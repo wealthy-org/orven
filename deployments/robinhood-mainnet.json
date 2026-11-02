@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "chainId": 4663,
+  "network": "robinhood-mainnet",
+  "deployedAt": "2026-11-02T22:59:28.619Z",
+  "deployer": "0x3f7736B3AB6480f88096326A4745923D84315b50",
+  "singleWalletAdmin": "0x3f7736B3AB6480f88096326A4745923D84315b50",
+  "token": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "status": "simulated_deployment",
+  "contracts": {
+    "vaultImplementation": "0x28a61fb430b72504d70c7d2987db274f0fbc0bd1",
+    "vaultBeacon": "0x498878bd8bd2228bfb38a985c5356e4f5dc8cbc7",
+    "vaultFactory": "0x45b0faa5924f3d292530f36c99a397cc16ce6af5",
+    "poolImplementation": "0xc104e4139428c70f8faf27bbaa19ecc5686fe49f",
+    "poolBeacon": "0xad02cea52e4d3bde4d000e9e099ca3103c9eee9e",
+    "pool": "0x6125d460d6784666a2330bfe40c04a29198ec6a9",
+    "splitFactory": "0x93c7634affec8f63d3f182fdccd389f8a874f818",
+    "registry": "0x489249df7f280b6c489c88cc98440677d494112c",
+    "vaultModule": "0xa7e3a42c0de4e1d1bc421d70337fb885a75de277",
+    "router": "0x2e72f43789e9a601a230b379473aa1820588e96c",
+    "spendVerifier": "0x6bbd8d11597f1a0da56f93c705f2ed1bcc817efb",
+    "privatePool": "0xe606356339ec2709d125659970c47cb88a6419e5",
+    "launchpad": {
+      "hook": "0x911346f8c3ee237d2cd0b87cd585ac9b533e04c4",
+      "launchpad": "0xa11030093a716966c4d20dcac09194f144419ca6",
+      "creatorSplit": "0x69745b35898d411d7578925deb23373dc559b14b"
+    },
+    "marketplace": {
+      "orvenPad": "0xf23d1f9c4e7579f838df01c44453576be14eef37"
+    }
+  }
+}

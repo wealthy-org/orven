@@ -1,0 +1,36 @@
+{
+  "name": "@orven/mcp",
+  "version": "0.1.0",
+  "description": "Orven Agent's MCP server (stdio): the post-quantum financial and commerce platform for AI agents on Robinhood Chain.",
+  "type": "module",
+  "bin": {
+    "orven-mcp": "./dist/server.js"
+  },
+  "main": "./dist/server.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "start": "node dist/server.js",
+    "publish:testnet": "npm publish --tag testnet --access public",
+    "publish:latest": "npm publish --tag latest --access public"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "viem": "^2.21.55",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

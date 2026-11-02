@@ -1,0 +1,38 @@
+name: Orven CI / CD Pipeline
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  test-and-build:
+    name: Build, Lint & Automated E2E Verification
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [ 22.x, 24.x ]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build All Monorepo Workspaces
+        run: npm run build:all
+
+      - name: Run Mainnet Pre-Flight & Security Checks
+        run: npm run verify:mainnet
+
+      - name: Run Comprehensive E2E System Test Suite (66 Tests)
+        run: npm run test:e2e

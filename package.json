@@ -1,0 +1,27 @@
+{
+  "name": "orven-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev": "node scripts/start-all.js",
+    "dev:web": "npm --workspace apps/web run dev",
+    "build:web": "npm --workspace apps/web run build",
+    "dev:ai": "npm --workspace services/ai-gateway run dev",
+    "dev:api": "npm --workspace services/application-api run dev",
+    "start:mcp": "node packages/mcp/dist/server.js",
+    "build:all": "npm run build --workspace packages/product-config && npm run build --workspace packages/mcp && npm run build --workspace services/ai-gateway && npm run build --workspace services/application-api && npm run build --workspace apps/web",
+    "test:e2e": "node scripts/test-e2e-system.js",
+    "verify:mainnet": "node scripts/verify-mainnet-readiness.js",
+    "deploy:testnet": "node scripts/deploy-network.js testnet",
+    "deploy:mainnet": "node scripts/deploy-network.js mainnet"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

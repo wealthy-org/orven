@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orven Protocol — BMad Roundtable Keepsake</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0C0D0E;
+      --card: #15171A;
+      --border: #22252A;
+      --text: #EDEDED;
+      --text-muted: #8E95A0;
+      --red: #D9381E;
+      --red-glow: rgba(217, 56, 30, 0.25);
+      --green: #22c55e;
+      --green-glow: rgba(34, 197, 94, 0.25);
+      --sans: "Schibsted Grotesk", -apple-system, sans-serif;
+      --mono: "JetBrains Mono", monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green-glow);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    h1 {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 14px;
+    }
+
+    h1 span { color: var(--red); }
+
+    p.subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 50px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: #353A42;
+    }
+
+    .persona-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .icon-box {
+      font-size: 26px;
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .persona-meta h3 {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .persona-meta span {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .quote {
+      font-size: 14.5px;
+      color: #CFD3DA;
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+
+    .deliverables {
+      list-style: none;
+      font-family: var(--mono);
+      font-size: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      color: var(--text-muted);
+    }
+
+    .deliverables li {
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .deliverables li::before {
+      content: "✔";
+      color: var(--green);
+    }
+
+    .timeline-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 50px;
+    }
+
+    .timeline-section h2 {
+      font-size: 22px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .timeline {
+      position: relative;
+      border-left: 2px solid var(--border);
+      margin-left: 10px;
+      padding-left: 24px;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -31px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 8px var(--red-glow);
+    }
+
+    .timeline-title {
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .timeline-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .actions {
+      text-align: center;
+      padding: 30px;
+      background: linear-gradient(180deg, var(--card) 0%, rgba(21, 23, 26, 0.4) 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .btn {
+      display: inline-block;
+      background: var(--red);
+      color: #fff;
+      text-decoration: none;
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 28px;
+      border-radius: 999px;
+      margin: 10px;
+      transition: background 0.2s;
+    }
+
+    .btn:hover { background: #b82d16; }
+    .btn.secondary { background: var(--border); color: var(--text); }
+    .btn.secondary:hover { background: #32373F; }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand-badge">
+        <span class="live-dot"></span>
+        ROBINHOOD CHAIN TESTNET (ID 46630) · SIMULATION MODE
+      </div>
+      <h1>ORVEN PROTOCOL <span>KEEPSAKE</span></h1>
+      <p class="subtitle">
+        Catatan kehormatan sesi BMad Party Mode: Analisis menyeluruh, rekonstruksi UIKit, kompilasi smart contract, backend services, dan orkestrasi monorepo penuh untuk Orven.
+      </p>
+    </header>
+
+    <div class="grid">
+      <!-- Sofia (PO) -->
+      <div class="card">
+        <div class="persona-header">
+          <div class="icon-box">🎯</div>
+          <div class="persona-meta">
+            <h3>Sofia</h3>
+            <span>Product Owner</span>
+          </div>
+        </div>
+        <p class="quote">
+          "Definisi 'Done' terkunci rapat sejak awal: Semua fitur lulus uji fungsional by-code dan E2E di Testnet tanpa ada pemotongan ke MVP."
+        </p>
+        <ul class="deliverables">
+          <li>Roadmap Milestone A s/d H</li>
+          <li>ACCEPTANCE.md matriks 11 E2E</li>
+          <li>13 entri memori proyek di .memlog.md</li>
+        </ul>
+      </div>
+
+      <!-- Winston (Architect) -->
+      <div class="card">
+        <div class="persona-header">
+          <div class="icon-box">🏗️</div>
+          <div class="persona-meta">
+            <h3>Winston</h3>
+            <span>System Architect</span>
+          </div>
+        </div>
+        <p class="quote">
+          "WOTS invariant terjaga: 1 kunci tidak pernah menandatangani 2 pesan berbeda. Relayer gas sponsorship di port 4010 siap menalangi gas token USDG."
+        </p>
+        <ul class="deliverables">
+          <li>Arsitektur Trust Boundaries & Monorepo</li>
+          <li>services/application-api (Port 4010)</li>
+          <li>deployments/deploy-testnet.js engine</li>
+        </ul>
+      </div>
+
+      <!-- Amelia (Dev) -->
+      <div class="card">
+        <div class="persona-header">
+          <div class="icon-box">💻</div>
+          <div class="persona-meta">
+            <h3>Amelia</h3>
+            <span>Senior Software Engineer</span>
+          </div>
+        </div>
+        <p class="quote">
+          "Kompilasi 3 repo Solc 0.8.30 bersih 100%! Dan Anvil fork test membuktikan OstraBreaker langsung hidup di local fork dengan 2.54M gas."
+        </p>
+        <ul class="deliverables">
+          <li>Foundry & Anvil v1.8.7 setup</li>
+          <li>out/ Bytecode Solidity compiled</li>
+          <li>npm run build:all (0 error)</li>
+        </ul>
+      </div>
+
+      <!-- Sally (UX Designer) -->
+      <div class="card">
+        <div class="persona-header">
+          <div class="icon-box">🎨</div>
+          <div class="persona-meta">
+            <h3>Sally</h3>
+            <span>UX Designer</span>
+          </div>
+        </div>
+        <p class="quote">
+          "UIKit Swiss-modernist dari app.ostraagent.xyz hidup kembali dengan jiwa Orven. In-browser WOTS keystore dan faucet testnet bikin user nyaman."
+        </p>
+        <ul class="deliverables">
+          <li>apps/web Next.js 14 (8 rute statis)</li>
+          <li>Schibsted Grotesk + JetBrains Mono</li>
+          <li>BrowserVaultManager + Faucet +250 USDG</li>
+        </ul>
+      </div>
+
+      <!-- Smithy (Toolsmith) -->
+      <div class="card">
+        <div class="persona-header">
+          <div class="icon-box">⚒️</div>
+          <div class="persona-meta">
+            <h3>Smithy</h3>
+            <span>Toolsmith</span>
+          </div>
+        </div>
+        <p class="quote">
+          "@orven/mcp adalah senjata agen mandiri: 7 tools aktif lewat stdio JSON-RPC 2.0 untuk vault, swap, privasi, pad, dan AI."
+        </p>
+        <ul class="deliverables">
+          <li>packages/mcp Server stdio</li>
+          <li>Zod schema JSON-RPC 2.0 teruji</li>
+          <li>npm run start:mcp</li>
+        </ul>
+      </div>
+
+      <!-- Mary (Analyst) -->
+      <div class="card">
+        <div class="persona-header">
+          <div class="icon-box">📊</div>
+          <div class="persona-meta">
+            <h3>Mary</h3>
+            <span>Business Analyst</span>
+          </div>
+        </div>
+        <p class="quote">
+          "Model ekonomi terlindungi: 0.20% swap fee, 1.00% launchpad hook dengan 70% creator / 30% protocol, dan penagihan AI dalam mikro-USDG."
+        </p>
+        <ul class="deliverables">
+          <li>ECONOMICS.md blueprint resmi</li>
+          <li>services/ai-gateway (Port 4020)</li>
+          <li>Zero real capital burned at Testnet</li>
+        </ul>
+      </div>
+    </div>
+
+    <section class="timeline-section">
+      <h2>🏆 Milestone Eksekusi Monorepo</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-title">Milestone A — Baseline & Audit Pinned Source</div>
+          <div class="timeline-desc">Kloning 3 repo upstream (ostra-robinhood, ostra-swap, ostrapad), verifikasi lisensi MIT, typecheck clean, terbit BASELINE.md.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-title">Milestone B — Core Monorepo, Contracts & Surfaces</div>
+          <div class="timeline-desc">Pemasangan Foundry & Anvil, kompilasi Solc 0.8.30, uji on-chain fork lulus, pembuatan packages/product-config & packages/mcp.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-title">Milestone C — Backend Services (AI & Relayer)</div>
+          <div class="timeline-desc">Pembangunan AI Gateway di Port 4020 dan Application API / Relayer di Port 4010, keduanya lulus uji curl HTTP 200.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-title">Milestone D — Web Application & In-Browser WOTS Keystore</div>
+          <div class="timeline-desc">Pembangunan Next.js 14 web app di Port 3000 dengan 8 rute, UIKit Orven, BrowserVaultManager, dan Faucet +250 USDG.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-title">Milestone H — Turnkey Orchestrator & Canonical Docs</div>
+          <div class="timeline-desc">Penerbitan README.md, ECONOMICS.md, ACCEPTANCE.md, serta script scripts/start-all.js (npm run dev).</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="actions">
+      <h3 style="margin-bottom: 12px; font-size: 20px;">Jalankan Platform Orven Sekarang</h3>
+      <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 14px;">
+        Ketik perintah berikut di terminal project untuk memulai seluruh ekosistem:
+      </p>
+      <div style="background: #000; padding: 14px; border-radius: 8px; font-family: var(--mono); font-size: 14px; display: inline-block; margin-bottom: 20px;">
+        <span style="color: var(--green);">$</span> npm run dev
+      </div>
+      <div>
+        <a href="http://localhost:3000/vault" target="_blank" class="btn">Buka Web App (:3000)</a>
+        <a href="http://localhost:4010/health" target="_blank" class="btn secondary">API Health (:4010)</a>
+        <a href="http://localhost:4020/health" target="_blank" class="btn secondary">AI Health (:4020)</a>
+      </div>
+    </div>
+
+    <footer>
+      Orven Protocol · Generated by BMad Master Agent &copy; 2026 Asia/Makassar
+    </footer>
+  </div>
+</body>
+</html>
