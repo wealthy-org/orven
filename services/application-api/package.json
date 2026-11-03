@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "npm --prefix ../../packages/product-config run build",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "start": "node dist/index.js",

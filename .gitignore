@@ -5,6 +5,7 @@ node_modules/
 
 # Build Outputs
 dist/
+!packages/product-config/dist/
 out/
 .next/
 build/
