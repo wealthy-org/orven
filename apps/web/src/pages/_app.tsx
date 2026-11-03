@@ -28,6 +28,24 @@ export default function App({ Component, pageProps }: AppProps) {
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
           <title>Orven · Post-Quantum Infrastructure</title>
+          <meta
+            name="description"
+            content="Decentralized post-quantum vaults, zero-gas token swaps, and autonomous agent tooling on Robinhood Chain."
+          />
+          <meta property="og:title" content="Orven Protocol · Post-Quantum Infrastructure" />
+          <meta
+            property="og:description"
+            content="Decentralized post-quantum vaults, zero-gas token swaps, and autonomous agent tooling on Robinhood Chain."
+          />
+          <meta property="og:url" content="https://useorvent.xyz" />
+          <meta property="og:site_name" content="Orven Protocol" />
+          <meta property="og:type" content="website" />
+          <meta name="twitter:card" content="summary" />
+          <meta name="twitter:title" content="Orven Protocol · Post-Quantum Infrastructure" />
+          <meta
+            name="twitter:description"
+            content="Post-quantum token vaults, swaps, and agent tooling on Robinhood Chain."
+          />
         </Head>
         <Component {...pageProps} />
       </ToastProvider>
