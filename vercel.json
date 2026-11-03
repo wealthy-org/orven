@@ -21,11 +21,13 @@
     },
     "api": {
       "root": "services/application-api",
-      "runtime": "node"
+      "runtime": "node",
+      "entrypoint": "src/index.ts"
     },
     "ai": {
       "root": "services/ai-gateway",
-      "runtime": "node"
+      "runtime": "node",
+      "entrypoint": "src/index.ts"
     }
   },
   "rewrites": [
