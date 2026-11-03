@@ -106,30 +106,7 @@ export function PWAInstallPrompt() {
 
       {/* PWA Install Promotion Banner */}
       {showPrompt && !isOffline && (
-        <aside
-          className="pwa-banner"
-          aria-label="Install Orven Application"
-          style={{
-            position: "fixed",
-            bottom: "calc(var(--bottom-nav-height, 64px) + var(--sab, 0px) + 12px)",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "min(420px, calc(100vw - 32px))",
-            zIndex: 79,
-            background: "rgba(21, 23, 26, 0.94)",
-            backdropFilter: "blur(14px)",
-            color: "#fff",
-            borderRadius: "12px",
-            padding: "12px 14px",
-            boxShadow: "0 12px 32px rgba(0, 0, 0, 0.24)",
-            border: "1px solid rgba(255, 255, 255, 0.12)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "10px",
-            animation: "bannerSlideUp 0.3s cubic-bezier(0.2, 0.7, 0.1, 1)",
-          }}
-        >
+        <aside className="pwa-banner" aria-label="Install Orven Application">
           <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
             <img
               src="/icons/icon-192.svg"

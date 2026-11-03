@@ -7,7 +7,6 @@ import { requestRelayerQuote, submitRelayTransaction } from "@/lib/api";
 import { useToast } from "@/lib/toast";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { NumberTicker } from "@/components/ui/NumberTicker";
-import { BorderBeam } from "@/components/ui/BorderBeam";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
 import { Badge } from "@/components/ui/Badge";
 import {
@@ -202,9 +201,8 @@ export default function VaultPage() {
 
         <div className="layout">
           <div className="stack" style={{ minWidth: 0 }}>
-            {/* Bento Overview Panel with 21st.dev BorderBeam */}
+            {/* Bento Overview Panel */}
             <section className="panel" style={{ position: "relative" }}>
-              <BorderBeam size={280} duration={14} colorFrom="#D9381E" colorTo="#FFA07A" />
               <div className="panel-head">
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   <ShieldCheck size={18} color="#D9381E" />
@@ -447,7 +445,6 @@ export default function VaultPage() {
 
           <aside className="side">
             <section className="swap-panel" aria-label="Vault Actions" style={{ position: "relative" }}>
-              <BorderBeam size={220} duration={12} colorFrom="#D9381E" colorTo="#F97316" />
               <div className="swap-panel-inner">
                 <div className="swap-nav-pills" role="tablist">
                   <button

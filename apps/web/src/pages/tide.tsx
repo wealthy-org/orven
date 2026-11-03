@@ -5,7 +5,6 @@ import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { useToast } from "@/lib/toast";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { NumberTicker } from "@/components/ui/NumberTicker";
-import { BorderBeam } from "@/components/ui/BorderBeam";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
 import { Badge } from "@/components/ui/Badge";
 import { Award, Zap, Calendar, Flame, Bot } from "lucide-react";
@@ -266,7 +265,6 @@ export default function TidePage() {
 
           <aside className="side">
             <section className="swap-panel" aria-label="Agent Linking" style={{ position: "relative" }}>
-              <BorderBeam size={220} duration={12} colorFrom="#D9381E" colorTo="#E11D48" />
               <div className="swap-panel-inner">
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
                   <Bot size={18} color="#D9381E" />

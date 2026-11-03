@@ -9,7 +9,6 @@ import { useWallet } from "@/lib/wallet";
 import { useToast } from "@/lib/toast";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { NumberTicker } from "@/components/ui/NumberTicker";
-import { BorderBeam } from "@/components/ui/BorderBeam";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
 import { Badge } from "@/components/ui/Badge";
 import { ArrowDownUp, Flame, Zap, ChevronDown, Check, Coins } from "lucide-react";
@@ -327,14 +326,13 @@ export default function SwapPage() {
             </section>
           </div>
 
-          {/* Primary Swap Terminal Widget with 21st.dev BorderBeam */}
+          {/* Primary Swap Terminal Widget */}
           <aside className="side">
             <section
               className="swap-panel"
               aria-label="Orven Swap Terminal"
               style={{ position: "relative" }}
             >
-              <BorderBeam size={260} duration={12} colorFrom="#D9381E" colorTo="#FFA07A" />
               <div className="swap-panel-inner">
                 {/* Segmented Mode Switcher */}
                 <div className="swap-nav-pills" role="tablist">

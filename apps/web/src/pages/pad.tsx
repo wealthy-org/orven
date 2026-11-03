@@ -4,7 +4,6 @@ import { Layout } from "@/components/Layout";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { useToast } from "@/lib/toast";
 import { PageTransition } from "@/components/ui/PageTransition";
-import { BorderBeam } from "@/components/ui/BorderBeam";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
 import { MotionCard } from "@/components/ui/MotionCard";
 import { Badge } from "@/components/ui/Badge";
@@ -330,7 +329,6 @@ export default function PadPage() {
 
           <aside className="side">
             <section className="swap-panel" aria-label="Pad Action" style={{ position: "relative" }}>
-              <BorderBeam size={220} duration={12} colorFrom="#D9381E" colorTo="#E11D48" />
               <div className="swap-panel-inner">
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
                   <PlusCircle size={18} color="#D9381E" />

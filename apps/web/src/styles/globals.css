@@ -1859,37 +1859,46 @@ img {
 /* ========================================================
    21ST.DEV, KOKONUT UI, SHADCN/UI & ANIME.JS PRIMITIVES
    ======================================================== */
-/* Border Beam (21st.dev Magic UI) */
-.border-beam-wrap {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: var(--border-width, 1.5px) solid transparent;
-  mask: linear-gradient(transparent, transparent), linear-gradient(#000, #000);
-  mask-clip: padding-box, border-box;
-  mask-composite: intersect;
-  -webkit-mask: linear-gradient(transparent, transparent), linear-gradient(#000, #000);
-  -webkit-mask-clip: padding-box, border-box;
-  -webkit-mask-composite: destination-out;
-  overflow: hidden;
-  z-index: 10;
+
+/* PWA Banner */
+.pwa-banner {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: min(380px, calc(100vw - 32px));
+  z-index: 79;
+  background: rgba(21, 23, 26, 0.95);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  color: #fff;
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  animation: bannerSlideUp 0.3s cubic-bezier(0.2, 0.7, 0.1, 1);
 }
 
-.border-beam-wrap::after {
-  content: "";
-  position: absolute;
-  aspect-ratio: 1;
-  width: var(--size, 200px);
-  background: linear-gradient(to left, var(--color-from, #D9381E), var(--color-to, #FFA07A), transparent);
-  offset-path: rect(0 auto auto 0 round var(--size, 200px));
-  animation: border-beam-anim var(--duration, 12s) infinite linear;
-  animation-delay: var(--delay, 0s);
-}
-
-@keyframes border-beam-anim {
+@keyframes bannerSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
   to {
-    offset-distance: 100%;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .pwa-banner {
+    right: 16px;
+    left: 16px;
+    width: auto;
+    bottom: calc(var(--bottom-nav-height, 64px) + var(--sab, 0px) + 12px);
   }
 }
 

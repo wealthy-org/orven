@@ -3,7 +3,6 @@ import Head from "next/head";
 import { Layout } from "@/components/Layout";
 import { executeAITask } from "@/lib/api";
 import { PageTransition } from "@/components/ui/PageTransition";
-import { BorderBeam } from "@/components/ui/BorderBeam";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
 import { Badge } from "@/components/ui/Badge";
 import { Bot, Terminal, Cpu, Sparkles, Play, Code2 } from "lucide-react";
@@ -226,7 +225,6 @@ export default function AgentsPage() {
 
           <aside className="side">
             <section className="swap-panel" aria-label="Agent Playground" style={{ position: "relative" }}>
-              <BorderBeam size={220} duration={12} colorFrom="#D9381E" colorTo="#E11D48" />
               <div className="swap-panel-inner">
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
                   <Sparkles size={18} color="#D9381E" />
