@@ -1,6 +1,7 @@
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useEffect } from "react";
+import { WalletProvider } from "@/lib/wallet";
 import "@/styles/globals.css";
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -15,7 +16,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <>
+    <WalletProvider>
       <Head>
         <meta charSet="utf-8" />
         <meta
@@ -27,6 +28,6 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>Orven · Post-Quantum Infrastructure</title>
       </Head>
       <Component {...pageProps} />
-    </>
+    </WalletProvider>
   );
 }

@@ -5,6 +5,7 @@ import { Layout } from "@/components/Layout";
 import { FEE_TIERS } from "@orven/product-config";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { requestRelayerQuote, submitRelayTransaction } from "@/lib/api";
+import { useWallet } from "@/lib/wallet";
 
 interface TokenItem {
   symbol: string;
@@ -24,6 +25,11 @@ const TOKEN_CATALOG: TokenItem[] = [
 ];
 
 export default function SwapPage() {
+  const {
+    isConnected: isExternalConnected,
+    address: externalWalletAddress,
+    connect: connectExternalWallet,
+  } = useWallet();
   const [vault, setVault] = useState<VaultState | null>(null);
   const [mounted, setMounted] = useState(false);
   const [sourceMode, setSourceMode] = useState<"wallet" | "vault">("vault");
@@ -82,29 +88,52 @@ export default function SwapPage() {
   };
 
   const handleExecuteSwap = async () => {
-    if (!vault || !isValidAmount || isInsufficientBalance) return;
+    if (sourceMode === "wallet" && !isExternalConnected) {
+      await connectExternalWallet();
+      return;
+    }
+
+    if (!isValidAmount) {
+      alert("Please enter a valid swap amount");
+      return;
+    }
+
+    if (sourceMode === "vault" && isInsufficientBalance) {
+      alert("Insufficient USDG balance in vault");
+      return;
+    }
 
     try {
       setIsProcessing(true);
-      setSwapMessage("Requesting route quote and relayer sponsorship...");
-      const quote = await requestRelayerQuote("vault_swap", vault.address);
+      if (sourceMode === "vault") {
+        setSwapMessage("Requesting route quote and relayer sponsorship...");
+        const quote = await requestRelayerQuote("vault_swap", vault?.address || "0x0");
 
-      setSwapMessage(`Signing swap order with WOTS Key #${vault.currentKeyIndex}...`);
-      await new Promise((r) => setTimeout(r, 600));
+        setSwapMessage(`Signing swap order with WOTS Key #${vault?.currentKeyIndex}...`);
+        await new Promise((r) => setTimeout(r, 600));
 
-      const { vault: updated, txHash } = BrowserVaultManager.executeSpend(
-        `Swap: ${tokenIn.symbol} -> ${tokenOut.symbol}`,
-        numAmount
-      );
-      await submitRelayTransaction(quote.quoteId, "0x_mock_swap_signature");
+        const { vault: updated, txHash } = BrowserVaultManager.executeSpend(
+          `Swap: ${tokenIn.symbol} -> ${tokenOut.symbol}`,
+          numAmount
+        );
+        await submitRelayTransaction(quote.quoteId, "0x_mock_swap_signature");
 
-      setVault({ ...updated });
-      setPayAmount("");
-      setSwapMessage(
-        `Swap Order Settled! Tx: ${txHash.slice(0, 10)}... (WOTS Key #${
-          updated.currentKeyIndex - 1
-        } retired)`
-      );
+        setVault({ ...updated });
+        setPayAmount("");
+        setSwapMessage(
+          `Swap Order Settled! Tx: ${txHash.slice(0, 10)}... (WOTS Key #${
+            updated.currentKeyIndex - 1
+          } retired)`
+        );
+      } else {
+        setSwapMessage("Broadcasting swap order from connected wallet via Uniswap v4 Router...");
+        await new Promise((r) => setTimeout(r, 800));
+        const mockTx = `0x${Array.from({ length: 64 }, () =>
+          Math.floor(Math.random() * 16).toString(16)
+        ).join("")}`;
+        setPayAmount("");
+        setSwapMessage(`Wallet Swap Confirmed! Tx: ${mockTx.slice(0, 10)}... on Robinhood Chain.`);
+      }
     } catch (err: any) {
       alert(err.message || "Swap failed");
     } finally {
@@ -125,14 +154,18 @@ export default function SwapPage() {
 
   // Button Label Helper
   const getButtonLabel = () => {
-    if (isProcessing) return "Submitting Order via Relayer...";
+    if (isProcessing) return "Submitting Order...";
+    if (sourceMode === "wallet" && !isExternalConnected) return "Connect a wallet";
     if (!payAmount || !isValidAmount) return "Enter an amount";
     if (isInsufficientBalance) return `Insufficient ${tokenIn.symbol} balance`;
-    if (sourceMode === "wallet") return "Connect a wallet";
+    if (sourceMode === "wallet") return `Swap with Wallet (${tokenIn.symbol} → ${tokenOut.symbol})`;
     return `Sign Vault Swap (${tokenIn.symbol} → ${tokenOut.symbol})`;
   };
 
-  const isButtonDisabled = isProcessing || !isValidAmount || isInsufficientBalance;
+  const isButtonDisabled =
+    isProcessing ||
+    (sourceMode === "vault" && (!isValidAmount || isInsufficientBalance)) ||
+    (sourceMode === "wallet" && isExternalConnected && !isValidAmount);
 
   return (
     <Layout>
@@ -294,7 +327,7 @@ export default function SwapPage() {
                       <span className="mono" style={{ fontSize: "11px", fontWeight: "600" }}>
                         YOU PAY
                       </span>
-                      {sourceMode === "vault" && (
+                      {sourceMode === "vault" ? (
                         <div className="swap-card-balance">
                           <span>
                             Balance: <b>{userBalance.toFixed(2)}</b> {tokenIn.symbol}
@@ -309,6 +342,14 @@ export default function SwapPage() {
                               MAX
                             </button>
                           )}
+                        </div>
+                      ) : (
+                        <div className="swap-card-balance">
+                          <span>
+                            {isExternalConnected && externalWalletAddress
+                              ? `Wallet: ${externalWalletAddress.slice(0, 6)}...`
+                              : "Wallet not connected"}
+                          </span>
                         </div>
                       )}
                     </div>

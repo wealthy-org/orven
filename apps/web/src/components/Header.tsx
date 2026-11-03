@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useWallet } from "@/lib/wallet";
+import { ROBINHOOD_TESTNET } from "@orven/product-config";
 
 export function Header() {
   const router = useRouter();
-  const [walletConnected, setWalletConnected] = useState(false);
+  const {
+    address,
+    isConnected,
+    isConnecting,
+    isCorrectNetwork,
+    connect,
+    disconnect,
+    switchNetwork,
+  } = useWallet();
+  const [walletMenuOpen, setWalletMenuOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => {
@@ -12,6 +24,19 @@ export function Header() {
       return router.pathname === "/vault" || router.pathname === "/";
     }
     return router.pathname.startsWith(path);
+  };
+
+  const shortAddr = address
+    ? `${address.slice(0, 6)}...${address.slice(-4)}`
+    : "";
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (address) {
+      navigator.clipboard.writeText(address);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   // Close mobile menu on route change
@@ -113,14 +138,87 @@ export function Header() {
           </Link>
 
           <div className="wallet">
-            <button
-              className="pill small"
-              type="button"
-              onClick={() => setWalletConnected(!walletConnected)}
-              aria-label={walletConnected ? "Wallet Connected" : "Connect Wallet"}
-            >
-              {walletConnected ? "0x7a3...4e19" : "Connect"}
-            </button>
+            {!isConnected ? (
+              <button
+                className="pill small"
+                type="button"
+                disabled={isConnecting}
+                onClick={connect}
+                aria-label="Connect Web3 Wallet"
+              >
+                {isConnecting ? "Connecting..." : "Connect"}
+              </button>
+            ) : (
+              <button
+                className={`pill small ${!isCorrectNetwork ? "warn" : "ghost"}`}
+                type="button"
+                onClick={() => setWalletMenuOpen(!walletMenuOpen)}
+                aria-expanded={walletMenuOpen}
+                aria-label="Wallet Menu"
+              >
+                <span
+                  style={{
+                    width: "7px",
+                    height: "7px",
+                    borderRadius: "50%",
+                    background: isCorrectNetwork ? "#16a34a" : "var(--red)",
+                    marginRight: "4px",
+                    display: "inline-block",
+                  }}
+                />
+                {shortAddr}
+              </button>
+            )}
+
+            {walletMenuOpen && isConnected && (
+              <div className="wallet-dropdown" onClick={(e) => e.stopPropagation()}>
+                <div className="wallet-dropdown-header">
+                  <span className="mono" style={{ fontSize: "10.5px" }}>Connected Account</span>
+                  <span className="addr" style={{ fontSize: "12px", fontWeight: "600", display: "block", marginTop: "2px" }}>
+                    {address}
+                  </span>
+                </div>
+
+                {!isCorrectNetwork && (
+                  <div style={{ padding: "8px 10px", background: "var(--red-soft)", color: "var(--red-ink)", fontSize: "11.5px", borderRadius: "6px" }}>
+                    Wrong Network · Switch to Robinhood Chain
+                    <button
+                      type="button"
+                      onClick={() => switchNetwork(ROBINHOOD_TESTNET.id)}
+                      className="pill small warn"
+                      style={{ minHeight: "26px", padding: "0 8px", fontSize: "11px", marginTop: "4px", width: "100%" }}
+                    >
+                      Switch to Testnet (46630)
+                    </button>
+                  </div>
+                )}
+
+                <div className="wallet-dropdown-actions">
+                  <button type="button" onClick={handleCopy} className="wallet-dropdown-item">
+                    <span>{copied ? "✔ Copied" : "Copy Address"}</span>
+                  </button>
+                  <a
+                    href={`https://testnet.robinhoodchain.blockscout.com/address/${address}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="wallet-dropdown-item"
+                  >
+                    <span>View on Explorer ↗</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      disconnect();
+                      setWalletMenuOpen(false);
+                    }}
+                    className="wallet-dropdown-item"
+                    style={{ color: "var(--red)" }}
+                  >
+                    <span>Disconnect</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           <button

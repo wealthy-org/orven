@@ -431,6 +431,58 @@ img {
   letter-spacing: 0.04em;
 }
 
+.wallet-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 95;
+  width: min(300px, calc(100vw - 32px));
+  background: #fff;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  box-shadow: 0 16px 36px rgba(21, 23, 26, 0.16);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: fadeIn 0.15s ease;
+}
+
+.wallet-dropdown-header {
+  padding: 8px 10px;
+  background: var(--soft);
+  border-radius: 8px;
+  word-break: break-all;
+}
+
+.wallet-dropdown-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wallet-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 38px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 0;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.wallet-dropdown-item:hover {
+  background: var(--soft);
+}
+
 @media (max-width: 480px) {
   .wallet .pill {
     padding: 0 12px;
