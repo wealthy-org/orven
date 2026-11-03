@@ -1,5 +1,9 @@
-const RELAYER_API_BASE = process.env.NEXT_PUBLIC_RELAYER_API || "http://localhost:4010";
-const AI_GATEWAY_BASE = process.env.NEXT_PUBLIC_AI_GATEWAY || "http://localhost:4020";
+const RELAYER_API_BASE =
+  process.env.NEXT_PUBLIC_RELAYER_API ||
+  (typeof window !== "undefined" ? "/api/relayer" : "http://localhost:4010");
+const AI_GATEWAY_BASE =
+  process.env.NEXT_PUBLIC_AI_GATEWAY ||
+  (typeof window !== "undefined" ? "/api/ai" : "http://localhost:4020");
 
 export async function requestRelayerQuote(action: string, fromVault: string) {
   try {

@@ -24,9 +24,10 @@ const server = createServer(async (req, res) => {
   }
 
   const url = new URL(req.url ?? "/", `http://${req.headers.host}`);
+  const pathname = url.pathname.replace(/^\/api\/relayer/, "") || "/";
 
   try {
-    if (req.method === "GET" && url.pathname === "/health") {
+    if (req.method === "GET" && pathname === "/health") {
       let liveBlock: string = "simulated_99120450";
       let liveGasGwei: string = "15.0";
 
@@ -67,7 +68,7 @@ const server = createServer(async (req, res) => {
       return JSON.parse(body);
     };
 
-    if (req.method === "POST" && url.pathname === "/v1/relayer/quote") {
+    if (req.method === "POST" && pathname === "/v1/relayer/quote") {
       const data = await readBody();
       const quote = relayer.getQuote(data);
       res.writeHead(200);
@@ -75,7 +76,7 @@ const server = createServer(async (req, res) => {
       return;
     }
 
-    if (req.method === "POST" && url.pathname === "/v1/relayer/submit") {
+    if (req.method === "POST" && pathname === "/v1/relayer/submit") {
       const data = await readBody();
       const receipt = relayer.simulateRelay(data.quoteId, data.signedPayload);
       res.writeHead(200);
@@ -83,8 +84,8 @@ const server = createServer(async (req, res) => {
       return;
     }
 
-    if (req.method === "GET" && url.pathname.startsWith("/v1/portfolio/")) {
-      const address = url.pathname.split("/").pop();
+    if (req.method === "GET" && pathname.startsWith("/v1/portfolio/")) {
+      const address = pathname.split("/").pop();
       res.writeHead(200);
       res.end(
         JSON.stringify({

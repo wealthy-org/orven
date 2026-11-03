@@ -20,15 +20,16 @@ const server = createServer(async (req, res) => {
   }
 
   const url = new URL(req.url ?? "/", `http://${req.headers.host}`);
+  const pathname = url.pathname.replace(/^\/api\/ai/, "") || "/";
 
   try {
-    if (req.method === "GET" && url.pathname === "/health") {
+    if (req.method === "GET" && pathname === "/health") {
       res.writeHead(200);
       res.end(JSON.stringify({ status: "ok", service: "orven-ai-gateway", version: "0.1.0" }));
       return;
     }
 
-    if (req.method === "GET" && url.pathname === "/v1/models") {
+    if (req.method === "GET" && pathname === "/v1/models") {
       res.writeHead(200);
       res.end(
         JSON.stringify({
@@ -54,7 +55,7 @@ const server = createServer(async (req, res) => {
       return JSON.parse(body);
     };
 
-    if (req.method === "POST" && url.pathname === "/v1/quote") {
+    if (req.method === "POST" && pathname === "/v1/quote") {
       const data = await readBody();
       const units = parseInt(data.units || "1", 10);
       const quote = manager.createQuote(
@@ -67,7 +68,7 @@ const server = createServer(async (req, res) => {
       return;
     }
 
-    if (req.method === "POST" && url.pathname === "/v1/jobs") {
+    if (req.method === "POST" && pathname === "/v1/jobs") {
       const data = await readBody();
       if (!data.quoteId || !data.modelId || !data.maxPriceMinor) {
         throw new Error("Missing required parameters: quoteId, modelId, maxPriceMinor");
