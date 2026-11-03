@@ -5,9 +5,8 @@ import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { useToast } from "@/lib/toast";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
-import { MotionCard } from "@/components/ui/MotionCard";
 import { Badge } from "@/components/ui/Badge";
-import { Briefcase, Rocket, Search, ShieldCheck, PlusCircle } from "lucide-react";
+import { Briefcase, Rocket, Search, PlusCircle, ArrowRight } from "lucide-react";
 
 export default function PadPage() {
   const { toast } = useToast();
@@ -17,22 +16,40 @@ export default function PadPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState("");
+  const [newCategory, setNewCategory] = useState("Security & Audit");
   const [newPrice, setNewPrice] = useState("");
+  const [newDesc, setNewDesc] = useState("");
 
   const [offers, setOffers] = useState([
     {
       id: "job_01",
       title: "Smart Contract Security Audit & Vector Analysis",
+      category: "Security & Audit",
+      description: "Automated vector analysis, symbolic execution, and invariant testing for Robinhood Chain smart contracts.",
       provider: "Agent Strix #042",
       evaluator: "Consensus Panel",
       price: 150.0,
+      turnaround: "24h delivery",
     },
     {
       id: "job_02",
       title: "AI Model Fine-tuning & Evaluation Dataset",
+      category: "Machine Learning",
+      description: "Fine-tuning quantized Llama & DeepSeek weights with Robinhood Chain liquidity and DEX transaction datasets.",
       provider: "NeuroAgent #109",
       evaluator: "Direct Client",
       price: 100.0,
+      turnaround: "48h delivery",
+    },
+    {
+      id: "job_03",
+      title: "Uniswap v4 Dynamic Hook Arbitrage Bot",
+      category: "Algorithmic Trading",
+      description: "High-frequency arbitrage bot listening to mempool pending orders and rebalancing pools with 0-gas meta-transactions.",
+      provider: "QuantBot #007",
+      evaluator: "Multi-Sig Panel",
+      price: 280.0,
+      turnaround: "72h delivery",
     },
   ]);
 
@@ -81,14 +98,18 @@ export default function PadPage() {
     const newOffer = {
       id: `job_${Date.now()}`,
       title: newTitle,
+      category: newCategory,
+      description: newDesc.trim() || "Verifiable task execution under decentralized on-chain escrow.",
       provider: mounted && vault ? `Vault ${vault.address.slice(0, 6)}...` : "Local Provider",
       evaluator: "Consensus Panel",
       price: priceNum,
+      turnaround: "24h delivery",
     };
 
     setOffers([newOffer, ...offers]);
     setNewTitle("");
     setNewPrice("");
+    setNewDesc("");
     toast.success("Offer Published!", `"${newOffer.title}" listed on OrvenPad registry.`);
     setActionMessage(`Offer "${newOffer.title}" published successfully to OrvenPad on-chain registry!`);
     setTimeout(() => setActionMessage(null), 5000);
@@ -188,7 +209,13 @@ export default function PadPage() {
                     <div style={{ position: "relative" }}>
                       <Search
                         size={16}
-                        style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "var(--mute-2)" }}
+                        style={{
+                          position: "absolute",
+                          left: "14px",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          color: "var(--mute-2)",
+                        }}
                       />
                       <input
                         style={{
@@ -209,67 +236,75 @@ export default function PadPage() {
 
                     <div style={{ display: "grid", gap: "12px", marginTop: "4px" }}>
                       {offers
-                        .filter((o) => o.title.toLowerCase().includes(searchQuery.toLowerCase()))
+                        .filter(
+                          (o) =>
+                            o.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            o.category.toLowerCase().includes(searchQuery.toLowerCase())
+                        )
                         .map((offer) => (
-                          <MotionCard
-                            key={offer.id}
-                            style={{
-                              padding: "16px",
-                              border: "1px solid var(--line)",
-                              borderRadius: "10px",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              flexWrap: "wrap",
-                              gap: "14px",
-                            }}
-                          >
-                            <div style={{ flex: "1 1 240px", minWidth: 0 }}>
-                              <div
+                          <div key={offer.id} className="pad-offer-card">
+                            {/* Top Meta Row */}
+                            <div className="pad-offer-top">
+                              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                <Badge variant="secondary" size="sm">
+                                  {offer.category}
+                                </Badge>
+                                <span className="mono" style={{ fontSize: "11px", color: "var(--mute-2)" }}>
+                                  {offer.turnaround}
+                                </span>
+                              </div>
+                              <div className="num" style={{ fontSize: "18px", fontWeight: "700" }}>
+                                {offer.price.toFixed(2)}{" "}
+                                <span style={{ fontSize: "12px", color: "var(--mute)" }}>USDG</span>
+                              </div>
+                            </div>
+
+                            {/* Title & Description */}
+                            <div style={{ marginTop: "10px" }}>
+                              <h3
                                 style={{
+                                  fontSize: "16px",
                                   fontWeight: "700",
-                                  fontSize: "15.5px",
+                                  letterSpacing: "-0.01em",
+                                  color: "var(--ink)",
                                   lineHeight: 1.35,
-                                  wordBreak: "break-word",
                                 }}
                               >
                                 {offer.title}
-                              </div>
+                              </h3>
                               <p
-                                className="note"
-                                style={{ marginTop: "4px", fontSize: "12.5px" }}
-                              >
-                                Provider: <span className="mono">{offer.provider}</span> · Evaluator:{" "}
-                                {offer.evaluator}
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "flex-end",
-                                gap: "6px",
-                                flex: "none",
-                              }}
-                            >
-                              <div
-                                className="num"
                                 style={{
-                                  fontWeight: "700",
-                                  fontSize: "clamp(17px, 2vw, 20px)",
+                                  fontSize: "13px",
+                                  color: "var(--mute)",
+                                  lineHeight: 1.5,
+                                  marginTop: "4px",
                                 }}
                               >
-                                {offer.price.toFixed(2)}{" "}
-                                <span style={{ fontSize: "13px", color: "var(--mute)" }}>USDG</span>
-                              </div>
-                              <ShimmerButton
-                                style={{ minHeight: "34px", padding: "0 14px", fontSize: "12px", borderRadius: "999px" }}
-                                onClick={() => handleOrderEscrow(offer)}
-                              >
-                                Order Escrow
-                              </ShimmerButton>
+                                {offer.description}
+                              </p>
                             </div>
-                          </MotionCard>
+
+                            {/* Bottom Row */}
+                            <div className="pad-offer-bottom">
+                              <div className="pad-offer-meta">
+                                <span className="mono">
+                                  Provider: <b>{offer.provider}</b>
+                                </span>
+                                <span style={{ color: "var(--line-2)" }}>•</span>
+                                <span className="mono">
+                                  Evaluator: <b>{offer.evaluator}</b>
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                className="pill small"
+                                onClick={() => handleOrderEscrow(offer)}
+                                style={{ minHeight: "36px", padding: "0 18px", fontSize: "12.5px" }}
+                              >
+                                Order Escrow →
+                              </button>
+                            </div>
+                          </div>
                         ))}
                     </div>
                   </div>
@@ -343,39 +378,52 @@ export default function PadPage() {
                       : "Create a new token with fair launch mechanics, locked initial liquidity, and anti-sniping protection."}
                   </p>
 
-                  <label className="field">
-                    <span className="field-top">
-                      <span className="mono">
-                        {padView === "marketplace" ? "Offer Title" : "Token Name & Symbol"}
-                      </span>
-                    </span>
-                    <span className="field-row">
-                      <input
-                        placeholder={
-                          padView === "marketplace"
-                            ? "e.g. Automated Code Review"
-                            : "e.g. Orven / ORV"
-                        }
-                        value={newTitle}
-                        onChange={(e) => setNewTitle(e.target.value)}
-                      />
-                    </span>
-                  </label>
+                  <div className="input-field">
+                    <span className="mono">Category</span>
+                    <select
+                      value={newCategory}
+                      onChange={(e) => setNewCategory(e.target.value)}
+                    >
+                      <option value="Security & Audit">Security & Audit</option>
+                      <option value="Machine Learning">Machine Learning</option>
+                      <option value="Algorithmic Trading">Algorithmic Trading</option>
+                      <option value="Smart Contract Dev">Smart Contract Dev</option>
+                    </select>
+                  </div>
 
-                  <label className="field">
-                    <span className="field-top">
-                      <span className="mono">Price (USDG)</span>
+                  <div className="input-field">
+                    <span className="mono">
+                      {padView === "marketplace" ? "Offer Title" : "Token Name & Symbol"}
                     </span>
-                    <span className="field-row">
-                      <input
-                        placeholder="0.00"
-                        inputMode="decimal"
-                        value={newPrice}
-                        onChange={(e) => setNewPrice(e.target.value)}
-                      />
-                      <span className="unit">USDG</span>
-                    </span>
-                  </label>
+                    <input
+                      placeholder={
+                        padView === "marketplace"
+                          ? "e.g. Automated Smart Contract Audit"
+                          : "e.g. Orven / ORV"
+                      }
+                      value={newTitle}
+                      onChange={(e) => setNewTitle(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="input-field">
+                    <span className="mono">Price (USDG)</span>
+                    <input
+                      placeholder="0.00"
+                      inputMode="decimal"
+                      value={newPrice}
+                      onChange={(e) => setNewPrice(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="input-field">
+                    <span className="mono">Description</span>
+                    <textarea
+                      placeholder="Describe the deliverables, timeline, and requirements..."
+                      value={newDesc}
+                      onChange={(e) => setNewDesc(e.target.value)}
+                    />
+                  </div>
 
                   <ShimmerButton
                     style={{ minHeight: "48px", borderRadius: "12px", width: "100%", marginTop: "4px" }}

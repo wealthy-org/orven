@@ -261,18 +261,35 @@ export default function AgentsPage() {
                     </div>
                   </div>
 
-                  <label className="field">
-                    <span className="field-top">
-                      <span className="mono">Task / Prompt</span>
-                    </span>
-                    <span className="field-row">
-                      <input
-                        placeholder="e.g. Analyze Robinhood Chain liquidity..."
-                        value={testPrompt}
-                        onChange={(e) => setTestPrompt(e.target.value)}
-                      />
-                    </span>
-                  </label>
+                  <div className="ai-prompt-container">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                      <span className="mono" style={{ fontSize: "11px", fontWeight: "600" }}>Task / Prompt</span>
+                      <span className="mono" style={{ fontSize: "10.5px", color: "var(--mute-2)" }}>orven_ai stdio</span>
+                    </div>
+                    <textarea
+                      className="ai-prompt-textarea"
+                      rows={3}
+                      placeholder="Ask orven_ai to audit smart contracts, analyze liquidity pools, or execute tasks..."
+                      value={testPrompt}
+                      onChange={(e) => setTestPrompt(e.target.value)}
+                    />
+                    <div className="ai-prompt-chips">
+                      <button
+                        type="button"
+                        className="ai-chip-btn"
+                        onClick={() => setTestPrompt("Analyze Robinhood Chain liquidity depth for ORVEN/USDG")}
+                      >
+                        + Liquidity Analysis
+                      </button>
+                      <button
+                        type="button"
+                        className="ai-chip-btn"
+                        onClick={() => setTestPrompt("Audit WOTS signature verification and key monotonically")}
+                      >
+                        + Security Audit
+                      </button>
+                    </div>
+                  </div>
 
                   <ShimmerButton
                     style={{ minHeight: "48px", borderRadius: "12px", width: "100%", marginTop: "4px" }}
