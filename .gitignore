@@ -27,7 +27,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# OS Files
+# Test & QA Artifacts
+qa-artifacts/
+ss/
 .DS_Store
 Thumbs.db
 

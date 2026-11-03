@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
+const WEB_PORT = process.env.WEB_PORT || 3005;
 
 const spawnedProcesses = [];
 
@@ -25,7 +26,7 @@ async function isPortOpen(url) {
 async function ensureServices() {
   const needsApi = !(await isPortOpen("http://localhost:4010/health"));
   const needsAi = !(await isPortOpen("http://localhost:4020/health"));
-  const needsWeb = !(await isPortOpen("http://localhost:3000/"));
+  const needsWeb = !(await isPortOpen(`http://localhost:${WEB_PORT}/`));
 
   if (needsApi) {
     const apiProc = spawn("node", ["services/application-api/dist/index.js"], { cwd: root, stdio: "ignore" });
@@ -37,7 +38,7 @@ async function ensureServices() {
   }
   if (needsWeb) {
     const nextBin = join(root, "apps", "web", "node_modules", "next", "dist", "bin", "next");
-    const webProc = spawn("node", [nextBin, "start", "-p", "3000"], { cwd: join(root, "apps", "web"), stdio: "ignore" });
+    const webProc = spawn("node", [nextBin, "start", "-p", String(WEB_PORT)], { cwd: join(root, "apps", "web"), stdio: "ignore" });
     spawnedProcesses.push(webProc);
   }
 
@@ -47,7 +48,7 @@ async function ensureServices() {
     while (Date.now() - start < 15000) {
       const apiReady = !needsApi || (await isPortOpen("http://localhost:4010/health"));
       const aiReady = !needsAi || (await isPortOpen("http://localhost:4020/health"));
-      const webReady = !needsWeb || (await isPortOpen("http://localhost:3000/"));
+      const webReady = !needsWeb || (await isPortOpen(`http://localhost:${WEB_PORT}/`));
       if (apiReady && aiReady && webReady) break;
       await new Promise((r) => setTimeout(r, 400));
     }
@@ -176,7 +177,7 @@ async function runTests() {
   }
 
   // --- SECTION 3: Web App Routes & Availability ---
-  console.log("\n\x1b[1m[3/5] Testing Web Application Routes (Port 3000)\x1b[0m");
+  console.log(`\n\x1b[1m[3/5] Testing Web Application Routes (Port ${WEB_PORT})\x1b[0m`);
   const routes = [
     { path: "/vault", title: "Vault · Orven" },
     { path: "/swap", title: "Swap · Orven" },
@@ -189,7 +190,7 @@ async function runTests() {
 
   for (const route of routes) {
     try {
-      const res = await fetch(`http://localhost:3000${route.path}`);
+      const res = await fetch(`http://localhost:${WEB_PORT}${route.path}`);
       const text = await res.text();
       assert(res.status === 200, `Route ${route.path} returns HTTP 200 OK`);
       assert(text.includes(`<title>${route.title}`), `Route ${route.path} renders title "${route.title}"`);

@@ -17,11 +17,16 @@
     "start:mcp": "node packages/mcp/dist/server.js",
     "build:all": "npm run build --workspace packages/product-config && npm run build --workspace packages/mcp && npm run build --workspace services/ai-gateway && npm run build --workspace services/application-api && npm run build --workspace apps/web",
     "test:e2e": "node scripts/test-e2e-system.js",
+    "qa:live": "node scripts/run-qa-live-simulation.js --headed",
+    "qa:test": "node scripts/run-qa-live-simulation.js",
     "verify:mainnet": "node scripts/verify-mainnet-readiness.js",
     "deploy:testnet": "node scripts/deploy-network.js testnet",
     "deploy:mainnet": "node scripts/deploy-network.js mainnet"
   },
   "engines": {
     "node": ">=24"
+  },
+  "devDependencies": {
+    "playwright": "1.64.1"
   }
 }

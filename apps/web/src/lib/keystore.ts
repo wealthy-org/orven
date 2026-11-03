@@ -182,7 +182,7 @@ export class BrowserVaultManager {
       encryptedSeed: buf2hex(seedBytes), // encrypted asynchronously on init
       saltHex: "00000000000000000000000000000000",
       ivHex: "000000000000000000000000",
-      currentKeyIndex: 0,
+      currentKeyIndex: 1, // Genesis Inception consumes Key #0; monotonic next spend is Key #1
       maxKeys: 1024,
       balanceUSDG: 250.0,
       shieldedUSDG: 0.0,
@@ -377,6 +377,12 @@ export class BrowserVaultManager {
         saltHex: vault.saltHex,
         ivHex: vault.ivHex,
         currentKeyIndex: vault.currentKeyIndex,
+        balanceUSDG: vault.balanceUSDG,
+        shieldedUSDG: vault.shieldedUSDG,
+        balanceORVEN: vault.balanceORVEN,
+        lockedORVEN: vault.lockedORVEN,
+        linkedAgent: vault.linkedAgent,
+        transactions: vault.transactions,
       },
       null,
       2
@@ -406,26 +412,40 @@ export class BrowserVaultManager {
       encryptedSeed: backup.encryptedSeed,
       saltHex: backup.saltHex || "00000000000000000000000000000000",
       ivHex: backup.ivHex || "000000000000000000000000",
-      currentKeyIndex: backup.currentKeyIndex || 0,
+      currentKeyIndex: typeof backup.currentKeyIndex === "number" ? backup.currentKeyIndex : 1,
       maxKeys: 1024,
-      balanceUSDG: current ? current.balanceUSDG : 250.0,
-      shieldedUSDG: current ? current.shieldedUSDG : 0.0,
-      balanceORVEN: current ? current.balanceORVEN : 500_000,
-      lockedORVEN: current ? current.lockedORVEN : 0,
-      linkedAgent: current ? current.linkedAgent : null,
-      transactions: [
-        {
-          id: `restore_${Date.now()}`,
-          type: "Vault Restored from Backup",
-          asset: "USDG",
-          amount: 0,
-          timestamp: Date.now(),
-          status: "confirmed",
-          txHash: `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}`,
-          wotsIndexUsed: backup.currentKeyIndex || 0,
-        },
-        ...(current ? current.transactions : []),
-      ],
+      balanceUSDG: typeof backup.balanceUSDG === "number" ? backup.balanceUSDG : current ? current.balanceUSDG : 250.0,
+      shieldedUSDG: typeof backup.shieldedUSDG === "number" ? backup.shieldedUSDG : current ? current.shieldedUSDG : 0.0,
+      balanceORVEN: typeof backup.balanceORVEN === "number" ? backup.balanceORVEN : current ? current.balanceORVEN : 500_000,
+      lockedORVEN: typeof backup.lockedORVEN === "number" ? backup.lockedORVEN : current ? current.lockedORVEN : 0,
+      linkedAgent: backup.linkedAgent || (current ? current.linkedAgent : null),
+      transactions: Array.isArray(backup.transactions) && backup.transactions.length > 0
+        ? [
+            {
+              id: `restore_${Date.now()}`,
+              type: "Vault Restored from Backup",
+              asset: "USDG",
+              amount: 0,
+              timestamp: Date.now(),
+              status: "confirmed",
+              txHash: `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}`,
+              wotsIndexUsed: backup.currentKeyIndex || 1,
+            },
+            ...backup.transactions,
+          ]
+        : [
+            {
+              id: `restore_${Date.now()}`,
+              type: "Vault Restored from Backup",
+              asset: "USDG",
+              amount: 0,
+              timestamp: Date.now(),
+              status: "confirmed",
+              txHash: `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}`,
+              wotsIndexUsed: backup.currentKeyIndex || 1,
+            },
+            ...(current ? current.transactions : []),
+          ],
     };
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(restored));
