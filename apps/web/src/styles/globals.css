@@ -278,11 +278,71 @@ img {
 .status-in {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 22px;
+  justify-content: space-between;
   align-items: center;
   min-height: 34px;
   padding-block: 6px;
   font-size: 11.5px;
+  gap: 8px;
+}
+
+.status-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Phantom-Style Developer Mode Switch */
+.phantom-dev-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.phantom-dev-switch:hover {
+  color: var(--ink);
+}
+
+.phantom-switch-track {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  background: var(--line-2);
+  border-radius: 999px;
+  transition: background-color 0.2s ease;
+  display: inline-block;
+  flex: none;
+}
+
+.phantom-switch-track.active {
+  background: #16a34a;
+}
+
+.phantom-switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s cubic-bezier(0.2, 0.7, 0.1, 1);
+}
+
+.phantom-switch-track.active .phantom-switch-thumb {
+  transform: translateX(14px);
 }
 
 .status-in span {

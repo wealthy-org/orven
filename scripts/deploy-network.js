@@ -107,6 +107,12 @@ async function main() {
   writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
   console.log(`   [OK] Manifest updated successfully with ${Object.keys(deployedContracts).length + 4} contract records!\n`);
 
+  console.log(`5. Blockscout Contract Creation Verification (${targetChain.explorerUrl}):`);
+  console.log(`   👉 Single-Wallet Admin : ${targetChain.explorerUrl}/address/${account.address}`);
+  console.log(`   👉 Vault Factory       : ${targetChain.explorerUrl}/address/${deployedContracts.vaultFactory}`);
+  console.log(`   👉 Uniswap v4 Router   : ${targetChain.explorerUrl}/address/${deployedContracts.router}`);
+  console.log(`   👉 OrvenPad Marketplace: ${targetChain.explorerUrl}/address/${manifest.contracts.marketplace.orvenPad}\n`);
+
   console.log("=======================================================");
   console.log(`   ORVEN ${isMainnet ? "MAINNET" : "TESTNET"} DEPLOYMENT READY   `);
   console.log("=======================================================\n");

@@ -4,6 +4,7 @@ import { Layout } from "@/components/Layout";
 import { FEE_TIERS } from "@orven/product-config";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { useToast } from "@/lib/toast";
+import { useNetwork } from "@/lib/network";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { NumberTicker } from "@/components/ui/NumberTicker";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
@@ -12,6 +13,7 @@ import { Lock, Coins, Shield, Zap } from "lucide-react";
 
 export default function LockPage() {
   const { toast } = useToast();
+  const { isMainnet } = useNetwork();
   const [vault, setVault] = useState<VaultState | null>(null);
   const [mounted, setMounted] = useState(false);
   const [lockAmount, setLockAmount] = useState("");
@@ -20,9 +22,9 @@ export default function LockPage() {
 
   useEffect(() => {
     setMounted(true);
-    const existing = BrowserVaultManager.loadVault() || BrowserVaultManager.createVault();
+    const existing = BrowserVaultManager.loadVault(isMainnet) || BrowserVaultManager.createVault(isMainnet);
     setVault(existing);
-  }, []);
+  }, [isMainnet]);
 
   const handleLock = () => {
     if (!vault) return;

@@ -6,6 +6,7 @@ import { FEE_TIERS } from "@orven/product-config";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { requestRelayerQuote, submitRelayTransaction } from "@/lib/api";
 import { useWallet } from "@/lib/wallet";
+import { useNetwork } from "@/lib/network";
 import { useToast } from "@/lib/toast";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { NumberTicker } from "@/components/ui/NumberTicker";
@@ -32,6 +33,7 @@ const TOKEN_CATALOG: TokenItem[] = [
 
 export default function SwapPage() {
   const { toast, showToast, updateToast } = useToast();
+  const { isMainnet, activeChain, explorerUrl } = useNetwork();
   const {
     isConnected: isExternalConnected,
     address: externalWalletAddress,
@@ -53,9 +55,9 @@ export default function SwapPage() {
 
   useEffect(() => {
     setMounted(true);
-    const existing = BrowserVaultManager.loadVault() || BrowserVaultManager.createVault();
+    const existing = BrowserVaultManager.loadVault(isMainnet) || BrowserVaultManager.createVault(isMainnet);
     setVault(existing);
-  }, []);
+  }, [isMainnet]);
 
   const exchangeRate = tokenIn.rateVsUSDG / tokenOut.rateVsUSDG;
   const numAmount = parseFloat(payAmount);
@@ -138,6 +140,7 @@ export default function SwapPage() {
           title: "Swap Order Settled!",
           message: `Swapped ${numAmount} ${tokenIn.symbol} for ${estimatedOut} ${tokenOut.symbol}`,
           txHash,
+          chainId: activeChain.id,
         });
         setSwapMessage(
           `Swap Order Settled! Tx: ${txHash.slice(0, 10)}... (WOTS Key #${
@@ -156,6 +159,7 @@ export default function SwapPage() {
           title: "Wallet Swap Confirmed!",
           message: `Swapped ${numAmount} ${tokenIn.symbol} via Uniswap v4 Router.`,
           txHash: mockTx,
+          chainId: activeChain.id,
         });
         setSwapMessage(`Wallet Swap Confirmed! Tx: ${mockTx.slice(0, 10)}... on Robinhood Chain.`);
       }

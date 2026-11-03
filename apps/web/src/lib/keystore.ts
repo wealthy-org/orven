@@ -32,7 +32,8 @@ export interface VaultState {
   }>;
 }
 
-const STORAGE_KEY = "orven_vault_v1";
+const STORAGE_KEY_TESTNET = "orven_vault_keystore_testnet_46630";
+const STORAGE_KEY_MAINNET = "orven_vault_keystore_mainnet_4663";
 const LOCK_KEY = "orven_wots_signing_mutex";
 const DEFAULT_PASS = "orven_default_local_pin_2026";
 
@@ -149,13 +150,26 @@ export class BrowserVaultManager {
     return dec.decode(decrypted);
   }
 
-  static loadVault(): VaultState | null {
+  static getStorageKey(isMainnet?: boolean): string {
+    const mainnet = isMainnet !== undefined ? isMainnet : this.isCurrentMainnet();
+    return mainnet ? STORAGE_KEY_MAINNET : STORAGE_KEY_TESTNET;
+  }
+
+  static isCurrentMainnet(): boolean {
+    if (typeof window === "undefined") return false;
+    const mode = localStorage.getItem("orven_developer_mode_active");
+    return mode === "false"; // Dev Mode OFF = Mainnet ON
+  }
+
+  static loadVault(isMainnet?: boolean): VaultState | null {
     if (typeof window === "undefined") return null;
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const key = this.getStorageKey(isMainnet);
+    const raw = localStorage.getItem(key);
     if (!raw) return null;
     try {
       const parsed = JSON.parse(raw);
-      if (parsed.balanceORVEN === undefined) parsed.balanceORVEN = 500_000;
+      const mainnet = isMainnet !== undefined ? isMainnet : this.isCurrentMainnet();
+      if (parsed.balanceORVEN === undefined) parsed.balanceORVEN = mainnet ? 0 : 500_000;
       if (parsed.lockedORVEN === undefined) parsed.lockedORVEN = 0;
       if (parsed.linkedAgent === undefined) parsed.linkedAgent = null;
       parsed.balanceUSDG = roundCurrency(parsed.balanceUSDG);
@@ -166,14 +180,21 @@ export class BrowserVaultManager {
     }
   }
 
-  static createVault(): VaultState {
+  static createVault(isMainnet?: boolean): VaultState {
+    const mainnet = isMainnet !== undefined ? isMainnet : this.isCurrentMainnet();
+    const key = this.getStorageKey(mainnet);
     const seedBytes = new Uint8Array(32);
     if (typeof window !== "undefined") {
       window.crypto.getRandomValues(seedBytes);
     }
     const rawSeedHex = buf2hex(seedBytes);
 
-    const addressHash = buf2hex(seedBytes.slice(0, 20));
+    // Derive network-scoped address: Mainnet address differs from Testnet address
+    const addressBytes = new Uint8Array(20);
+    for (let i = 0; i < 20; i++) {
+      addressBytes[i] = seedBytes[i] ^ (mainnet ? 0xaa : 0x00);
+    }
+    const addressHash = buf2hex(addressBytes);
     const address = `0x${addressHash}` as `0x${string}`;
 
     // Create initial state with encrypted seed placeholder
@@ -184,17 +205,17 @@ export class BrowserVaultManager {
       ivHex: "000000000000000000000000",
       currentKeyIndex: 1, // Genesis Inception consumes Key #0; monotonic next spend is Key #1
       maxKeys: 1024,
-      balanceUSDG: 250.0,
+      balanceUSDG: mainnet ? 0.0 : 250.0,
       shieldedUSDG: 0.0,
-      balanceORVEN: 500_000,
+      balanceORVEN: mainnet ? 0 : 500_000,
       lockedORVEN: 0,
       linkedAgent: null,
       transactions: [
         {
           id: `tx_${Date.now()}`,
-          type: "Vault Inception (AES-256 Encrypted)",
+          type: mainnet ? "Mainnet Vault Inception" : "Vault Inception (AES-256 Encrypted)",
           asset: "USDG",
-          amount: 250.0,
+          amount: mainnet ? 0 : 250.0,
           timestamp: Date.now(),
           status: "confirmed",
           txHash: `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}`,
@@ -204,15 +225,15 @@ export class BrowserVaultManager {
     };
 
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newVault));
+      localStorage.setItem(key, JSON.stringify(newVault));
       // Asynchronously encrypt seed with AES-GCM
       this.encryptSeed(rawSeedHex).then(({ encryptedSeed, saltHex, ivHex }) => {
-        const v = this.loadVault();
+        const v = this.loadVault(mainnet);
         if (v) {
           v.encryptedSeed = encryptedSeed;
           v.saltHex = saltHex;
           v.ivHex = ivHex;
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(v));
+          localStorage.setItem(key, JSON.stringify(v));
         }
       });
     }
@@ -235,7 +256,7 @@ export class BrowserVaultManager {
         txHash: `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}`,
         wotsIndexUsed: vault.currentKeyIndex,
       });
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(vault));
+      localStorage.setItem(this.getStorageKey(), JSON.stringify(vault));
       return vault;
     } finally {
       this.releaseLock();
@@ -281,7 +302,7 @@ export class BrowserVaultManager {
         wotsIndexUsed: usedIndex,
       });
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(vault));
+      localStorage.setItem(this.getStorageKey(), JSON.stringify(vault));
       return { vault, txHash };
     } finally {
       this.releaseLock();
@@ -320,7 +341,7 @@ export class BrowserVaultManager {
         wotsIndexUsed: usedIndex,
       });
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(vault));
+      localStorage.setItem(this.getStorageKey(), JSON.stringify(vault));
       return { vault, txHash };
     } finally {
       this.releaseLock();
@@ -352,7 +373,7 @@ export class BrowserVaultManager {
         wotsIndexUsed: usedIndex,
       });
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(vault));
+      localStorage.setItem(this.getStorageKey(), JSON.stringify(vault));
       return { vault, txHash };
     } finally {
       this.releaseLock();
@@ -448,7 +469,7 @@ export class BrowserVaultManager {
           ],
     };
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(restored));
+    localStorage.setItem(this.getStorageKey(), JSON.stringify(restored));
     return restored;
   }
 }

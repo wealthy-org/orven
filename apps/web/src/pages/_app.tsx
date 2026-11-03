@@ -1,6 +1,7 @@
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useEffect } from "react";
+import { NetworkProvider } from "@/lib/network";
 import { WalletProvider } from "@/lib/wallet";
 import { ToastProvider } from "@/lib/toast";
 import "@/styles/globals.css";
@@ -17,8 +18,9 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <WalletProvider>
-      <ToastProvider>
+    <NetworkProvider>
+      <WalletProvider>
+        <ToastProvider>
         <Head>
           <meta charSet="utf-8" />
           <meta
@@ -50,5 +52,6 @@ export default function App({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
       </ToastProvider>
     </WalletProvider>
+  </NetworkProvider>
   );
 }

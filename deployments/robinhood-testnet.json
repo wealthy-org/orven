@@ -2,31 +2,31 @@
   "version": 1,
   "chainId": 46630,
   "network": "robinhood-testnet",
-  "deployedAt": "2026-11-02T22:59:28.175Z",
-  "deployer": "0xD69E5b1b97a678694d08cbc1F43B67c80838D740",
-  "singleWalletAdmin": "0xD69E5b1b97a678694d08cbc1F43B67c80838D740",
+  "deployedAt": "2026-11-03T18:10:12.615Z",
+  "deployer": "0xb06d35bf181d6AD69040D72F45B0Da961167A567",
+  "singleWalletAdmin": "0xb06d35bf181d6AD69040D72F45B0Da961167A567",
   "token": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
   "status": "simulated_deployment",
   "contracts": {
-    "vaultImplementation": "0xf6f2b09077ea864fe401bae70d1f5c7b8faa7f6a",
-    "vaultBeacon": "0x46014f593c00b8fa26672740ff55206c9c8c1ceb",
-    "vaultFactory": "0x4f7cb1a7f31fdfc44824e3cc8b705e1629e1a8c5",
-    "poolImplementation": "0xee9e6556b9100de8610e86e46d0a09f5208c6172",
-    "poolBeacon": "0x29f747ff703672b4b6ab604b9b97a8602387dd4d",
-    "pool": "0xf4cf872d524d29697453206e41a1628d46ed5098",
-    "splitFactory": "0xcfb3ad61e8404195141d7da83d57f31932c35367",
-    "registry": "0xf9661eb67371e1aedbbfa2b634e01b0b5a460fa2",
-    "vaultModule": "0x367b6180d05b5f0c0c4647a02f0796ae76d4f99e",
-    "router": "0x2f68363226502af378a441749d71cba3a6691487",
-    "spendVerifier": "0x18cac7d0f48a18370d6c2529dc284e0d158bd818",
-    "privatePool": "0xcb83d7ac5f0b55a6bb435933908648d966013cf5",
+    "vaultImplementation": "0x98af4ef2dc3f56e3650217b0e16079d18bdc1e72",
+    "vaultBeacon": "0x5f41d52c03363b52a9c081ffc16eb8db321fdf9e",
+    "vaultFactory": "0xdfde279b51f3e6cb61cb61de1705f072eadeb45b",
+    "poolImplementation": "0x9c07bb0b0ba975f94d06765a76aa0f64f392970b",
+    "poolBeacon": "0x0b70b1853b8a6157f754442bff3188c0a6661c50",
+    "pool": "0x39b55bdb15fc8db24012b8ed63b94a3ceea2a145",
+    "splitFactory": "0xb366796c4f39fffa9ff65d9ce8efcbdfa3a06e7b",
+    "registry": "0x3d151b466850b7988a2537ed4e0e6e48a735f95c",
+    "vaultModule": "0xea6d5c3bb715a9156e5365d9f0215b39514c89bb",
+    "router": "0xa6d3de0ecf3ab56c8d0f69c3ba00fb99af81ff51",
+    "spendVerifier": "0x84f0ef2f592ffaf0fe1c58582079672a790e6d6d",
+    "privatePool": "0x1421deebaba2ffb7ac80413fd1ad85ec7dbb0cb5",
     "launchpad": {
-      "hook": "0x0df935e4bbb01858ce4206458046027cac108336",
-      "launchpad": "0x720ae9e20849265586a20365774fed00a4883f21",
-      "creatorSplit": "0x8d26dd39e51c50f24f8b7e00414dec0aa527292c"
+      "hook": "0x7b26f9f46e21411b200fb90496979b31fdde0ee1",
+      "launchpad": "0x766b0094544498c7f77c02c5f543e008acf39c30",
+      "creatorSplit": "0xa1d9800641fc23ad3688a5bab7a0b7cac524be71"
     },
     "marketplace": {
-      "orvenPad": "0x4b12217d3c8bb965123e2958f6a2f51c6585cac6"
+      "orvenPad": "0xe509d1f7d03e5613d4cd1df4fdbac728dc04b7b5"
     }
   }
 }

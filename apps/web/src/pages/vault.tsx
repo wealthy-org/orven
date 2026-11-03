@@ -5,6 +5,7 @@ import { Layout } from "@/components/Layout";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { requestRelayerQuote, submitRelayTransaction } from "@/lib/api";
 import { useToast } from "@/lib/toast";
+import { useNetwork } from "@/lib/network";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { NumberTicker } from "@/components/ui/NumberTicker";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
@@ -24,6 +25,7 @@ import {
 
 export default function VaultPage() {
   const { toast, showToast, updateToast } = useToast();
+  const { isDeveloperMode, isMainnet, activeChain, explorerUrl } = useNetwork();
   const [vault, setVault] = useState<VaultState | null>(null);
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"deposit" | "send" | "privacy">("deposit");
@@ -35,14 +37,14 @@ export default function VaultPage() {
 
   useEffect(() => {
     setMounted(true);
-    const existing = BrowserVaultManager.loadVault();
+    const existing = BrowserVaultManager.loadVault(isMainnet);
     if (existing) {
       setVault(existing);
     } else {
-      const created = BrowserVaultManager.createVault();
+      const created = BrowserVaultManager.createVault(isMainnet);
       setVault(created);
     }
-  }, []);
+  }, [isMainnet]);
 
   const handleCopyAddress = () => {
     if (vault?.address) {
@@ -53,6 +55,13 @@ export default function VaultPage() {
   };
 
   const handleClaimFaucet = () => {
+    if (isMainnet) {
+      toast.error(
+        "Mainnet Active",
+        "Faucet simulation is disabled on Mainnet. Deposit real USDG or ETH to your vault address."
+      );
+      return;
+    }
     const updated = BrowserVaultManager.claimFaucet(250);
     setVault({ ...updated });
     toast.success("Faucet Claimed!", "+250.00 Testnet USDG deposited into Vault.");
@@ -309,12 +318,22 @@ export default function VaultPage() {
                     alignItems: "center",
                   }}
                 >
-                  <ShimmerButton
-                    onClick={handleClaimFaucet}
-                    style={{ minHeight: "38px", padding: "0 16px", fontSize: "13px", borderRadius: "999px" }}
-                  >
-                    + Claim 250 USDG Faucet
-                  </ShimmerButton>
+                  {!isMainnet ? (
+                    <ShimmerButton
+                      onClick={handleClaimFaucet}
+                      style={{ minHeight: "38px", padding: "0 16px", fontSize: "13px", borderRadius: "999px" }}
+                    >
+                      + Claim 250 USDG Faucet
+                    </ShimmerButton>
+                  ) : (
+                    <button
+                      className="pill small"
+                      type="button"
+                      onClick={() => setActiveTab("deposit")}
+                    >
+                      Deposit Real USDG (Mainnet)
+                    </button>
+                  )}
                   <button
                     className="pill small ghost"
                     type="button"
@@ -340,8 +359,8 @@ export default function VaultPage() {
                     accept=".json"
                     onChange={handleFileChange}
                   />
-                  <Badge variant="secondary" className="hide-sm">
-                    Robinhood Testnet (Chain ID 46630)
+                  <Badge variant={isMainnet ? "default" : "secondary"} className="hide-sm">
+                    {isMainnet ? "Robinhood Mainnet (Chain 4663)" : "Robinhood Testnet (Chain ID 46630)"}
                   </Badge>
                 </div>
               </div>

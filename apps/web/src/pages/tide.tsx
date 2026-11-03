@@ -3,6 +3,7 @@ import Head from "next/head";
 import { Layout } from "@/components/Layout";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { useToast } from "@/lib/toast";
+import { useNetwork } from "@/lib/network";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { NumberTicker } from "@/components/ui/NumberTicker";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
@@ -11,6 +12,7 @@ import { Award, Zap, Calendar, Flame, Bot, KeyRound } from "lucide-react";
 
 export default function TidePage() {
   const { toast } = useToast();
+  const { isMainnet } = useNetwork();
   const [vault, setVault] = useState<VaultState | null>(null);
   const [mounted, setMounted] = useState(false);
   const [agentKeyInput, setAgentKeyInput] = useState("");
@@ -19,9 +21,9 @@ export default function TidePage() {
 
   useEffect(() => {
     setMounted(true);
-    const existing = BrowserVaultManager.loadVault() || BrowserVaultManager.createVault();
+    const existing = BrowserVaultManager.loadVault(isMainnet) || BrowserVaultManager.createVault(isMainnet);
     setVault(existing);
-  }, []);
+  }, [isMainnet]);
 
   const handleLinkAgent = () => {
     if (!vault) return;

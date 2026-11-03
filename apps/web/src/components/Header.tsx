@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useWallet } from "@/lib/wallet";
-import { ROBINHOOD_TESTNET } from "@orven/product-config";
+import { useNetwork } from "@/lib/network";
+import { ROBINHOOD_TESTNET, ROBINHOOD_MAINNET } from "@orven/product-config";
 
 export function Header() {
   const router = useRouter();
+  const { isDeveloperMode, activeChain, explorerUrl, isMainnet } = useNetwork();
   const {
     address,
     isConnected,
@@ -105,7 +107,7 @@ export function Header() {
               ></circle>
               <circle cx="50" cy="50" r="9" fill="#15171A"></circle>
             </svg>
-            orven<small>App</small>
+            orven<small style={isMainnet ? { background: "var(--red-soft)", color: "var(--red-ink)", borderColor: "var(--red)" } : undefined}>{isMainnet ? "Mainnet" : "App"}</small>
           </Link>
 
           <nav className="nav" aria-label="Main">
@@ -194,14 +196,14 @@ export function Header() {
 
                 {!isCorrectNetwork && (
                   <div style={{ padding: "8px 10px", background: "var(--red-soft)", color: "var(--red-ink)", fontSize: "11.5px", borderRadius: "6px" }}>
-                    Wrong Network · Switch to Robinhood Chain
+                    Wrong Network · Switch to {activeChain.name}
                     <button
                       type="button"
-                      onClick={() => switchNetwork(ROBINHOOD_TESTNET.id)}
+                      onClick={() => switchNetwork(activeChain.id)}
                       className="pill small warn"
                       style={{ minHeight: "26px", padding: "0 8px", fontSize: "11px", marginTop: "4px", width: "100%" }}
                     >
-                      Switch to Testnet (46630)
+                      Switch to {isMainnet ? "Mainnet (4663)" : "Testnet (46630)"}
                     </button>
                   </div>
                 )}
@@ -211,12 +213,12 @@ export function Header() {
                     <span>{copied ? "✔ Copied" : "Copy Address"}</span>
                   </button>
                   <a
-                    href={`https://testnet.robinhoodchain.blockscout.com/address/${address}`}
+                    href={`${explorerUrl}/address/${address}`}
                     target="_blank"
                     rel="noreferrer"
                     className="wallet-dropdown-item"
                   >
-                    <span>View on Explorer ↗</span>
+                    <span>View on Blockscout Explorer ↗</span>
                   </a>
                   <button
                     type="button"
