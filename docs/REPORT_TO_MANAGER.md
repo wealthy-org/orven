@@ -4,7 +4,7 @@
 **Dari:** Kevin Adisurya Nugraha & Seluruh Tim BMAD Taskforce  
 **Tanggal:** 3 November 2026  
 **Status Proyek:** 🏆 **100% SELESAI, LULUS UJI ISO 29119 (GRADE A+), SIAP MAINNET**  
-**Repositori GitHub:** [https://github.com/kevinadisuryanugraha/orven](https://github.com/kevinadisuryanugraha/orven) (Private)
+**Repositori GitHub Resmi:** [https://github.com/wealthy-org/orven](https://github.com/wealthy-org/orven)
 
 ---
 
@@ -89,6 +89,6 @@ cd apps/web && vercel --prod
 4. `docs/SPRINT_RETROSPECTIVE.md` — Laporan resmi evaluasi sprint & lessons learned.
 5. `docs/QA_QC_MASTER_REPORT.md` — Sertifikasi audit mutu ISO 29119 (Grade A+).
 6. `.github/workflows/ci.yml` — Automated CI/CD pipeline untuk GitHub.
-7. Repositori GitHub resmi: `https://github.com/kevinadisuryanugraha/orven`
+7. Repositori GitHub resmi: `https://github.com/wealthy-org/orven`
 
 Demikian laporan serah terima ini kami sampaikan. Seluruh sistem telah siap sepenuhnya dan dapat segera diperiksa kapan pun Manajer berkenan. Terima kasih atas arahan dan kepercayaannya!

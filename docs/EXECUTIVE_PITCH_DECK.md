@@ -76,4 +76,4 @@ Per leadership directive, the platform has completed functional validation on Te
 ---
 
 **Contact & Release Package:**  
-Dokumen lengkap: `HANDOVER_PACKAGE.md` · Repositori: `github.com/orven-network/orven`
+Dokumen lengkap: `HANDOVER_PACKAGE.md` · Repositori: `github.com/wealthy-org/orven`

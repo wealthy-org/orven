@@ -43,7 +43,7 @@ Across the development lifecycle, the BMAD engineering team delivered the comple
 4. **Auto-Spawner E2E Test Engine:**  
    `scripts/test-e2e-system.js` detects offline microservices, automatically boots them, waits for health readiness, runs all 66 test assertions, and cleans up processes on exit.
 5. **Private Remote Git Integration:**  
-   Clean initial repository initialized and pushed to private remote `https://github.com/kevinadisuryanugraha/orven.git` with strict `.gitignore` secret isolation.
+   Clean initial repository initialized and pushed to private remote `https://github.com/wealthy-org/orven.git` with strict `.gitignore` secret isolation.
 
 ---
 
