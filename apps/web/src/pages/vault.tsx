@@ -131,7 +131,7 @@ export default function VaultPage() {
       </Head>
 
       <div className="wrap page">
-        <div className="page-head">
+        <div className="page-head hide-sm">
           <div>
             <div className="label">
               <span className="sq"></span>
@@ -146,61 +146,13 @@ export default function VaultPage() {
           </div>
         </div>
 
-        {/* 3-Step Professional Onboarding Banner */}
-        <div
-          style={{
-            background: "var(--soft)",
-            border: "1px solid var(--line)",
-            borderRadius: "8px",
-            padding: "18px 20px",
-            margin: "24px 0",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
-            gap: "16px",
-          }}
-        >
-          <div>
-            <span className="mono" style={{ color: "var(--red)", fontSize: "11px" }}>
-              Step 1 · Inception
-            </span>
-            <div style={{ fontWeight: "700", marginTop: "4px", fontSize: "15px" }}>
-              Post-Quantum Keys Active
-            </div>
-            <p className="note" style={{ fontSize: "12.5px", marginTop: "4px" }}>
-              Encrypted AES-GCM 256-bit seed stored in your local browser sandbox.
-            </p>
-          </div>
-          <div>
-            <span className="mono" style={{ color: "var(--red)", fontSize: "11px" }}>
-              Step 2 · Funding
-            </span>
-            <div style={{ fontWeight: "700", marginTop: "4px", fontSize: "15px" }}>
-              Claim Faucet Simulation
-            </div>
-            <p className="note" style={{ fontSize: "12.5px", marginTop: "4px" }}>
-              Get free USDG to test swaps, privacy, and marketplace orders.
-            </p>
-          </div>
-          <div>
-            <span className="mono" style={{ color: "var(--red)", fontSize: "11px" }}>
-              Step 3 · Connect
-            </span>
-            <div style={{ fontWeight: "700", marginTop: "4px", fontSize: "15px" }}>
-              AI Agent & Swaps
-            </div>
-            <p className="note" style={{ fontSize: "12.5px", marginTop: "4px" }}>
-              Run local <code>@orven/mcp</code> or trade on Uniswap v3/v4 gas-free.
-            </p>
-          </div>
-        </div>
-
         {message && (
           <div
             style={{
               padding: "14px 18px",
               background: "var(--soft)",
               borderLeft: "4px solid var(--red)",
-              marginBottom: "20px",
+              marginBottom: "16px",
               borderRadius: "4px",
               fontWeight: "500",
               fontSize: "14px",
@@ -318,6 +270,53 @@ export default function VaultPage() {
               </div>
             </section>
 
+            {/* 3-Step Professional Onboarding Banner */}
+            <div
+              style={{
+                background: "var(--soft)",
+                border: "1px solid var(--line)",
+                borderRadius: "8px",
+                padding: "16px 18px",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))",
+                gap: "14px",
+              }}
+            >
+              <div>
+                <span className="mono" style={{ color: "var(--red)", fontSize: "11px" }}>
+                  Step 1 · Inception
+                </span>
+                <div style={{ fontWeight: "700", marginTop: "4px", fontSize: "14.5px" }}>
+                  Post-Quantum Keys Active
+                </div>
+                <p className="note" style={{ fontSize: "12px", marginTop: "4px" }}>
+                  Encrypted AES-GCM 256-bit seed stored in your local browser sandbox.
+                </p>
+              </div>
+              <div>
+                <span className="mono" style={{ color: "var(--red)", fontSize: "11px" }}>
+                  Step 2 · Funding
+                </span>
+                <div style={{ fontWeight: "700", marginTop: "4px", fontSize: "14.5px" }}>
+                  Claim Faucet Simulation
+                </div>
+                <p className="note" style={{ fontSize: "12px", marginTop: "4px" }}>
+                  Get free USDG to test swaps, privacy, and marketplace orders.
+                </p>
+              </div>
+              <div>
+                <span className="mono" style={{ color: "var(--red)", fontSize: "11px" }}>
+                  Step 3 · Connect
+                </span>
+                <div style={{ fontWeight: "700", marginTop: "4px", fontSize: "14.5px" }}>
+                  AI Agent & Swaps
+                </div>
+                <p className="note" style={{ fontSize: "12px", marginTop: "4px" }}>
+                  Run local <code>@orven/mcp</code> or trade on Uniswap v3/v4 gas-free.
+                </p>
+              </div>
+            </div>
+
             <section className="panel">
               <div className="panel-head">
                 <h2>Transaction Journal (Local WOTS Ledger)</h2>
@@ -369,35 +368,41 @@ export default function VaultPage() {
           </div>
 
           <aside className="side">
-            <section className="panel" aria-label="Vault Actions">
-              <div className="tabs">
-                <button
-                  type="button"
-                  aria-pressed={activeTab === "deposit"}
-                  onClick={() => setActiveTab("deposit")}
-                >
-                  Deposit
-                </button>
-                <button
-                  type="button"
-                  aria-pressed={activeTab === "send"}
-                  onClick={() => setActiveTab("send")}
-                >
-                  Send
-                </button>
-                <button
-                  type="button"
-                  aria-pressed={activeTab === "privacy"}
-                  onClick={() => setActiveTab("privacy")}
-                >
-                  Shield
-                </button>
-              </div>
+            <section className="swap-panel" aria-label="Vault Actions">
+              <div className="swap-panel-inner">
+                <div className="swap-nav-pills" role="tablist">
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={activeTab === "deposit"}
+                    className={`swap-nav-pill ${activeTab === "deposit" ? "active" : ""}`}
+                    onClick={() => setActiveTab("deposit")}
+                  >
+                    Deposit
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={activeTab === "send"}
+                    className={`swap-nav-pill ${activeTab === "send" ? "active" : ""}`}
+                    onClick={() => setActiveTab("send")}
+                  >
+                    Send
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={activeTab === "privacy"}
+                    className={`swap-nav-pill ${activeTab === "privacy" ? "active" : ""}`}
+                    onClick={() => setActiveTab("privacy")}
+                  >
+                    Shield
+                  </button>
+                </div>
 
-              <div className="panel-body stack">
-                <div className="stack">
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   <div className="tp">
-                    <span className="mono">Asset</span>
+                    <span className="mono" style={{ fontSize: "11px" }}>Asset</span>
                     <div className="tp-btn" style={{ cursor: "default" }}>
                       <span className="tb tb-coin tb-sm" data-len="4">
                         <img src="/logos/usdg.png" alt="USDG" />
@@ -408,83 +413,113 @@ export default function VaultPage() {
                       </span>
                     </div>
                   </div>
-                </div>
 
-                {activeTab === "deposit" ? (
-                  <div className="stack" style={{ padding: "12px 0" }}>
-                    <p className="note">
-                      Your vault's on-chain deposit address on Robinhood Chain. Send testnet USDG or WETH
-                      here; transactions will register automatically.
-                    </p>
-                    <div
-                      style={{
-                        padding: "12px 14px",
-                        background: "var(--soft)",
-                        borderRadius: "6px",
-                        border: "1px solid var(--line)",
-                      }}
-                    >
-                      <span
-                        className="mono"
-                        style={{ fontSize: "11.5px", wordBreak: "break-all", display: "block" }}
+                  {activeTab === "deposit" ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                      <p className="note">
+                        Your vault's on-chain deposit address on Robinhood Chain. Send testnet USDG or WETH
+                        here; transactions will register automatically.
+                      </p>
+                      <div
+                        style={{
+                          padding: "12px 14px",
+                          background: "var(--soft)",
+                          borderRadius: "8px",
+                          border: "1px solid var(--line)",
+                        }}
                       >
-                        {mounted && vault ? vault.address : "Loading address..."}
-                      </span>
-                    </div>
-                    <button className="pill block" type="button" onClick={handleClaimFaucet}>
-                      Use Testnet Faucet (+250 USDG)
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <label className="field">
-                      <span className="field-top">
-                        <span className="mono">Amount to {activeTab === "send" ? "Send" : "Shield"}</span>
-                        <span className="mono" style={{ fontSize: "11px" }}>
-                          Max: {vault?.balanceUSDG.toFixed(2)} USDG
+                        <span
+                          className="mono"
+                          style={{ fontSize: "11.5px", wordBreak: "break-all", display: "block" }}
+                        >
+                          {mounted && vault ? vault.address : "Loading address..."}
                         </span>
-                      </span>
-                      <span className="field-row">
-                        <input
-                          inputMode="decimal"
-                          placeholder="0.00"
-                          aria-label="Amount"
-                          value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
-                        />
-                        <span className="unit">USDG</span>
-                      </span>
-                    </label>
-
-                    <div className="quote num">
-                      <div className="row">
-                        <span>Relayer Sponsorship Fee</span>
-                        <span>0.05 USDG</span>
                       </div>
-                      <div className="row">
-                        <span>ETH Gas required</span>
-                        <span style={{ color: "#16a34a", fontWeight: "600" }}>0.00 ETH (Free)</span>
-                      </div>
+                      <button className="pill block" type="button" onClick={handleClaimFaucet}>
+                        Use Testnet Faucet (+250 USDG)
+                      </button>
                     </div>
+                  ) : (
+                    <>
+                      <div className="swap-card-box">
+                        <div className="swap-card-top">
+                          <span className="mono" style={{ fontSize: "11px", fontWeight: "600" }}>
+                            AMOUNT TO {activeTab === "send" ? "SEND" : "SHIELD"}
+                          </span>
+                          <div className="swap-card-balance">
+                            <span>Max: {vault?.balanceUSDG.toFixed(2)} USDG</span>
+                            {vault && vault.balanceUSDG > 0 && (
+                              <button
+                                type="button"
+                                className="swap-max-btn"
+                                onClick={() => setAmount(vault.balanceUSDG.toString())}
+                              >
+                                MAX
+                              </button>
+                            )}
+                          </div>
+                        </div>
 
-                    <button
-                      className="pill block"
-                      type="button"
-                      disabled={isProcessing}
-                      onClick={handleAction}
-                    >
-                      {isProcessing
-                        ? "Broadcasting via Relayer..."
-                        : activeTab === "send"
-                        ? "Sign with WOTS Key & Transfer"
-                        : "Deposit to Private STARK Pool"}
-                    </button>
-                  </>
-                )}
+                        <div className="swap-card-main">
+                          <input
+                            className="swap-amount-input"
+                            inputMode="decimal"
+                            placeholder="0.00"
+                            aria-label="Amount"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                          />
+                          <span className="unit" style={{ fontSize: "16px", fontWeight: "700" }}>
+                            USDG
+                          </span>
+                        </div>
+                      </div>
 
-                <p className="note" style={{ fontSize: "12px", marginTop: "8px" }}>
-                  One-time post-quantum signatures enforce that a key is never reused twice.
-                </p>
+                      <div className="swap-info-box">
+                        <div className="swap-info-row">
+                          <span className="swap-info-label">Relayer Sponsorship Fee</span>
+                          <span className="swap-info-val">0.05 USDG</span>
+                        </div>
+                        <div className="swap-info-row">
+                          <span className="swap-info-label">ETH Gas required</span>
+                          <span className="swap-info-val" style={{ color: "#16a34a" }}>
+                            0.00 ETH (Free)
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        className="pill block"
+                        style={{ minHeight: "48px", borderRadius: "12px" }}
+                        type="button"
+                        disabled={isProcessing}
+                        onClick={handleAction}
+                      >
+                        {isProcessing
+                          ? "Broadcasting via Relayer..."
+                          : activeTab === "send"
+                          ? "Sign with WOTS Key & Transfer"
+                          : "Deposit to Private STARK Pool"}
+                      </button>
+                    </>
+                  )}
+
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontSize: "11.5px",
+                      color: "var(--mute-2)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "6px",
+                      marginTop: "2px",
+                    }}
+                  >
+                    <span style={{ color: "#16a34a" }}>⚡</span>
+                    <span>One-time post-quantum key · Never reused</span>
+                  </div>
+                </div>
               </div>
             </section>
           </aside>

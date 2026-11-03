@@ -158,76 +158,106 @@ export default function LockPage() {
           </div>
 
           <aside className="side">
-            <section className="panel" aria-label="Lock Action">
-              <div className="panel-head">
-                <h2>Lock Tokens</h2>
-              </div>
-              <div className="panel-body stack">
-                <div style={{ padding: "14px", background: "var(--soft)", borderRadius: "6px" }}>
-                  <span className="mono" style={{ fontSize: "11px" }}>Currently Locked</span>
+            <section className="swap-panel" aria-label="Lock Action">
+              <div className="swap-panel-inner">
+                <div style={{ fontWeight: "700", fontSize: "16px", marginBottom: "14px" }}>
+                  Lock Tokens
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <div style={{ padding: "14px", background: "var(--soft)", borderRadius: "8px" }}>
+                    <span className="mono" style={{ fontSize: "11px" }}>Currently Locked</span>
+                    <div
+                      className="num"
+                      style={{
+                        fontSize: "clamp(18px, 2.4vw, 22px)",
+                        fontWeight: "700",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {mounted && vault ? vault.lockedORVEN.toLocaleString() : "0"} ORVEN{" "}
+                      <span style={{ fontSize: "13px", color: "var(--mute)" }}>
+                        ({currentTier.tier}: {currentTier.fee})
+                      </span>
+                    </div>
+                    <div
+                      className="mono"
+                      style={{ fontSize: "11px", color: "var(--mute)", marginTop: "4px" }}
+                    >
+                      Available: {mounted && vault ? vault.balanceORVEN.toLocaleString() : "0"} ORVEN
+                    </div>
+                  </div>
+
+                  <div className="swap-card-box">
+                    <div className="swap-card-top">
+                      <span className="mono" style={{ fontSize: "11px", fontWeight: "600" }}>
+                        AMOUNT TO LOCK
+                      </span>
+                      <div className="swap-card-balance">
+                        {vault && vault.balanceORVEN > 0 && (
+                          <button
+                            type="button"
+                            className="swap-max-btn"
+                            onClick={() => setLockAmount(vault.balanceORVEN.toString())}
+                          >
+                            MAX
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="swap-card-main">
+                      <input
+                        className="swap-amount-input"
+                        placeholder="e.g. 100000"
+                        inputMode="decimal"
+                        value={lockAmount}
+                        onChange={(e) => setLockAmount(e.target.value)}
+                      />
+                      <span className="unit" style={{ fontSize: "15px", fontWeight: "700" }}>
+                        ORVEN
+                      </span>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                    {[100_000, 250_000, 500_000].map((amt) => (
+                      <button
+                        key={amt}
+                        type="button"
+                        className="pill small ghost"
+                        onClick={() => setLockAmount(amt.toString())}
+                        style={{ flex: "1 1 70px", minHeight: "34px", fontSize: "12px" }}
+                      >
+                        +{amt / 1000}k
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    className="pill block"
+                    style={{ minHeight: "48px", borderRadius: "12px", marginTop: "4px" }}
+                    type="button"
+                    disabled={isProcessing}
+                    onClick={handleLock}
+                  >
+                    {isProcessing ? "Broadcasting Lock Order..." : "Lock ORVEN (7 Days)"}
+                  </button>
+
                   <div
-                    className="num"
                     style={{
-                      fontSize: "clamp(18px, 2.4vw, 22px)",
-                      fontWeight: "700",
-                      marginTop: "4px",
+                      textAlign: "center",
+                      fontSize: "11.5px",
+                      color: "var(--mute-2)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "6px",
                     }}
                   >
-                    {mounted && vault ? vault.lockedORVEN.toLocaleString() : "0"} ORVEN{" "}
-                    <span style={{ fontSize: "13px", color: "var(--mute)" }}>
-                      ({currentTier.tier}: {currentTier.fee})
-                    </span>
-                  </div>
-                  <div
-                    className="mono"
-                    style={{ fontSize: "11px", color: "var(--mute)", marginTop: "4px" }}
-                  >
-                    Available: {mounted && vault ? vault.balanceORVEN.toLocaleString() : "0"} ORVEN
+                    <span style={{ color: "#16a34a" }}>⚡</span>
+                    <span>Locking is on-chain · Gas sponsored by Vault</span>
                   </div>
                 </div>
-
-                <label className="field">
-                  <span className="field-top">
-                    <span className="mono">Amount to Lock</span>
-                  </span>
-                  <span className="field-row">
-                    <input
-                      placeholder="e.g. 100000"
-                      inputMode="decimal"
-                      value={lockAmount}
-                      onChange={(e) => setLockAmount(e.target.value)}
-                    />
-                    <span className="unit">ORVEN</span>
-                  </span>
-                </label>
-
-                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                  {[100_000, 250_000, 500_000].map((amt) => (
-                    <button
-                      key={amt}
-                      type="button"
-                      className="pill small ghost"
-                      onClick={() => setLockAmount(amt.toString())}
-                      style={{ flex: "1 1 70px" }}
-                    >
-                      {amt / 1000}k
-                    </button>
-                  ))}
-                </div>
-
-                <button
-                  className="pill block"
-                  type="button"
-                  disabled={isProcessing}
-                  onClick={handleLock}
-                >
-                  {isProcessing ? "Broadcasting Lock Order..." : "Lock ORVEN (7 Days)"}
-                </button>
-
-                <p className="note" style={{ fontSize: "12px", marginTop: "8px" }}>
-                  Locking is an on-chain transaction. Gas fees are sponsored when locked from your
-                  Orven Vault.
-                </p>
               </div>
             </section>
           </aside>

@@ -46,9 +46,34 @@ export default function SwapPage() {
 
   const exchangeRate = tokenIn.rateVsUSDG / tokenOut.rateVsUSDG;
   const numAmount = parseFloat(payAmount);
-  const estimatedOut = isNaN(numAmount) ? "—" : (numAmount * exchangeRate).toFixed(4);
+  const isValidAmount = !isNaN(numAmount) && numAmount > 0;
+  const estimatedOut = isValidAmount ? (numAmount * exchangeRate).toFixed(4) : "0.00";
   const slipMultiplier = slippage === "0.5%" ? 0.995 : slippage === "1%" ? 0.99 : 0.97;
-  const minOut = isNaN(numAmount) ? "—" : (numAmount * exchangeRate * slipMultiplier).toFixed(4);
+  const minOut = isValidAmount ? (numAmount * exchangeRate * slipMultiplier).toFixed(4) : "0.00";
+
+  const rateDisplay =
+    exchangeRate >= 0.01
+      ? `1 ${tokenIn.symbol} ≈ ${exchangeRate.toFixed(4)} ${tokenOut.symbol}`
+      : `1 ${tokenOut.symbol} ≈ ${(1 / exchangeRate).toLocaleString(undefined, {
+          maximumFractionDigits: 2,
+        })} ${tokenIn.symbol}`;
+
+  const userBalance =
+    sourceMode === "vault"
+      ? tokenIn.symbol === "USDG"
+        ? vault?.balanceUSDG ?? 0
+        : tokenIn.symbol === "ORVEN"
+        ? vault?.balanceORVEN ?? 0
+        : 0
+      : 0;
+
+  const isInsufficientBalance = sourceMode === "vault" && isValidAmount && numAmount > userBalance;
+
+  const handleMax = () => {
+    if (sourceMode === "vault") {
+      setPayAmount(userBalance > 0 ? userBalance.toString() : "0");
+    }
+  };
 
   const handleInvertTokens = () => {
     const temp = tokenIn;
@@ -57,12 +82,7 @@ export default function SwapPage() {
   };
 
   const handleExecuteSwap = async () => {
-    if (!vault) return;
-    const amount = parseFloat(payAmount);
-    if (isNaN(amount) || amount <= 0) {
-      alert("Please enter a valid swap amount");
-      return;
-    }
+    if (!vault || !isValidAmount || isInsufficientBalance) return;
 
     try {
       setIsProcessing(true);
@@ -74,7 +94,7 @@ export default function SwapPage() {
 
       const { vault: updated, txHash } = BrowserVaultManager.executeSpend(
         `Swap: ${tokenIn.symbol} -> ${tokenOut.symbol}`,
-        amount
+        numAmount
       );
       await submitRelayTransaction(quote.quoteId, "0x_mock_swap_signature");
 
@@ -103,6 +123,17 @@ export default function SwapPage() {
     setSearchFilter("");
   };
 
+  // Button Label Helper
+  const getButtonLabel = () => {
+    if (isProcessing) return "Submitting Order via Relayer...";
+    if (!payAmount || !isValidAmount) return "Enter an amount";
+    if (isInsufficientBalance) return `Insufficient ${tokenIn.symbol} balance`;
+    if (sourceMode === "wallet") return "Connect a wallet";
+    return `Sign Vault Swap (${tokenIn.symbol} → ${tokenOut.symbol})`;
+  };
+
+  const isButtonDisabled = isProcessing || !isValidAmount || isInsufficientBalance;
+
   return (
     <Layout>
       <Head>
@@ -114,7 +145,7 @@ export default function SwapPage() {
       </Head>
 
       <div className="wrap page">
-        <div className="page-head">
+        <div className="page-head hide-sm">
           <div>
             <div className="label">
               <span className="sq"></span>
@@ -126,43 +157,6 @@ export default function SwapPage() {
               your wallet or from your Orven vault.
             </p>
           </div>
-        </div>
-
-        {/* Live $ORVEN Deflation & Burn Tracker Widget */}
-        <div
-          style={{
-            background: "linear-gradient(90deg, #15171A 0%, #201311 100%)",
-            border: "1px solid var(--line-2)",
-            borderRadius: "8px",
-            padding: "16px 20px",
-            margin: "24px 0",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: "14px",
-            color: "#fff",
-          }}
-        >
-          <div>
-            <span className="mono" style={{ color: "var(--red)", fontSize: "11px" }}>
-              🔥 Deflationary Buyback Engine
-            </span>
-            <div
-              style={{ fontSize: "clamp(18px, 2.4vw, 22px)", fontWeight: "700", marginTop: "2px" }}
-              className="num"
-            >
-              124,500 ORVEN Burned{" "}
-              <span style={{ fontSize: "13px", color: "var(--faint)" }}>(~$31,125 USDG)</span>
-            </div>
-          </div>
-          <p
-            className="note"
-            style={{ maxWidth: "460px", color: "var(--faint)", fontSize: "12.5px" }}
-          >
-            50% of every swap fee (0.20%) and protocol hook share is permanently routed to buy back and
-            burn $ORVEN to the dead address on Robinhood Chain.
-          </p>
         </div>
 
         {swapMessage && (
@@ -182,12 +176,50 @@ export default function SwapPage() {
         )}
 
         <div className="layout">
+          {/* Main Info Stack */}
           <div className="stack" style={{ minWidth: 0 }}>
+            {/* Live $ORVEN Deflation & Burn Tracker Widget */}
+            <div
+              style={{
+                background: "linear-gradient(90deg, #15171A 0%, #201311 100%)",
+                border: "1px solid var(--line-2)",
+                borderRadius: "10px",
+                padding: "16px 20px",
+                marginBottom: "8px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: "12px",
+                color: "#fff",
+              }}
+            >
+              <div>
+                <span className="mono" style={{ color: "var(--red)", fontSize: "11px" }}>
+                  🔥 Deflationary Buyback Engine
+                </span>
+                <div
+                  style={{ fontSize: "clamp(18px, 2.4vw, 22px)", fontWeight: "700", marginTop: "2px" }}
+                  className="num"
+                >
+                  124,500 ORVEN Burned{" "}
+                  <span style={{ fontSize: "13px", color: "var(--faint)" }}>(~$31,125 USDG)</span>
+                </div>
+              </div>
+              <p
+                className="note"
+                style={{ maxWidth: "460px", color: "var(--faint)", fontSize: "12px" }}
+              >
+                50% of every swap fee (0.20%) and protocol hook share is permanently routed to buy back and
+                burn $ORVEN to the dead address on Robinhood Chain.
+              </p>
+            </div>
+
             <section className="panel">
               <div className="panel-head">
                 <h2>How a swap goes</h2>
                 <span className="mono">
-                  Vault Balance: {mounted && vault ? vault.balanceUSDG.toFixed(2) : "0.00"} USDG
+                  Vault: {mounted && vault ? vault.balanceUSDG.toFixed(2) : "0.00"} USDG
                 </span>
               </div>
               <div className="panel-body stack">
@@ -229,153 +261,224 @@ export default function SwapPage() {
             </section>
           </div>
 
+          {/* Primary Swap Terminal Widget */}
           <aside className="side">
-            <section className="panel swap" aria-label="Orven Swap">
-              <div className="tabs">
-                <button
-                  type="button"
-                  aria-pressed={sourceMode === "wallet"}
-                  onClick={() => setSourceMode("wallet")}
-                >
-                  From a wallet
-                </button>
-                <button
-                  type="button"
-                  aria-pressed={sourceMode === "vault"}
-                  onClick={() => setSourceMode("vault")}
-                >
-                  From your Orven vault
-                </button>
-              </div>
-
-              <div className="panel-body stack">
-                <div className="stack">
-                  <div className="tp">
-                    <span className="mono">You pay</span>
-                    <button
-                      type="button"
-                      className="tp-btn"
-                      onClick={() => setTokenModalTarget("in")}
-                      aria-label="Select token to pay"
-                    >
-                      <span className="tb tb-coin tb-sm" data-len={tokenIn.symbol.length}>
-                        <img src={tokenIn.logo} alt={tokenIn.symbol} />
-                      </span>
-                      <span className="tp-val">
-                        <b>{tokenIn.symbol}</b>
-                        <span>{tokenIn.name}</span>
-                      </span>
-                      <span style={{ fontSize: "11px", color: "var(--mute)" }}>▼</span>
-                    </button>
-                  </div>
-                </div>
-
-                <label className="field">
-                  <span className="field-top">
-                    <span className="mono">Amount to Swap</span>
-                    {sourceMode === "vault" && (
-                      <span className="mono" style={{ fontSize: "11px" }}>
-                        Balance: {vault?.balanceUSDG.toFixed(2)} USDG
-                      </span>
-                    )}
-                  </span>
-                  <span className="field-row">
-                    <input
-                      inputMode="decimal"
-                      placeholder="0.00"
-                      aria-label="Amount"
-                      value={payAmount}
-                      onChange={(e) => setPayAmount(e.target.value)}
-                    />
-                    <span className="unit">{tokenIn.symbol}</span>
-                  </span>
-                </label>
-
-                {/* Invert Token Direction Button */}
-                <div style={{ display: "flex", justifyContent: "center", margin: "-6px 0" }}>
+            <section className="swap-panel" aria-label="Orven Swap Terminal">
+              <div className="swap-panel-inner">
+                {/* Segmented Mode Switcher */}
+                <div className="swap-nav-pills" role="tablist">
                   <button
                     type="button"
-                    onClick={handleInvertTokens}
-                    className="pill small ghost"
-                    style={{ minHeight: "34px", padding: "0 14px", fontSize: "12px" }}
-                    aria-label="Invert Swap Tokens"
+                    role="tab"
+                    aria-selected={sourceMode === "vault"}
+                    className={`swap-nav-pill ${sourceMode === "vault" ? "active" : ""}`}
+                    onClick={() => setSourceMode("vault")}
                   >
-                    ⇅ Flip Pair
+                    Orven Vault (Gas-Free)
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={sourceMode === "wallet"}
+                    className={`swap-nav-pill ${sourceMode === "wallet" ? "active" : ""}`}
+                    onClick={() => setSourceMode("wallet")}
+                  >
+                    External Wallet
                   </button>
                 </div>
 
-                <div className="stack">
-                  <div className="tp">
-                    <span className="mono">You receive</span>
-                    <button
-                      type="button"
-                      className="tp-btn"
-                      onClick={() => setTokenModalTarget("out")}
-                      aria-label="Select token to receive"
-                    >
-                      <span className="tb tb-coin tb-sm" data-len={tokenOut.symbol.length}>
-                        <img src={tokenOut.logo} alt={tokenOut.symbol} />
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {/* YOU PAY CARD */}
+                  <div className="swap-card-box">
+                    <div className="swap-card-top">
+                      <span className="mono" style={{ fontSize: "11px", fontWeight: "600" }}>
+                        YOU PAY
                       </span>
-                      <span className="tp-val">
-                        <b>{tokenOut.symbol}</b>
-                        <span>{tokenOut.name}</span>
-                      </span>
-                      <span style={{ fontSize: "11px", color: "var(--mute)" }}>▼</span>
-                    </button>
-                  </div>
-                </div>
+                      {sourceMode === "vault" && (
+                        <div className="swap-card-balance">
+                          <span>
+                            Balance: <b>{userBalance.toFixed(2)}</b> {tokenIn.symbol}
+                          </span>
+                          {userBalance > 0 && (
+                            <button
+                              type="button"
+                              className="swap-max-btn"
+                              onClick={handleMax}
+                              title="Use full balance"
+                            >
+                              MAX
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
 
-                <div className="quote num">
-                  <div className="row">
-                    <span>You receive (est.)</span>
-                    <span className="big" style={{ fontWeight: "700" }}>
-                      {estimatedOut} {tokenOut.symbol}
-                    </span>
-                  </div>
-                  <div className="row">
-                    <span>Min received ({slippage} slippage)</span>
-                    <span>
-                      {minOut} {tokenOut.symbol}
-                    </span>
-                  </div>
-                  <div className="row">
-                    <span>Orven Swap fee</span>
-                    <span>0.20% (50% burned)</span>
-                  </div>
-                  <div className="slip">
-                    <span className="mono">Slippage</span>
-                    <div className="seg mono-seg" role="group" aria-label="Slippage">
-                      {(["0.5%", "1%", "3%"] as const).map((s) => (
-                        <button
-                          key={s}
-                          type="button"
-                          aria-pressed={slippage === s}
-                          onClick={() => setSlippage(s)}
-                        >
-                          {s}
-                        </button>
-                      ))}
+                    <div className="swap-card-main">
+                      <input
+                        className="swap-amount-input"
+                        inputMode="decimal"
+                        placeholder="0.00"
+                        aria-label="Amount to pay"
+                        value={payAmount}
+                        onChange={(e) => setPayAmount(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        className="swap-token-select-btn"
+                        onClick={() => setTokenModalTarget("in")}
+                        aria-label={`Select source token, currently ${tokenIn.symbol}`}
+                      >
+                        <img
+                          src={tokenIn.logo}
+                          alt={tokenIn.symbol}
+                          style={{ width: "22px", height: "22px", borderRadius: "50%" }}
+                        />
+                        <span>{tokenIn.symbol}</span>
+                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                          <path
+                            d="M2.5 3.5L5 6L7.5 3.5"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div className="swap-card-sub">
+                      <span>≈ ${(isValidAmount ? numAmount * tokenIn.rateVsUSDG : 0).toFixed(2)} USD</span>
+                      <span style={{ fontSize: "11px" }}>{tokenIn.name}</span>
                     </div>
                   </div>
+
+                  {/* FLIP DIRECTION BUTTON */}
+                  <div className="swap-flip-divider">
+                    <div className="swap-flip-line" />
+                    <button
+                      type="button"
+                      className="swap-flip-btn"
+                      onClick={handleInvertTokens}
+                      aria-label="Invert Swap Tokens"
+                      title="Switch swap pair"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                        <path d="M7 10h14l-4-4" />
+                        <path d="M17 14H3l4 4" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* YOU RECEIVE CARD */}
+                  <div className="swap-card-box">
+                    <div className="swap-card-top">
+                      <span className="mono" style={{ fontSize: "11px", fontWeight: "600" }}>
+                        YOU RECEIVE
+                      </span>
+                      <span style={{ fontSize: "11px", color: "var(--mute-2)", fontVariantNumeric: "tabular-nums" }}>
+                        {rateDisplay}
+                      </span>
+                    </div>
+
+                    <div className="swap-card-main">
+                      <div className="swap-amount-output num" aria-label="Estimated amount to receive">
+                        {estimatedOut}
+                      </div>
+                      <button
+                        type="button"
+                        className="swap-token-select-btn"
+                        onClick={() => setTokenModalTarget("out")}
+                        aria-label={`Select destination token, currently ${tokenOut.symbol}`}
+                      >
+                        <img
+                          src={tokenOut.logo}
+                          alt={tokenOut.symbol}
+                          style={{ width: "22px", height: "22px", borderRadius: "50%" }}
+                        />
+                        <span>{tokenOut.symbol}</span>
+                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                          <path
+                            d="M2.5 3.5L5 6L7.5 3.5"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div className="swap-card-sub">
+                      <span>≈ ${(isValidAmount ? parseFloat(estimatedOut) * tokenOut.rateVsUSDG : 0).toFixed(2)} USD</span>
+                      <span style={{ fontSize: "11px" }}>{tokenOut.name}</span>
+                    </div>
+                  </div>
+
+                  {/* TRANSACTION SPECS & SLIPPAGE */}
+                  <div className="swap-info-box">
+                    <div className="swap-info-row">
+                      <span className="swap-info-label">Rate</span>
+                      <span className="swap-info-val">{rateDisplay}</span>
+                    </div>
+                    <div className="swap-info-row">
+                      <span className="swap-info-label">Min received ({slippage})</span>
+                      <span className="swap-info-val">
+                        {minOut} {tokenOut.symbol}
+                      </span>
+                    </div>
+                    <div className="swap-info-row">
+                      <span className="swap-info-label">Swap Fee (0.20%)</span>
+                      <span className="swap-info-val">
+                        0.20% <span style={{ color: "var(--red)", fontSize: "10.5px" }}>🔥 50% Burn · Free Gas</span>
+                      </span>
+                    </div>
+
+                    <div className="swap-slip-wrap">
+                      <span className="swap-info-label" style={{ fontSize: "11.5px" }}>
+                        Slippage Tolerance
+                      </span>
+                      <div className="swap-slip-group">
+                        {(["0.5%", "1%", "3%"] as const).map((s) => (
+                          <button
+                            key={s}
+                            type="button"
+                            className={`swap-slip-btn ${slippage === s ? "active" : ""}`}
+                            onClick={() => setSlippage(s)}
+                          >
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ACTION BUTTON */}
+                  <button
+                    className="pill block"
+                    style={{ minHeight: "48px", borderRadius: "12px", marginTop: "4px" }}
+                    type="button"
+                    disabled={isButtonDisabled}
+                    onClick={handleExecuteSwap}
+                  >
+                    {getButtonLabel()}
+                  </button>
+
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontSize: "10.5px",
+                      color: "var(--mute-2)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "5px",
+                      marginTop: "2px",
+                    }}
+                  >
+                    <span style={{ color: "#16a34a" }}>⚡</span>
+                    <span>Zero ETH Gas Required · One-Time WOTS Key Protected</span>
+                  </div>
                 </div>
-
-                <button
-                  className="pill block"
-                  type="button"
-                  disabled={isProcessing}
-                  onClick={handleExecuteSwap}
-                >
-                  {isProcessing
-                    ? "Submitting Swap via Relayer..."
-                    : sourceMode === "vault"
-                    ? `Sign Vault Swap (${tokenIn.symbol} → ${tokenOut.symbol})`
-                    : "Connect a wallet"}
-                </button>
-
-                <p className="note" style={{ fontSize: "12px", marginTop: "8px" }}>
-                  Routed through Uniswap v3 and v4 against USDG or WETH by OrvenRouter. No ETH gas
-                  required when swapping from an Orven Vault.
-                </p>
               </div>
             </section>
           </aside>
@@ -411,12 +514,13 @@ export default function SwapPage() {
                   minHeight: "44px",
                   padding: "0 14px",
                   border: "1px solid var(--line-2)",
-                  borderRadius: "6px",
+                  borderRadius: "8px",
                   marginBottom: "14px",
                   fontFamily: "var(--sans)",
                   fontSize: "15px",
+                  outline: "none",
                 }}
-                placeholder="Search token name or Robinhood ticker..."
+                placeholder="Search token name or ticker..."
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
                 autoFocus
@@ -426,7 +530,7 @@ export default function SwapPage() {
                 style={{
                   display: "flex",
                   flexDirection: "column",
-                  gap: "8px",
+                  gap: "6px",
                   maxHeight: "320px",
                   overflowY: "auto",
                 }}
@@ -439,7 +543,7 @@ export default function SwapPage() {
                   <div
                     key={token.symbol}
                     style={{
-                      padding: "12px 14px",
+                      padding: "10px 14px",
                       borderRadius: "8px",
                       display: "flex",
                       justifyContent: "space-between",
@@ -462,7 +566,7 @@ export default function SwapPage() {
                         <div style={{ fontSize: "12px", color: "var(--mute)" }}>{token.name}</div>
                       </div>
                     </div>
-                    <div className="num mono" style={{ fontSize: "12.5px", color: "var(--mute-2)" }}>
+                    <div className="num mono" style={{ fontSize: "12px", color: "var(--mute-2)" }}>
                       ${token.rateVsUSDG.toLocaleString()} USDG
                     </div>
                   </div>

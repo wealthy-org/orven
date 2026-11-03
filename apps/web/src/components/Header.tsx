@@ -119,7 +119,7 @@ export function Header() {
               onClick={() => setWalletConnected(!walletConnected)}
               aria-label={walletConnected ? "Wallet Connected" : "Connect Wallet"}
             >
-              {walletConnected ? "0x7a3...4e19" : "Connect wallet"}
+              {walletConnected ? "0x7a3...4e19" : "Connect"}
             </button>
           </div>
 
