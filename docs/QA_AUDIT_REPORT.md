@@ -24,20 +24,20 @@
 
 | # | Test Scenario | Status | Findings / Details | Timestamp |
 |---|---|:---:|---|---|
-| 1 | Vault Page Load & Title | **PASS** | Title: Vault · Orven | `05:27:53` |
-| 2 | Claim Faucet Simulation | **PASS** | Claim button interactive, state updated | `05:27:54` |
-| 3 | Send Tab & MAX Button | **PASS** | Amount filled: 500 | `05:27:54` |
-| 4 | Swap Terminal Initial Visibility | **PASS** | Visible in viewport | `05:27:55` |
-| 5 | Token Pair Flip Direction | **PASS** | Invert direction executed smoothly | `05:27:56` |
-| 6 | Slippage Tolerance Toggle | **PASS** | 3% slippage applied | `05:27:56` |
-| 7 | Marketplace Filter Search | **PASS** | Query 'Audit' filtered offers | `05:27:58` |
-| 8 | Token Launchpad View Switch | **PASS** | Pool schedule displayed | `05:27:58` |
-| 9 | 7-Day Streak Calendar | **PASS** | Active days rendered | `05:28:00` |
-| 10 | Quick Lock Amount Preset | **PASS** | 100k ORVEN preset populated | `05:28:01` |
-| 11 | AI Task Gateway Execution | **PASS** | Task submitted and processed without crash | `05:28:04` |
-| 12 | Tablet (768px) Horizontal Overflow Check | **PASS** | Zero horizontal scroll | `05:28:04` |
-| 13 | Desktop (1280px) Horizontal Overflow Check | **PASS** | Two-column sticky layout verified | `05:28:05` |
-| 14 | Console Errors Audit | **WARN** | Errors found: 18 | `05:28:05` |
+| 1 | Vault Page Load & Title | **PASS** | Title: Vault · Orven | `05:42:46` |
+| 2 | Claim Faucet Simulation | **PASS** | Claim button interactive, state updated | `05:42:46` |
+| 3 | Send Tab & MAX Button | **PASS** | Amount filled: 500 | `05:42:47` |
+| 4 | Swap Terminal Initial Visibility | **PASS** | Visible in viewport | `05:42:48` |
+| 5 | Token Pair Flip Direction | **PASS** | Invert direction executed smoothly | `05:42:49` |
+| 6 | Slippage Tolerance Toggle | **PASS** | 3% slippage applied | `05:42:49` |
+| 7 | Marketplace Filter Search | **PASS** | Query 'Audit' filtered offers | `05:42:51` |
+| 8 | Token Launchpad View Switch | **PASS** | Pool schedule table rendered | `05:42:52` |
+| 9 | 7-Day Streak Calendar | **PASS** | Active days rendered | `05:42:53` |
+| 10 | Quick Lock Amount Preset | **PASS** | 100k ORVEN preset populated | `05:42:54` |
+| 11 | AI Task Gateway Execution | **PASS** | Task submitted and processed without crash | `05:42:57` |
+| 12 | Tablet (768px) Horizontal Overflow Check | **PASS** | Zero horizontal scroll | `05:42:58` |
+| 13 | Desktop (1280px) Horizontal Overflow Check | **PASS** | Two-column sticky layout verified | `05:42:58` |
+| 14 | Console Errors Audit | **WARN** | Fatal errors: 18 | `05:42:59` |
 
 ---
 

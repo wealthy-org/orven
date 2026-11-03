@@ -3,6 +3,7 @@ import { Header } from "./Header";
 import { NetworkStatusBar } from "./NetworkStatusBar";
 import { Footer } from "./Footer";
 import { MobileBottomNav } from "./MobileBottomNav";
+import { PWAInstallPrompt } from "./PWAInstallPrompt";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ export function Layout({ children }: LayoutProps) {
       <main id="main" className="main-viewport">{children}</main>
       <Footer />
       <MobileBottomNav />
+      <PWAInstallPrompt />
     </div>
   );
 }
