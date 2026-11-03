@@ -2,6 +2,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import { randomBytes } from "node:crypto";
 import { ACTIVE_CHAIN, TOKENS } from "./config.js";
 
 const INSTRUCTIONS =
@@ -127,7 +128,7 @@ server.tool(
             status: "shielded",
             amount,
             asset: "USDG",
-            noteCommitment: `0x${Math.random().toString(16).substring(2, 66)}`,
+            noteCommitment: `0x${randomBytes(32).toString("hex")}`,
             pool: "0xe4250895Da2499602Cee4e178Fb46A0cF39F5b76",
             relayerFeeUSDG: "0.05",
           }),

@@ -5,6 +5,7 @@ import { createPublicClient, http, formatGwei } from "viem";
 
 const relayer = new RelayerEngine();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 4010;
+const MAX_BODY_SIZE = 1024 * 1024; // 1 MB limit (DoS prevention)
 
 const publicClient = createPublicClient({
   transport: http(ROBINHOOD_TESTNET.rpcUrl, { timeout: 3000 }),
@@ -53,10 +54,21 @@ const server = createServer(async (req, res) => {
       return;
     }
 
-    if (req.method === "POST" && url.pathname === "/v1/relayer/quote") {
+    const readBody = async () => {
       let body = "";
-      for await (const chunk of req) body += chunk;
-      const data = JSON.parse(body);
+      let bytes = 0;
+      for await (const chunk of req) {
+        bytes += chunk.length;
+        if (bytes > MAX_BODY_SIZE) {
+          throw new Error("Payload too large: maximum allowed body size is 1MB");
+        }
+        body += chunk;
+      }
+      return JSON.parse(body);
+    };
+
+    if (req.method === "POST" && url.pathname === "/v1/relayer/quote") {
+      const data = await readBody();
       const quote = relayer.getQuote(data);
       res.writeHead(200);
       res.end(JSON.stringify(quote));
@@ -64,9 +76,7 @@ const server = createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && url.pathname === "/v1/relayer/submit") {
-      let body = "";
-      for await (const chunk of req) body += chunk;
-      const data = JSON.parse(body);
+      const data = await readBody();
       const receipt = relayer.simulateRelay(data.quoteId, data.signedPayload);
       res.writeHead(200);
       res.end(JSON.stringify(receipt));

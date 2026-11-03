@@ -68,6 +68,10 @@ export default function VaultPage() {
       alert("Please enter a valid amount");
       return;
     }
+    if (num > vault.balanceUSDG) {
+      alert(`Insufficient USDG balance. You have ${vault.balanceUSDG.toFixed(2)} USDG.`);
+      return;
+    }
 
     try {
       setIsProcessing(true);

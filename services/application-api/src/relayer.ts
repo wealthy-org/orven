@@ -51,6 +51,14 @@ export class RelayerEngine {
       throw new Error("Estimated gas units out of permitted bounds (1 - 5,000,000)");
     }
 
+    // Periodic sweep of expired quotes to prevent memory leak
+    const now = Date.now();
+    for (const [id, q] of this.activeQuotes.entries()) {
+      if (now > q.validUntil) {
+        this.activeQuotes.delete(id);
+      }
+    }
+
     const feeMinor = 50_000n; // 0.05 USDG
     const quoteId = `rq_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     const validUntil = Date.now() + 180_000; // 3 minutes

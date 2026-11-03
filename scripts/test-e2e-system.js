@@ -37,7 +37,7 @@ async function ensureServices() {
   }
   if (needsWeb) {
     const nextBin = join(root, "apps", "web", "node_modules", "next", "dist", "bin", "next");
-    const webProc = spawn("node", [nextBin, "start", join(root, "apps", "web"), "-p", "3000"], { cwd: root, stdio: "ignore" });
+    const webProc = spawn("node", [nextBin, "start", "-p", "3000"], { cwd: join(root, "apps", "web"), stdio: "ignore" });
     spawnedProcesses.push(webProc);
   }
 
