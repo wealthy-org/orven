@@ -11,6 +11,8 @@ export function Header() {
     isConnected,
     isConnecting,
     isCorrectNetwork,
+    ethBalance,
+    currentBlock,
     connect,
     disconnect,
     switchNetwork,
@@ -173,10 +175,21 @@ export function Header() {
             {walletMenuOpen && isConnected && (
               <div className="wallet-dropdown" onClick={(e) => e.stopPropagation()}>
                 <div className="wallet-dropdown-header">
-                  <span className="mono" style={{ fontSize: "10.5px" }}>Connected Account</span>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span className="mono" style={{ fontSize: "10.5px" }}>Connected Account</span>
+                    <span className="mono" style={{ fontSize: "10px", color: "#16a34a" }}>● Live RPC</span>
+                  </div>
                   <span className="addr" style={{ fontSize: "12px", fontWeight: "600", display: "block", marginTop: "2px" }}>
                     {address}
                   </span>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "8px", paddingTop: "6px", borderTop: "1px solid var(--line)" }}>
+                    <span style={{ fontSize: "12px", color: "var(--mute-2)" }}>Balance:</span>
+                    <span className="num" style={{ fontSize: "13px", fontWeight: "700" }}>{ethBalance} ETH</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "2px" }}>
+                    <span style={{ fontSize: "11px", color: "var(--faint)" }}>Block:</span>
+                    <span className="mono" style={{ fontSize: "10.5px", color: "var(--faint)" }}>#{currentBlock}</span>
+                  </div>
                 </div>
 
                 {!isCorrectNetwork && (

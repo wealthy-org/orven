@@ -3,8 +3,10 @@ import Head from "next/head";
 import { Layout } from "@/components/Layout";
 import { FEE_TIERS } from "@orven/product-config";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
+import { useToast } from "@/lib/toast";
 
 export default function LockPage() {
+  const { toast } = useToast();
   const [vault, setVault] = useState<VaultState | null>(null);
   const [mounted, setMounted] = useState(false);
   const [lockAmount, setLockAmount] = useState("");
@@ -21,7 +23,7 @@ export default function LockPage() {
     if (!vault) return;
     const amount = parseFloat(lockAmount);
     if (isNaN(amount) || amount <= 0) {
-      alert("Please enter a valid ORVEN amount to lock");
+      toast.error("Invalid Amount", "Please enter a valid ORVEN amount to lock.");
       return;
     }
 
@@ -30,6 +32,11 @@ export default function LockPage() {
       const { vault: updated, txHash } = BrowserVaultManager.lockTokens(amount);
       setVault({ ...updated });
       setLockAmount("");
+      toast.success(
+        "Tokens Locked Successfully!",
+        `Locked ${amount.toLocaleString()} ORVEN for 7 days. Discount updated!`,
+        txHash
+      );
       setMessage(
         `Successfully locked ${amount.toLocaleString()} ORVEN for 7 days! Tx: ${txHash.slice(
           0,
@@ -38,6 +45,7 @@ export default function LockPage() {
       );
       setTimeout(() => setMessage(null), 5000);
     } catch (err: any) {
+      toast.error("Lock Order Failed", err.message || "Execution error");
       alert(err.message || "Lock failed");
     } finally {
       setIsProcessing(false);

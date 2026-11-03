@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Layout } from "@/components/Layout";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
+import { useToast } from "@/lib/toast";
 
 export default function TidePage() {
+  const { toast } = useToast();
   const [vault, setVault] = useState<VaultState | null>(null);
   const [mounted, setMounted] = useState(false);
   const [agentKeyInput, setAgentKeyInput] = useState("");
@@ -19,7 +21,7 @@ export default function TidePage() {
   const handleLinkAgent = () => {
     if (!vault) return;
     if (!agentKeyInput.trim()) {
-      alert("Please enter a valid agent public key or digest");
+      toast.error("Invalid Input", "Please enter a valid agent public key or digest.");
       return;
     }
 
@@ -28,6 +30,11 @@ export default function TidePage() {
       const { vault: updated, txHash } = BrowserVaultManager.linkAgent(agentKeyInput.trim());
       setVault({ ...updated });
       setAgentKeyInput("");
+      toast.success(
+        "Agent Linked Successfully!",
+        "1.5x Rewards Multiplier activated on Robinhood Chain.",
+        txHash
+      );
       setMessage(
         `Agent successfully linked to Vault! Tx: ${txHash.slice(
           0,
@@ -36,6 +43,7 @@ export default function TidePage() {
       );
       setTimeout(() => setMessage(null), 5000);
     } catch (err: any) {
+      toast.error("Agent Linking Failed", err.message || "Execution error");
       alert(err.message || "Linking failed");
     } finally {
       setIsLinking(false);

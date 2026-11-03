@@ -2,6 +2,7 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useEffect } from "react";
 import { WalletProvider } from "@/lib/wallet";
+import { ToastProvider } from "@/lib/toast";
 import "@/styles/globals.css";
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -17,17 +18,19 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <WalletProvider>
-      <Head>
-        <meta charSet="utf-8" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"
-        />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <title>Orven · Post-Quantum Infrastructure</title>
-      </Head>
-      <Component {...pageProps} />
+      <ToastProvider>
+        <Head>
+          <meta charSet="utf-8" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"
+          />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+          <title>Orven · Post-Quantum Infrastructure</title>
+        </Head>
+        <Component {...pageProps} />
+      </ToastProvider>
     </WalletProvider>
   );
 }

@@ -4,8 +4,10 @@ import Link from "next/link";
 import { Layout } from "@/components/Layout";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { requestRelayerQuote, submitRelayTransaction } from "@/lib/api";
+import { useToast } from "@/lib/toast";
 
 export default function VaultPage() {
+  const { toast, showToast, updateToast } = useToast();
   const [vault, setVault] = useState<VaultState | null>(null);
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"deposit" | "send" | "privacy">("deposit");
@@ -37,6 +39,7 @@ export default function VaultPage() {
   const handleClaimFaucet = () => {
     const updated = BrowserVaultManager.claimFaucet(250);
     setVault({ ...updated });
+    toast.success("Faucet Claimed!", "+250.00 Testnet USDG deposited into Vault.");
     setMessage("Successfully claimed +250.00 Testnet USDG!");
     setTimeout(() => setMessage(null), 4000);
   };
@@ -74,13 +77,19 @@ export default function VaultPage() {
     if (!vault) return;
     const num = parseFloat(amount);
     if (isNaN(num) || num <= 0) {
-      alert("Please enter a valid amount");
+      toast.error("Invalid Amount", "Please enter a valid amount greater than zero.");
       return;
     }
     if (num > vault.balanceUSDG) {
-      alert(`Insufficient USDG balance. You have ${vault.balanceUSDG.toFixed(2)} USDG.`);
+      toast.error("Insufficient Funds", `You have ${vault.balanceUSDG.toFixed(2)} USDG available.`);
       return;
     }
+
+    const pendingId = showToast({
+      type: "pending",
+      title: activeTab === "send" ? "Broadcasting Transfer..." : "Depositing to STARK Pool...",
+      message: `Signing with local WOTS Key #${vault.currentKeyIndex}`,
+    });
 
     try {
       setIsProcessing(true);
@@ -102,13 +111,23 @@ export default function VaultPage() {
 
       setVault({ ...updated });
       setAmount("");
+      updateToast(pendingId, {
+        type: "success",
+        title: activeTab === "send" ? "Transfer Settled!" : "Shielded Note Deposited!",
+        message: `WOTS Key #${updated.currentKeyIndex - 1} retired on Robinhood Chain.`,
+        txHash,
+      });
       setMessage(
         `Transaction confirmed! Tx: ${txHash.slice(0, 10)}... (WOTS Key #${
           updated.currentKeyIndex - 1
         } retired)`
       );
     } catch (err: any) {
-      alert(err.message || "Failed to execute transaction");
+      updateToast(pendingId, {
+        type: "error",
+        title: "Transaction Failed",
+        message: err.message || "Failed to execute transaction",
+      });
     } finally {
       setIsProcessing(false);
       setTimeout(() => setMessage(null), 5000);

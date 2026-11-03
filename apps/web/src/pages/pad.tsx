@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Layout } from "@/components/Layout";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
+import { useToast } from "@/lib/toast";
 
 export default function PadPage() {
+  const { toast } = useToast();
   const [vault, setVault] = useState<VaultState | null>(null);
   const [mounted, setMounted] = useState(false);
   const [padView, setPadView] = useState<"marketplace" | "launchpad">("marketplace");
@@ -43,6 +45,11 @@ export default function PadPage() {
         offer.price
       );
       setVault({ ...updated });
+      toast.success(
+        "Escrow Funded!",
+        `${offer.price} USDG locked in escrow contract.`,
+        txHash
+      );
       setActionMessage(
         `Escrow Funded (${offer.price} USDG)! Tx: ${txHash.slice(0, 10)}... Evaluator: ${
           offer.evaluator
@@ -50,18 +57,19 @@ export default function PadPage() {
       );
       setTimeout(() => setActionMessage(null), 5000);
     } catch (err: any) {
+      toast.error("Escrow Funding Failed", err.message || "Execution error");
       alert(err.message || "Failed to order escrow");
     }
   };
 
   const handlePublishOffer = () => {
     if (!newTitle.trim() || !newPrice.trim()) {
-      alert("Please provide both title and price");
+      toast.error("Incomplete Listing", "Please provide both title and price.");
       return;
     }
     const priceNum = parseFloat(newPrice);
     if (isNaN(priceNum) || priceNum <= 0) {
-      alert("Please enter a valid price");
+      toast.error("Invalid Price", "Please enter a valid price in USDG.");
       return;
     }
 
@@ -76,6 +84,7 @@ export default function PadPage() {
     setOffers([newOffer, ...offers]);
     setNewTitle("");
     setNewPrice("");
+    toast.success("Offer Published!", `"${newOffer.title}" listed on OrvenPad registry.`);
     setActionMessage(`Offer "${newOffer.title}" published successfully to OrvenPad on-chain registry!`);
     setTimeout(() => setActionMessage(null), 5000);
   };

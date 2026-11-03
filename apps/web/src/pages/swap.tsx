@@ -6,6 +6,7 @@ import { FEE_TIERS } from "@orven/product-config";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { requestRelayerQuote, submitRelayTransaction } from "@/lib/api";
 import { useWallet } from "@/lib/wallet";
+import { useToast } from "@/lib/toast";
 
 interface TokenItem {
   symbol: string;
@@ -25,6 +26,7 @@ const TOKEN_CATALOG: TokenItem[] = [
 ];
 
 export default function SwapPage() {
+  const { toast, showToast, updateToast } = useToast();
   const {
     isConnected: isExternalConnected,
     address: externalWalletAddress,
@@ -94,14 +96,20 @@ export default function SwapPage() {
     }
 
     if (!isValidAmount) {
-      alert("Please enter a valid swap amount");
+      toast.error("Invalid Swap Amount", "Please enter a valid amount greater than zero.");
       return;
     }
 
     if (sourceMode === "vault" && isInsufficientBalance) {
-      alert("Insufficient USDG balance in vault");
+      toast.error("Insufficient Balance", `You have ${userBalance.toFixed(2)} ${tokenIn.symbol} in your vault.`);
       return;
     }
+
+    const pendingId = showToast({
+      type: "pending",
+      title: "Executing Swap Order...",
+      message: `${payAmount} ${tokenIn.symbol} → ${estimatedOut} ${tokenOut.symbol}`,
+    });
 
     try {
       setIsProcessing(true);
@@ -120,6 +128,12 @@ export default function SwapPage() {
 
         setVault({ ...updated });
         setPayAmount("");
+        updateToast(pendingId, {
+          type: "success",
+          title: "Swap Order Settled!",
+          message: `Swapped ${numAmount} ${tokenIn.symbol} for ${estimatedOut} ${tokenOut.symbol}`,
+          txHash,
+        });
         setSwapMessage(
           `Swap Order Settled! Tx: ${txHash.slice(0, 10)}... (WOTS Key #${
             updated.currentKeyIndex - 1
@@ -132,9 +146,20 @@ export default function SwapPage() {
           Math.floor(Math.random() * 16).toString(16)
         ).join("")}`;
         setPayAmount("");
+        updateToast(pendingId, {
+          type: "success",
+          title: "Wallet Swap Confirmed!",
+          message: `Swapped ${numAmount} ${tokenIn.symbol} via Uniswap v4 Router.`,
+          txHash: mockTx,
+        });
         setSwapMessage(`Wallet Swap Confirmed! Tx: ${mockTx.slice(0, 10)}... on Robinhood Chain.`);
       }
     } catch (err: any) {
+      updateToast(pendingId, {
+        type: "error",
+        title: "Swap Failed",
+        message: err.message || "Execution error",
+      });
       alert(err.message || "Swap failed");
     } finally {
       setIsProcessing(false);
