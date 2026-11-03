@@ -28,6 +28,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Install Playwright Chromium Browser
+        run: npx playwright install --with-deps chromium
+
       - name: Build All Monorepo Workspaces
         run: npm run build:all
 
@@ -36,3 +39,16 @@ jobs:
 
       - name: Run Comprehensive E2E System Test Suite (66 Tests)
         run: npm run test:e2e
+
+      - name: Run Live Playwright Browser Simulation (UI & User Flows)
+        run: npm run qa:test
+
+      - name: Upload QA Report & Screenshots Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-qa-artifacts-node-${{ matrix.node-version }}
+          path: |
+            qa-artifacts/
+            docs/QA_AUDIT_REPORT.md
+          retention-days: 14

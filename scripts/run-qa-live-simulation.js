@@ -11,11 +11,64 @@ import { chromium } from "playwright";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawn } from "node:child_process";
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const isHeaded = process.argv.includes("--headed");
 const targetArg = process.argv.find((a) => a.startsWith("--target="));
-const baseUrl = targetArg ? targetArg.split("=")[1] : (process.env.TARGET_URL || "https://orven-1ohw.vercel.app");
+const baseUrl = targetArg
+  ? targetArg.split("=")[1]
+  : process.env.TARGET_URL || "http://localhost:3005";
+
+let spawnedServer = null;
+
+async function isPortOpen(url) {
+  try {
+    const res = await fetch(url);
+    return res.status === 200 || res.status === 304;
+  } catch {
+    return false;
+  }
+}
+
+async function ensureLocalServer() {
+  if (baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1")) {
+    const isOpen = await isPortOpen(baseUrl);
+    if (!isOpen) {
+      console.log(`   [Auto-Spawner] Spawning local Next.js server for QA on ${baseUrl}...`);
+      const port = new URL(baseUrl).port || "3005";
+      const nextBin = path.join(root, "apps", "web", "node_modules", "next", "dist", "bin", "next");
+      spawnedServer = spawn("node", [nextBin, "start", "-p", port], {
+        cwd: path.join(root, "apps", "web"),
+        stdio: "ignore",
+      });
+
+      const start = Date.now();
+      while (Date.now() - start < 15000) {
+        if (await isPortOpen(baseUrl)) break;
+        await new Promise((r) => setTimeout(r, 400));
+      }
+      console.log(`   [Auto-Spawner] Local server ready on ${baseUrl}!\n`);
+    }
+  }
+}
+
+function cleanup() {
+  if (spawnedServer) {
+    try {
+      spawnedServer.kill();
+    } catch {}
+  }
+}
+process.on("exit", cleanup);
+process.on("SIGINT", () => {
+  cleanup();
+  process.exit();
+});
+process.on("SIGTERM", () => {
+  cleanup();
+  process.exit();
+});
 
 const artifactsDir = path.join(root, "qa-artifacts");
 if (!fs.existsSync(artifactsDir)) {
@@ -38,6 +91,8 @@ function recordStep(name, status, details = "") {
 }
 
 async function runLiveSimulation() {
+  await ensureLocalServer();
+
   const browser = await chromium.launch({
     headless: !isHeaded,
     slowMo: isHeaded ? 100 : 0, // Slow down slightly in headed mode for human watching
@@ -293,4 +348,11 @@ Screenshots captured automatically during test execution in \`qa-artifacts/\`:
   console.log(`📁 Screenshot artifacts stored in: ${artifactsDir}\n`);
 }
 
-runLiveSimulation();
+runLiveSimulation().then(() => {
+  cleanup();
+  process.exit(0);
+}).catch((err) => {
+  console.error("QA simulation fatal error:", err);
+  cleanup();
+  process.exit(1);
+});
