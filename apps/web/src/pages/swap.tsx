@@ -50,6 +50,12 @@ export default function SwapPage() {
   const slipMultiplier = slippage === "0.5%" ? 0.995 : slippage === "1%" ? 0.99 : 0.97;
   const minOut = isNaN(numAmount) ? "—" : (numAmount * exchangeRate * slipMultiplier).toFixed(4);
 
+  const handleInvertTokens = () => {
+    const temp = tokenIn;
+    setTokenIn(tokenOut);
+    setTokenOut(temp);
+  };
+
   const handleExecuteSwap = async () => {
     if (!vault) return;
     const amount = parseFloat(payAmount);
@@ -66,12 +72,19 @@ export default function SwapPage() {
       setSwapMessage(`Signing swap order with WOTS Key #${vault.currentKeyIndex}...`);
       await new Promise((r) => setTimeout(r, 600));
 
-      const { vault: updated, txHash } = BrowserVaultManager.executeSpend(`Swap: ${tokenIn.symbol} -> ${tokenOut.symbol}`, amount);
+      const { vault: updated, txHash } = BrowserVaultManager.executeSpend(
+        `Swap: ${tokenIn.symbol} -> ${tokenOut.symbol}`,
+        amount
+      );
       await submitRelayTransaction(quote.quoteId, "0x_mock_swap_signature");
 
       setVault({ ...updated });
       setPayAmount("");
-      setSwapMessage(`Swap Order Settled! Tx: ${txHash.slice(0, 10)}... (WOTS Key #${updated.currentKeyIndex - 1} retired)`);
+      setSwapMessage(
+        `Swap Order Settled! Tx: ${txHash.slice(0, 10)}... (WOTS Key #${
+          updated.currentKeyIndex - 1
+        } retired)`
+      );
     } catch (err: any) {
       alert(err.message || "Swap failed");
     } finally {
@@ -119,15 +132,15 @@ export default function SwapPage() {
         <div
           style={{
             background: "linear-gradient(90deg, #15171A 0%, #201311 100%)",
-            border: "1px solid var(--border)",
+            border: "1px solid var(--line-2)",
             borderRadius: "8px",
-            padding: "16px 22px",
-            marginBottom: "24px",
+            padding: "16px 20px",
+            margin: "24px 0",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
             flexWrap: "wrap",
-            gap: "12px",
+            gap: "14px",
             color: "#fff",
           }}
         >
@@ -135,11 +148,18 @@ export default function SwapPage() {
             <span className="mono" style={{ color: "var(--red)", fontSize: "11px" }}>
               🔥 Deflationary Buyback Engine
             </span>
-            <div style={{ fontSize: "18px", fontWeight: "700", marginTop: "2px" }} className="num">
-              124,500 ORVEN Burned <span style={{ fontSize: "13px", color: "var(--text-muted)" }}>(~$31,125 USDG)</span>
+            <div
+              style={{ fontSize: "clamp(18px, 2.4vw, 22px)", fontWeight: "700", marginTop: "2px" }}
+              className="num"
+            >
+              124,500 ORVEN Burned{" "}
+              <span style={{ fontSize: "13px", color: "var(--faint)" }}>(~$31,125 USDG)</span>
             </div>
           </div>
-          <p className="note" style={{ maxWidth: "480px", color: "var(--text-muted)", fontSize: "12px" }}>
+          <p
+            className="note"
+            style={{ maxWidth: "460px", color: "var(--faint)", fontSize: "12.5px" }}
+          >
             50% of every swap fee (0.20%) and protocol hook share is permanently routed to buy back and
             burn $ORVEN to the dead address on Robinhood Chain.
           </p>
@@ -148,12 +168,13 @@ export default function SwapPage() {
         {swapMessage && (
           <div
             style={{
-              padding: "12px 18px",
+              padding: "14px 18px",
               background: "var(--soft)",
               borderLeft: "4px solid var(--red)",
               marginBottom: "20px",
               borderRadius: "4px",
               fontWeight: "500",
+              fontSize: "14px",
             }}
           >
             {swapMessage}
@@ -161,7 +182,7 @@ export default function SwapPage() {
         )}
 
         <div className="layout">
-          <div className="stack">
+          <div className="stack" style={{ minWidth: 0 }}>
             <section className="panel">
               <div className="panel-head">
                 <h2>How a swap goes</h2>
@@ -187,22 +208,24 @@ export default function SwapPage() {
                   Lock ORVEN
                 </Link>
               </div>
-              <table className="trades">
-                <thead>
-                  <tr>
-                    <th>ORVEN locked for the account</th>
-                    <th>Fee</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {FEE_TIERS.map((tier) => (
-                    <tr key={tier.label}>
-                      <td>{tier.label}</td>
-                      <td className="num">{tier.feePercent}</td>
+              <div className="table-container">
+                <table className="trades">
+                  <thead>
+                    <tr>
+                      <th>ORVEN locked for the account</th>
+                      <th>Fee</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {FEE_TIERS.map((tier) => (
+                      <tr key={tier.label}>
+                        <td>{tier.label}</td>
+                        <td className="num">{tier.feePercent}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </section>
           </div>
 
@@ -229,7 +252,12 @@ export default function SwapPage() {
                 <div className="stack">
                   <div className="tp">
                     <span className="mono">You pay</span>
-                    <button type="button" className="tp-btn" onClick={() => setTokenModalTarget("in")}>
+                    <button
+                      type="button"
+                      className="tp-btn"
+                      onClick={() => setTokenModalTarget("in")}
+                      aria-label="Select token to pay"
+                    >
                       <span className="tb tb-coin tb-sm" data-len={tokenIn.symbol.length}>
                         <img src={tokenIn.logo} alt={tokenIn.symbol} />
                       </span>
@@ -245,6 +273,11 @@ export default function SwapPage() {
                 <label className="field">
                   <span className="field-top">
                     <span className="mono">Amount to Swap</span>
+                    {sourceMode === "vault" && (
+                      <span className="mono" style={{ fontSize: "11px" }}>
+                        Balance: {vault?.balanceUSDG.toFixed(2)} USDG
+                      </span>
+                    )}
                   </span>
                   <span className="field-row">
                     <input
@@ -258,10 +291,28 @@ export default function SwapPage() {
                   </span>
                 </label>
 
+                {/* Invert Token Direction Button */}
+                <div style={{ display: "flex", justifyContent: "center", margin: "-6px 0" }}>
+                  <button
+                    type="button"
+                    onClick={handleInvertTokens}
+                    className="pill small ghost"
+                    style={{ minHeight: "34px", padding: "0 14px", fontSize: "12px" }}
+                    aria-label="Invert Swap Tokens"
+                  >
+                    ⇅ Flip Pair
+                  </button>
+                </div>
+
                 <div className="stack">
                   <div className="tp">
                     <span className="mono">You receive</span>
-                    <button type="button" className="tp-btn" onClick={() => setTokenModalTarget("out")}>
+                    <button
+                      type="button"
+                      className="tp-btn"
+                      onClick={() => setTokenModalTarget("out")}
+                      aria-label="Select token to receive"
+                    >
                       <span className="tb tb-coin tb-sm" data-len={tokenOut.symbol.length}>
                         <img src={tokenOut.logo} alt={tokenOut.symbol} />
                       </span>
@@ -276,12 +327,16 @@ export default function SwapPage() {
 
                 <div className="quote num">
                   <div className="row">
-                    <span>You receive</span>
-                    <span className="big">{estimatedOut} {tokenOut.symbol}</span>
+                    <span>You receive (est.)</span>
+                    <span className="big" style={{ fontWeight: "700" }}>
+                      {estimatedOut} {tokenOut.symbol}
+                    </span>
                   </div>
                   <div className="row">
-                    <span>At least, after {slippage} slippage</span>
-                    <span>{minOut} {tokenOut.symbol}</span>
+                    <span>Min received ({slippage} slippage)</span>
+                    <span>
+                      {minOut} {tokenOut.symbol}
+                    </span>
                   </div>
                   <div className="row">
                     <span>Orven Swap fee</span>
@@ -317,7 +372,7 @@ export default function SwapPage() {
                     : "Connect a wallet"}
                 </button>
 
-                <p className="note">
+                <p className="note" style={{ fontSize: "12px", marginTop: "8px" }}>
                   Routed through Uniswap v3 and v4 against USDG or WETH by OrvenRouter. No ETH gas
                   required when swapping from an Orven Vault.
                 </p>
@@ -327,94 +382,92 @@ export default function SwapPage() {
         </div>
       </div>
 
-      {/* Interactive Token Selector Modal */}
+      {/* Interactive Token Selector (Bottom Sheet on Mobile, Centered Modal on Desktop) */}
       {tokenModalTarget && (
         <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0, 0, 0, 0.6)",
-            backdropFilter: "blur(6px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 100,
-            padding: "20px",
-          }}
+          className="tp-modal-overlay"
           onClick={() => setTokenModalTarget(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Select a Token"
         >
-          <div
-            style={{
-              background: "#fff",
-              borderRadius: "12px",
-              width: "100%",
-              maxWidth: "420px",
-              padding: "24px",
-              boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <h3 style={{ fontSize: "18px", fontWeight: "700" }}>Select a Token</h3>
+          <div className="tp-modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="tp-modal-header">
+              <h3>Select a Token</h3>
               <button
                 type="button"
+                className="tp-modal-close"
                 onClick={() => setTokenModalTarget(null)}
-                style={{ background: "none", border: "none", fontSize: "20px", cursor: "pointer", color: "var(--mute)" }}
+                aria-label="Close dialog"
               >
                 ✕
               </button>
             </div>
 
-            <input
-              style={{
-                width: "100%",
-                padding: "10px 14px",
-                border: "1px solid var(--line)",
-                borderRadius: "6px",
-                marginBottom: "16px",
-                fontFamily: "var(--sans)",
-                fontSize: "14px",
-              }}
-              placeholder="Search token name or Robinhood ticker..."
-              value={searchFilter}
-              onChange={(e) => setSearchFilter(e.target.value)}
-              autoFocus
-            />
+            <div style={{ padding: "16px 20px" }}>
+              <input
+                style={{
+                  width: "100%",
+                  minHeight: "44px",
+                  padding: "0 14px",
+                  border: "1px solid var(--line-2)",
+                  borderRadius: "6px",
+                  marginBottom: "14px",
+                  fontFamily: "var(--sans)",
+                  fontSize: "15px",
+                }}
+                placeholder="Search token name or Robinhood ticker..."
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                autoFocus
+              />
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxHeight: "300px", overflowY: "auto" }}>
-              {TOKEN_CATALOG
-                .filter(
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "8px",
+                  maxHeight: "320px",
+                  overflowY: "auto",
+                }}
+              >
+                {TOKEN_CATALOG.filter(
                   (t) =>
                     t.symbol.toLowerCase().includes(searchFilter.toLowerCase()) ||
                     t.name.toLowerCase().includes(searchFilter.toLowerCase())
-                )
-                .map((token) => (
+                ).map((token) => (
                   <div
                     key={token.symbol}
                     style={{
-                      padding: "10px 14px",
-                      borderRadius: "6px",
+                      padding: "12px 14px",
+                      borderRadius: "8px",
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
                       cursor: "pointer",
                       background: "var(--soft)",
                       transition: "background 0.15s",
+                      minHeight: "48px",
                     }}
                     onClick={() => handleSelectToken(token)}
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <img src={token.logo} alt={token.symbol} style={{ width: "24px", height: "24px" }} />
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                      <img
+                        src={token.logo}
+                        alt={token.symbol}
+                        style={{ width: "28px", height: "28px", borderRadius: "50%" }}
+                      />
                       <div>
-                        <div style={{ fontWeight: "700", fontSize: "14px" }}>{token.symbol}</div>
-                        <div style={{ fontSize: "11px", color: "var(--mute)" }}>{token.name}</div>
+                        <div style={{ fontWeight: "700", fontSize: "14.5px" }}>{token.symbol}</div>
+                        <div style={{ fontSize: "12px", color: "var(--mute)" }}>{token.name}</div>
                       </div>
                     </div>
-                    <div className="num mono" style={{ fontSize: "12px", color: "var(--mute)" }}>
+                    <div className="num mono" style={{ fontSize: "12.5px", color: "var(--mute-2)" }}>
                       ${token.rateVsUSDG.toLocaleString()} USDG
                     </div>
                   </div>
                 ))}
+              </div>
             </div>
           </div>
         </div>

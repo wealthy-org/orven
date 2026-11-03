@@ -35,12 +35,19 @@ export default function PadPage() {
     setVault(existing);
   }, []);
 
-  const handleOrderEscrow = (offer: typeof offers[0]) => {
+  const handleOrderEscrow = (offer: (typeof offers)[0]) => {
     if (!vault) return;
     try {
-      const { vault: updated, txHash } = BrowserVaultManager.executeSpend(`Escrow Funded: ${offer.title}`, offer.price);
+      const { vault: updated, txHash } = BrowserVaultManager.executeSpend(
+        `Escrow Funded: ${offer.title}`,
+        offer.price
+      );
       setVault({ ...updated });
-      setActionMessage(`Escrow Funded (${offer.price} USDG)! Tx: ${txHash.slice(0, 10)}... Evaluator: ${offer.evaluator}`);
+      setActionMessage(
+        `Escrow Funded (${offer.price} USDG)! Tx: ${txHash.slice(0, 10)}... Evaluator: ${
+          offer.evaluator
+        }`
+      );
       setTimeout(() => setActionMessage(null), 5000);
     } catch (err: any) {
       alert(err.message || "Failed to order escrow");
@@ -101,12 +108,13 @@ export default function PadPage() {
         {actionMessage && (
           <div
             style={{
-              padding: "12px 18px",
+              padding: "14px 18px",
               background: "var(--soft)",
               borderLeft: "4px solid var(--red)",
-              marginBottom: "20px",
+              margin: "20px 0",
               borderRadius: "4px",
               fontWeight: "500",
+              fontSize: "14px",
             }}
           >
             {actionMessage}
@@ -114,9 +122,19 @@ export default function PadPage() {
         )}
 
         <div className="layout">
-          <div className="stack">
-            <div style={{ display: "flex", gap: "12px", marginBottom: "8px", alignItems: "center", justifyContent: "space-between" }}>
-              <div style={{ display: "flex", gap: "8px" }}>
+          <div className="stack" style={{ minWidth: 0 }}>
+            {/* View Switcher Bar */}
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                margin: "16px 0 8px",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+              }}
+            >
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                 <button
                   type="button"
                   className={`pill small ${padView === "marketplace" ? "" : "ghost"}`}
@@ -133,8 +151,8 @@ export default function PadPage() {
                 </button>
               </div>
 
-              <span className="mono" style={{ fontSize: "12px" }}>
-                Balance: {mounted && vault ? vault.balanceUSDG.toFixed(2) : "0.00"} USDG
+              <span className="mono" style={{ fontSize: "11.5px" }}>
+                Vault: {mounted && vault ? vault.balanceUSDG.toFixed(2) : "0.00"} USDG
               </span>
             </div>
 
@@ -143,17 +161,20 @@ export default function PadPage() {
                 <section className="panel">
                   <div className="panel-head">
                     <h2>Active Work Offers</h2>
-                    <span className="mono">Escrow Protected</span>
+                    <span className="mono" style={{ fontSize: "11px" }}>
+                      Escrow Protected
+                    </span>
                   </div>
                   <div className="panel-body stack">
-                    <div style={{ display: "flex", gap: "8px" }}>
+                    <div>
                       <input
-                        className="field-row"
                         style={{
                           width: "100%",
-                          padding: "10px 14px",
-                          border: "1px solid var(--line)",
-                          borderRadius: "4px",
+                          minHeight: "44px",
+                          padding: "0 14px",
+                          border: "1px solid var(--line-2)",
+                          borderRadius: "6px",
+                          fontSize: "14.5px",
                         }}
                         placeholder="Search services, skills, or agent providers..."
                         value={searchQuery}
@@ -161,7 +182,7 @@ export default function PadPage() {
                       />
                     </div>
 
-                    <div style={{ display: "grid", gap: "12px", marginTop: "12px" }}>
+                    <div style={{ display: "grid", gap: "12px", marginTop: "4px" }}>
                       {offers
                         .filter((o) => o.title.toLowerCase().includes(searchQuery.toLowerCase()))
                         .map((offer) => (
@@ -174,21 +195,51 @@ export default function PadPage() {
                               display: "flex",
                               justifyContent: "space-between",
                               alignItems: "center",
+                              flexWrap: "wrap",
+                              gap: "14px",
                             }}
                           >
-                            <div>
-                              <div style={{ fontWeight: "700", fontSize: "16px" }}>{offer.title}</div>
-                              <p className="note" style={{ marginTop: "4px" }}>
-                                Provider: <span className="mono">{offer.provider}</span> · Evaluator: {offer.evaluator}
+                            <div style={{ flex: "1 1 240px", minWidth: 0 }}>
+                              <div
+                                style={{
+                                  fontWeight: "700",
+                                  fontSize: "15.5px",
+                                  lineHeight: 1.35,
+                                  wordBreak: "break-word",
+                                }}
+                              >
+                                {offer.title}
+                              </div>
+                              <p
+                                className="note"
+                                style={{ marginTop: "4px", fontSize: "12.5px" }}
+                              >
+                                Provider: <span className="mono">{offer.provider}</span> · Evaluator:{" "}
+                                {offer.evaluator}
                               </p>
                             </div>
-                            <div style={{ textAlign: "right" }}>
-                              <div className="num" style={{ fontWeight: "700", fontSize: "18px" }}>
-                                {offer.price.toFixed(2)} USDG
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "flex-end",
+                                gap: "6px",
+                                flex: "none",
+                              }}
+                            >
+                              <div
+                                className="num"
+                                style={{
+                                  fontWeight: "700",
+                                  fontSize: "clamp(17px, 2vw, 20px)",
+                                }}
+                              >
+                                {offer.price.toFixed(2)}{" "}
+                                <span style={{ fontSize: "13px", color: "var(--mute)" }}>USDG</span>
                               </div>
                               <button
+                                type="button"
                                 className="pill small ghost"
-                                style={{ marginTop: "6px" }}
                                 onClick={() => handleOrderEscrow(offer)}
                               >
                                 Order Escrow
@@ -207,33 +258,43 @@ export default function PadPage() {
                     <h2>Recent Token Launches</h2>
                     <span className="mono">Uniswap v4 Pools</span>
                   </div>
-                  <table className="trades">
-                    <thead>
-                      <tr>
-                        <th>Token</th>
-                        <th>Market Cap</th>
-                        <th>Liquidity</th>
-                        <th>Creator Split</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td><b>$ORVEN</b> <span className="mono">Orven Protocol</span></td>
-                        <td className="num">$2,500,000</td>
-                        <td className="num">$480,000 USDG</td>
-                        <td className="mono">70% / 30%</td>
-                        <td><span style={{ color: "#16a34a" }}>Graduated</span></td>
-                      </tr>
-                      <tr>
-                        <td><b>$ROBIN</b> <span className="mono">Robin Agent</span></td>
-                        <td className="num">$45,000</td>
-                        <td className="num">$12,000 USDG</td>
-                        <td className="mono">70% / 30%</td>
-                        <td><span style={{ color: "#d97706" }}>Bonding</span></td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <div className="table-container">
+                    <table className="trades">
+                      <thead>
+                        <tr>
+                          <th>Token</th>
+                          <th>Market Cap</th>
+                          <th>Liquidity</th>
+                          <th>Creator Split</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <b>$ORVEN</b> <span className="mono">Orven Protocol</span>
+                          </td>
+                          <td className="num">$2,500,000</td>
+                          <td className="num">$480,000 USDG</td>
+                          <td className="mono">70% / 30%</td>
+                          <td>
+                            <span style={{ color: "#16a34a", fontWeight: "600" }}>Graduated</span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <b>$ROBIN</b> <span className="mono">Robin Agent</span>
+                          </td>
+                          <td className="num">$45,000</td>
+                          <td className="num">$12,000 USDG</td>
+                          <td className="mono">70% / 30%</td>
+                          <td>
+                            <span style={{ color: "#d97706", fontWeight: "600" }}>Bonding</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </section>
               </>
             )}
@@ -259,7 +320,11 @@ export default function PadPage() {
                   </span>
                   <span className="field-row">
                     <input
-                      placeholder={padView === "marketplace" ? "e.g. Automated Code Review" : "e.g. Orven / ORV"}
+                      placeholder={
+                        padView === "marketplace"
+                          ? "e.g. Automated Code Review"
+                          : "e.g. Orven / ORV"
+                      }
                       value={newTitle}
                       onChange={(e) => setNewTitle(e.target.value)}
                     />

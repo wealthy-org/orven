@@ -30,7 +30,12 @@ export default function LockPage() {
       const { vault: updated, txHash } = BrowserVaultManager.lockTokens(amount);
       setVault({ ...updated });
       setLockAmount("");
-      setMessage(`Successfully locked ${amount.toLocaleString()} ORVEN for 7 days! Tx: ${txHash.slice(0, 10)}... (WOTS Key #${updated.currentKeyIndex - 1} retired)`);
+      setMessage(
+        `Successfully locked ${amount.toLocaleString()} ORVEN for 7 days! Tx: ${txHash.slice(
+          0,
+          10
+        )}... (WOTS Key #${updated.currentKeyIndex - 1} retired)`
+      );
       setTimeout(() => setMessage(null), 5000);
     } catch (err: any) {
       alert(err.message || "Lock failed");
@@ -77,12 +82,13 @@ export default function LockPage() {
         {message && (
           <div
             style={{
-              padding: "12px 18px",
+              padding: "14px 18px",
               background: "var(--soft)",
               borderLeft: "4px solid var(--red)",
-              marginBottom: "20px",
+              margin: "20px 0",
               borderRadius: "4px",
               fontWeight: "500",
+              fontSize: "14px",
             }}
           >
             {message}
@@ -90,51 +96,58 @@ export default function LockPage() {
         )}
 
         <div className="layout">
-          <div className="stack">
+          <div className="stack" style={{ minWidth: 0 }}>
             <section className="panel">
               <div className="panel-head">
                 <h2>Fee Discount Schedule</h2>
                 <span className="mono" style={{ color: "#16a34a" }}>
-                  Active Status: {currentTier.tier} ({currentTier.fee} Fee)
+                  Active: {currentTier.tier} ({currentTier.fee} Fee)
                 </span>
               </div>
-              <table className="trades">
-                <thead>
-                  <tr>
-                    <th>ORVEN Locked</th>
-                    <th>Effective Swap Fee</th>
-                    <th>Discount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {FEE_TIERS.map((tier) => (
-                    <tr
-                      key={tier.label}
-                      style={{
-                        background:
-                          currentTier.fee === tier.feePercent ? "rgba(217, 56, 30, 0.08)" : undefined,
-                      }}
-                    >
-                      <td>
-                        <b>{tier.label}</b>{" "}
-                        {currentTier.fee === tier.feePercent && (
-                          <span className="mono" style={{ color: "var(--red)", fontSize: "11px" }}>
-                            (Current Tier)
-                          </span>
-                        )}
-                      </td>
-                      <td className="num">{tier.feePercent}</td>
-                      <td>
-                        {tier.feeBps === 0 ? (
-                          <span style={{ color: "#16a34a", fontWeight: "700" }}>100% (Free)</span>
-                        ) : (
-                          `${((20 - tier.feeBps) / 20) * 100}%`
-                        )}
-                      </td>
+              <div className="table-container">
+                <table className="trades">
+                  <thead>
+                    <tr>
+                      <th>ORVEN Locked</th>
+                      <th>Effective Swap Fee</th>
+                      <th>Discount</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {FEE_TIERS.map((tier) => (
+                      <tr
+                        key={tier.label}
+                        style={{
+                          background:
+                            currentTier.fee === tier.feePercent
+                              ? "rgba(217, 56, 30, 0.08)"
+                              : undefined,
+                        }}
+                      >
+                        <td>
+                          <b>{tier.label}</b>{" "}
+                          {currentTier.fee === tier.feePercent && (
+                            <span
+                              className="mono"
+                              style={{ color: "var(--red)", fontSize: "11px", marginLeft: "6px" }}
+                            >
+                              (Current Tier)
+                            </span>
+                          )}
+                        </td>
+                        <td className="num">{tier.feePercent}</td>
+                        <td>
+                          {tier.feeBps === 0 ? (
+                            <span style={{ color: "#16a34a", fontWeight: "700" }}>100% (Free)</span>
+                          ) : (
+                            `${((20 - tier.feeBps) / 20) * 100}%`
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
               <div className="panel-body">
                 <p className="note">
                   Locked tokens are held in the OrvenLock contract for a minimum duration of 7 days.
@@ -150,15 +163,25 @@ export default function LockPage() {
                 <h2>Lock Tokens</h2>
               </div>
               <div className="panel-body stack">
-                <div style={{ padding: "12px", background: "var(--soft)", borderRadius: "6px" }}>
+                <div style={{ padding: "14px", background: "var(--soft)", borderRadius: "6px" }}>
                   <span className="mono" style={{ fontSize: "11px" }}>Currently Locked</span>
-                  <div className="num" style={{ fontSize: "20px", fontWeight: "700", marginTop: "4px" }}>
+                  <div
+                    className="num"
+                    style={{
+                      fontSize: "clamp(18px, 2.4vw, 22px)",
+                      fontWeight: "700",
+                      marginTop: "4px",
+                    }}
+                  >
                     {mounted && vault ? vault.lockedORVEN.toLocaleString() : "0"} ORVEN{" "}
                     <span style={{ fontSize: "13px", color: "var(--mute)" }}>
                       ({currentTier.tier}: {currentTier.fee})
                     </span>
                   </div>
-                  <div className="mono" style={{ fontSize: "11px", color: "var(--mute)", marginTop: "4px" }}>
+                  <div
+                    className="mono"
+                    style={{ fontSize: "11px", color: "var(--mute)", marginTop: "4px" }}
+                  >
                     Available: {mounted && vault ? vault.balanceORVEN.toLocaleString() : "0"} ORVEN
                   </div>
                 </div>
@@ -178,13 +201,14 @@ export default function LockPage() {
                   </span>
                 </label>
 
-                <div style={{ display: "flex", gap: "6px" }}>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                   {[100_000, 250_000, 500_000].map((amt) => (
                     <button
                       key={amt}
                       type="button"
                       className="pill small ghost"
                       onClick={() => setLockAmount(amt.toString())}
+                      style={{ flex: "1 1 70px" }}
                     >
                       {amt / 1000}k
                     </button>
@@ -200,7 +224,7 @@ export default function LockPage() {
                   {isProcessing ? "Broadcasting Lock Order..." : "Lock ORVEN (7 Days)"}
                 </button>
 
-                <p className="note">
+                <p className="note" style={{ fontSize: "12px", marginTop: "8px" }}>
                   Locking is an on-chain transaction. Gas fees are sponsored when locked from your
                   Orven Vault.
                 </p>

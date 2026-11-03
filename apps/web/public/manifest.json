@@ -1,0 +1,48 @@
+{
+  "name": "Orven Protocol",
+  "short_name": "Orven",
+  "description": "Post-Quantum Vaults, Swaps, and Autonomous Agent Infrastructure on Robinhood Chain",
+  "start_url": "/vault",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#15171A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["finance", "utilities", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Vault",
+      "url": "/vault",
+      "description": "Manage Post-Quantum USDG Vault"
+    },
+    {
+      "name": "Swap",
+      "url": "/swap",
+      "description": "Gas-Free Token & Stock Swaps"
+    },
+    {
+      "name": "Tide",
+      "url": "/tide",
+      "description": "Tide Rewards & Multipliers"
+    }
+  ]
+}

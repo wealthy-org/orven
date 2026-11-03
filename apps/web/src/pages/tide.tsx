@@ -28,7 +28,12 @@ export default function TidePage() {
       const { vault: updated, txHash } = BrowserVaultManager.linkAgent(agentKeyInput.trim());
       setVault({ ...updated });
       setAgentKeyInput("");
-      setMessage(`Agent successfully linked to Vault! Tx: ${txHash.slice(0, 10)}... Multiplier 1.5x activated.`);
+      setMessage(
+        `Agent successfully linked to Vault! Tx: ${txHash.slice(
+          0,
+          10
+        )}... Multiplier 1.5x activated.`
+      );
       setTimeout(() => setMessage(null), 5000);
     } catch (err: any) {
       alert(err.message || "Linking failed");
@@ -67,12 +72,13 @@ export default function TidePage() {
         {message && (
           <div
             style={{
-              padding: "12px 18px",
+              padding: "14px 18px",
               background: "var(--soft)",
               borderLeft: "4px solid var(--red)",
-              marginBottom: "20px",
+              margin: "20px 0",
               borderRadius: "4px",
               fontWeight: "500",
+              fontSize: "14px",
             }}
           >
             {message}
@@ -80,35 +86,66 @@ export default function TidePage() {
         )}
 
         <div className="layout">
-          <div className="stack">
+          <div className="stack" style={{ minWidth: 0 }}>
+            {/* Epoch Overview Widget */}
             <section className="panel">
               <div className="panel-head">
                 <h2>Epoch 1 Overview</h2>
-                <span className="mono" style={{ color: "#16a34a" }}>Active Epoch</span>
+                <span className="mono" style={{ color: "#16a34a" }}>
+                  Active Epoch
+                </span>
               </div>
               <div className="panel-body stack">
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px" }}>
-                  <div style={{ padding: "14px", background: "var(--soft)", borderRadius: "6px" }}>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 160px), 1fr))",
+                    gap: "16px",
+                  }}
+                >
+                  <div style={{ padding: "16px", background: "var(--soft)", borderRadius: "6px" }}>
                     <span className="mono">Your Points</span>
-                    <div className="num" style={{ fontSize: "24px", fontWeight: "700", marginTop: "4px" }}>
+                    <div
+                      className="num"
+                      style={{
+                        fontSize: "clamp(22px, 3vw, 26px)",
+                        fontWeight: "700",
+                        marginTop: "4px",
+                      }}
+                    >
                       {isAgentLinked ? "2,130" : "1,420"}
                     </div>
                   </div>
-                  <div style={{ padding: "14px", background: "var(--soft)", borderRadius: "6px" }}>
+                  <div style={{ padding: "16px", background: "var(--soft)", borderRadius: "6px" }}>
                     <span className="mono">Multiplier</span>
-                    <div className="num" style={{ fontSize: "24px", fontWeight: "700", marginTop: "4px", color: isAgentLinked ? "#16a34a" : undefined }}>
-                      {isAgentLinked ? "1.5x (Agent Linked)" : "1.0x (Standard)"}
+                    <div
+                      className="num"
+                      style={{
+                        fontSize: "clamp(20px, 2.8vw, 24px)",
+                        fontWeight: "700",
+                        marginTop: "4px",
+                        color: isAgentLinked ? "#16a34a" : undefined,
+                      }}
+                    >
+                      {isAgentLinked ? "1.5x (Agent)" : "1.0x (Standard)"}
                     </div>
                   </div>
-                  <div style={{ padding: "14px", background: "var(--soft)", borderRadius: "6px" }}>
+                  <div style={{ padding: "16px", background: "var(--soft)", borderRadius: "6px" }}>
                     <span className="mono">Epoch Ends In</span>
-                    <div className="num" style={{ fontSize: "24px", fontWeight: "700", marginTop: "4px" }}>
+                    <div
+                      className="num"
+                      style={{
+                        fontSize: "clamp(22px, 3vw, 26px)",
+                        fontWeight: "700",
+                        marginTop: "4px",
+                      }}
+                    >
                       4d 18h
                     </div>
                   </div>
                 </div>
 
-                <p className="note" style={{ marginTop: "12px" }}>
+                <p className="note" style={{ marginTop: "8px" }}>
                   Points are computed deterministically per epoch based on net fee volume, agent activity
                   frequency, and verifiable work completions. Rewards distribute directly to your linked
                   Orven Vault upon epoch finalization.
@@ -116,36 +153,88 @@ export default function TidePage() {
               </div>
             </section>
 
+            {/* 7-Day Activity Streak Widget */}
+            <section className="panel">
+              <div className="panel-head">
+                <h2>Weekly Activity Streak</h2>
+                <span className="mono" style={{ color: "var(--red)" }}>
+                  Streak Bonus: +20%
+                </span>
+              </div>
+              <div className="panel-body stack" style={{ padding: "0 0 16px" }}>
+                <ul className="tide-days">
+                  <li className="on">
+                    <span className="mono">Mon</span>
+                    <b>120</b>
+                    <span className="tide-day-st">Active</span>
+                  </li>
+                  <li className="on">
+                    <span className="mono">Tue</span>
+                    <b>140</b>
+                    <span className="tide-day-st">Active</span>
+                  </li>
+                  <li className="on">
+                    <span className="mono">Wed</span>
+                    <b>190</b>
+                    <span className="tide-day-st">Active</span>
+                  </li>
+                  <li className="on">
+                    <span className="mono">Thu</span>
+                    <b>210</b>
+                    <span className="tide-day-st">Today</span>
+                  </li>
+                  <li>
+                    <span className="mono">Fri</span>
+                    <b>—</b>
+                    <span className="tide-day-st">Pending</span>
+                  </li>
+                  <li>
+                    <span className="mono">Sat</span>
+                    <b>—</b>
+                    <span className="tide-day-st">Pending</span>
+                  </li>
+                  <li>
+                    <span className="mono">Sun</span>
+                    <b>—</b>
+                    <span className="tide-day-st">Pending</span>
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            {/* Rules Table */}
             <section className="panel">
               <div className="panel-head">
                 <h2>Point Distribution Rules</h2>
               </div>
-              <table className="trades">
-                <thead>
-                  <tr>
-                    <th>Action</th>
-                    <th>Points Awarded</th>
-                    <th>Multiplier Condition</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Vault Swap Volume</td>
-                    <td className="num">100 pts / $1 USDG fee</td>
-                    <td>Up to $20 fee/pair daily</td>
-                  </tr>
-                  <tr>
-                    <td>Active Days Streak</td>
-                    <td className="num">+20% / 3 days</td>
-                    <td>Up to +50% at 7 consecutive days</td>
-                  </tr>
-                  <tr>
-                    <td>Work Escrow Completion</td>
-                    <td className="num">250 pts / job</td>
-                    <td>Evaluator approved deliverables</td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className="table-container">
+                <table className="trades">
+                  <thead>
+                    <tr>
+                      <th>Action</th>
+                      <th>Points Awarded</th>
+                      <th>Multiplier Condition</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Vault Swap Volume</td>
+                      <td className="num">100 pts / $1 USDG fee</td>
+                      <td>Up to $20 fee/pair daily</td>
+                    </tr>
+                    <tr>
+                      <td>Active Days Streak</td>
+                      <td className="num">+20% / 3 days</td>
+                      <td>Up to +50% at 7 consecutive days</td>
+                    </tr>
+                    <tr>
+                      <td>Work Escrow Completion</td>
+                      <td className="num">250 pts / job</td>
+                      <td>Evaluator approved deliverables</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </section>
           </div>
 
@@ -161,11 +250,24 @@ export default function TidePage() {
                 </p>
 
                 {isAgentLinked ? (
-                  <div style={{ padding: "14px", background: "var(--soft)", borderRadius: "6px", border: "1px solid var(--line)" }}>
-                    <span className="mono" style={{ color: "#16a34a", fontSize: "12px", display: "block" }}>
+                  <div
+                    style={{
+                      padding: "14px",
+                      background: "var(--soft)",
+                      borderRadius: "6px",
+                      border: "1px solid var(--line)",
+                    }}
+                  >
+                    <span
+                      className="mono"
+                      style={{ color: "#16a34a", fontSize: "12px", display: "block" }}
+                    >
                       ● Agent Verified & Linked
                     </span>
-                    <div className="mono" style={{ fontSize: "11px", wordBreak: "break-all", marginTop: "6px" }}>
+                    <div
+                      className="mono"
+                      style={{ fontSize: "11px", wordBreak: "break-all", marginTop: "6px" }}
+                    >
                       {vault?.linkedAgent}
                     </div>
                   </div>
@@ -190,13 +292,14 @@ export default function TidePage() {
                       disabled={isLinking}
                       onClick={handleLinkAgent}
                     >
-                      {isLinking ? "Signing Proof with WOTS Key..." : "Sign Linking Proof"}
+                      {isLinking ? "Verifying Agent Key..." : "Link Agent (1.5x Boost)"}
                     </button>
                   </>
                 )}
 
-                <p className="note">
-                  Linking secrets are stored locally and never broadcast to public indexers or logs.
+                <p className="note" style={{ fontSize: "12px", marginTop: "8px" }}>
+                  Autonomous agents query the local MCP server over stdio to settle trades and escrow
+                  without user intervention.
                 </p>
               </div>
             </section>

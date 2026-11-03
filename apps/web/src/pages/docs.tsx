@@ -1,7 +1,8 @@
 import React from "react";
 import Head from "next/head";
+import Link from "next/link";
 import { Layout } from "@/components/Layout";
-import { ROBINHOOD_TESTNET, TOKENS, FEE_TIERS } from "@orven/product-config";
+import { ROBINHOOD_TESTNET, TOKENS } from "@orven/product-config";
 
 export default function DocsPage() {
   return (
@@ -30,8 +31,8 @@ export default function DocsPage() {
         </div>
 
         <div className="layout">
-          <div className="stack">
-            <section className="panel">
+          <div className="stack" style={{ minWidth: 0 }}>
+            <section className="panel" id="section-1">
               <div className="panel-head">
                 <h2>1. Post-Quantum WOTS Vaults</h2>
               </div>
@@ -48,73 +49,107 @@ export default function DocsPage() {
               </div>
             </section>
 
-            <section className="panel">
+            <section className="panel" id="section-2">
               <div className="panel-head">
                 <h2>2. Network & Asset Specifications</h2>
               </div>
-              <table className="trades">
-                <thead>
-                  <tr>
-                    <th>Parameter</th>
-                    <th>Value</th>
-                    <th>Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Network</td>
-                    <td><b>{ROBINHOOD_TESTNET.name}</b></td>
-                    <td>Chain ID: <code>{ROBINHOOD_TESTNET.id}</code></td>
-                  </tr>
-                  <tr>
-                    <td>Primary Currency</td>
-                    <td><b>USDG</b> (Global Dollar)</td>
-                    <td><code>{TOKENS.USDG.address}</code> (6 decimals)</td>
-                  </tr>
-                  <tr>
-                    <td>Wrapped Ether</td>
-                    <td><b>WETH</b></td>
-                    <td><code>{TOKENS.WETH.address}</code> (18 decimals)</td>
-                  </tr>
-                  <tr>
-                    <td>Relayer Fee</td>
-                    <td className="num">0.05 USDG</td>
-                    <td>Sponsored gas (~120k gas equivalent)</td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className="table-container">
+                <table className="trades">
+                  <thead>
+                    <tr>
+                      <th>Parameter</th>
+                      <th>Value</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Network</td>
+                      <td>
+                        <b>{ROBINHOOD_TESTNET.name}</b>
+                      </td>
+                      <td>
+                        Chain ID: <code>{ROBINHOOD_TESTNET.id}</code>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Primary Currency</td>
+                      <td>
+                        <b>USDG</b> (Global Dollar)
+                      </td>
+                      <td>
+                        <code style={{ wordBreak: "break-all" }}>{TOKENS.USDG.address}</code> (6 decimals)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Wrapped Ether</td>
+                      <td>
+                        <b>WETH</b>
+                      </td>
+                      <td>
+                        <code style={{ wordBreak: "break-all" }}>{TOKENS.WETH.address}</code> (18 decimals)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Relayer Fee</td>
+                      <td className="num">0.05 USDG</td>
+                      <td>Sponsored gas (~120k gas equivalent)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </section>
 
-            <section className="panel">
+            <section className="panel" id="section-3">
               <div className="panel-head">
                 <h2>3. Local Service Endpoints</h2>
               </div>
-              <table className="trades">
-                <thead>
-                  <tr>
-                    <th>Service</th>
-                    <th>Port</th>
-                    <th>Health Endpoint</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Web Application</td>
-                    <td><code>3000</code></td>
-                    <td><a href="http://localhost:3000/vault" className="link">/vault</a></td>
-                  </tr>
-                  <tr>
-                    <td>Application & Relayer API</td>
-                    <td><code>4010</code></td>
-                    <td><a href="http://localhost:4010/health" className="link">/health</a></td>
-                  </tr>
-                  <tr>
-                    <td>AI Task Gateway</td>
-                    <td><code>4020</code></td>
-                    <td><a href="http://localhost:4020/health" className="link">/health</a></td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className="table-container">
+                <table className="trades">
+                  <thead>
+                    <tr>
+                      <th>Service</th>
+                      <th>Port</th>
+                      <th>Health Endpoint</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Web Application</td>
+                      <td>
+                        <code>3000</code>
+                      </td>
+                      <td>
+                        <Link href="/vault" className="link">
+                          /vault
+                        </Link>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Application & Relayer API</td>
+                      <td>
+                        <code>4010</code>
+                      </td>
+                      <td>
+                        <a href="http://localhost:4010/health" target="_blank" rel="noreferrer" className="link">
+                          /health
+                        </a>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>AI Task Gateway</td>
+                      <td>
+                        <code>4020</code>
+                      </td>
+                      <td>
+                        <a href="http://localhost:4020/health" target="_blank" rel="noreferrer" className="link">
+                          /health
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </section>
           </div>
 
@@ -133,9 +168,13 @@ export default function DocsPage() {
                 <a href="#section-3" className="link mono" style={{ display: "block" }}>
                   3. Service Endpoints
                 </a>
-                <a href="/agents" className="link mono" style={{ display: "block", marginTop: "12px", color: "var(--red)" }}>
+                <Link
+                  href="/agents"
+                  className="link mono"
+                  style={{ display: "block", marginTop: "12px", color: "var(--red)" }}
+                >
                   → Agent MCP Guide
-                </a>
+                </Link>
               </div>
             </section>
           </aside>

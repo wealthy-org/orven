@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -7,91 +7,260 @@ export function Header() {
   const [walletConnected, setWalletConnected] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isActive = (path: string) => router.pathname.startsWith(path);
+  const isActive = (path: string) => {
+    if (path === "/vault") {
+      return router.pathname === "/vault" || router.pathname === "/";
+    }
+    return router.pathname.startsWith(path);
+  };
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    const handleRouteChange = () => setMobileMenuOpen(false);
+    router.events.on("routeChangeStart", handleRouteChange);
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChange);
+    };
+  }, [router]);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      if (mobileMenuOpen) {
+        document.body.classList.add("mnav-open");
+      } else {
+        document.body.classList.remove("mnav-open");
+      }
+    }
+    return () => {
+      if (typeof document !== "undefined") {
+        document.body.classList.remove("mnav-open");
+      }
+    };
+  }, [mobileMenuOpen]);
+
+  // Handle escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [mobileMenuOpen]);
 
   return (
-    <header className="bar">
-      <div className="wrap bar-in">
-        <Link href="/vault" className="brand" aria-label="Orven app, the vault">
-          <svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true">
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              fill="none"
-              stroke="#15171A"
-              strokeWidth="10"
-              strokeDasharray="11.7 4"
-              transform="rotate(-93.6 50 50)"
-            ></circle>
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              fill="none"
-              stroke="#D9381E"
-              strokeWidth="10"
-              strokeDasharray="11.7 239.6"
-              transform="rotate(-93.6 50 50)"
-            ></circle>
-            <circle cx="50" cy="50" r="9" fill="#15171A"></circle>
-          </svg>
-          orven<small>App</small>
-        </Link>
+    <>
+      <header className="bar">
+        <div className="wrap bar-in">
+          <Link href="/vault" className="brand" aria-label="Orven app, the vault">
+            <svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true">
+              <circle
+                cx="50"
+                cy="50"
+                r="40"
+                fill="none"
+                stroke="#15171A"
+                strokeWidth="10"
+                strokeDasharray="11.7 4"
+                transform="rotate(-93.6 50 50)"
+              ></circle>
+              <circle
+                cx="50"
+                cy="50"
+                r="40"
+                fill="none"
+                stroke="#D9381E"
+                strokeWidth="10"
+                strokeDasharray="11.7 239.6"
+                transform="rotate(-93.6 50 50)"
+              ></circle>
+              <circle cx="50" cy="50" r="9" fill="#15171A"></circle>
+            </svg>
+            orven<small>App</small>
+          </Link>
 
-        <nav className="nav" aria-label="Main">
-          <Link href="/vault" className={isActive("/vault") ? "on" : ""}>
+          <nav className="nav" aria-label="Main">
+            <Link href="/vault" className={isActive("/vault") ? "on" : ""}>
+              Vault
+            </Link>
+            <Link href="/pad" className={isActive("/pad") ? "on" : ""}>
+              OrvenPad
+            </Link>
+            <Link href="/tide" className={isActive("/tide") ? "on" : ""}>
+              Tide
+            </Link>
+            <Link href="/swap" className={isActive("/swap") ? "on" : ""}>
+              Swap
+            </Link>
+            <Link href="/lock" className={isActive("/lock") ? "on" : ""}>
+              Lock
+            </Link>
+            <Link href="/agents" className={isActive("/agents") ? "on" : ""}>
+              Agents
+            </Link>
+            <Link href="/docs" className={isActive("/docs") ? "on" : ""}>
+              Docs
+            </Link>
+          </nav>
+
+          <Link
+            className={`pill small ghost vault-pill ${isActive("/vault") ? "on" : ""}`}
+            href="/vault"
+          >
             Vault
           </Link>
-          <Link href="/pad" className={isActive("/pad") ? "on" : ""}>
-            OrvenPad
-          </Link>
-          <Link href="/tide" className={isActive("/tide") ? "on" : ""}>
-            Tide
-          </Link>
-          <Link href="/swap" className={isActive("/swap") ? "on" : ""}>
-            Swap
-          </Link>
-          <Link href="/lock" className={isActive("/lock") ? "on" : ""}>
-            Lock
-          </Link>
-          <a href="/agents" target="_blank" rel="noreferrer">
-            Agents
-          </a>
-          <a href="/docs" target="_blank" rel="noreferrer">
-            Docs
-          </a>
-        </nav>
 
-        <Link
-          className={`pill small ghost vault-pill ${isActive("/vault") ? "on" : ""}`}
-          href="/vault"
-        >
-          Vault
-        </Link>
+          <div className="wallet">
+            <button
+              className="pill small"
+              type="button"
+              onClick={() => setWalletConnected(!walletConnected)}
+              aria-label={walletConnected ? "Wallet Connected" : "Connect Wallet"}
+            >
+              {walletConnected ? "0x7a3...4e19" : "Connect wallet"}
+            </button>
+          </div>
 
-        <div className="wallet">
           <button
-            className="pill small"
             type="button"
-            onClick={() => setWalletConnected(!walletConnected)}
+            className="mnav-btn"
+            aria-expanded={mobileMenuOpen}
+            aria-label={mobileMenuOpen ? "Close Menu" : "Open Menu"}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            {walletConnected ? "0x7a3...4e19" : "Connect wallet"}
+            {mobileMenuOpen ? (
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="4" y1="4" x2="18" y2="18" />
+                <line x1="18" y1="4" x2="4" y2="18" />
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
+                <path d="M3 7h16M3 15h16" stroke="currentColor" strokeWidth="1.8"></path>
+              </svg>
+            )}
           </button>
         </div>
+      </header>
 
-        <button
-          type="button"
-          className="mnav-btn"
-          aria-expanded={mobileMenuOpen}
-          aria-label="Menu"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
-            <path d="M3 7h16M3 15h16" stroke="currentColor" strokeWidth="1.8"></path>
-          </svg>
-        </button>
-      </div>
-    </header>
+      {/* Mobile Navigation Drawer & Backdrop */}
+      {mobileMenuOpen && (
+        <>
+          <div
+            className="mnav-backdrop"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+          <nav className="mnav" aria-label="Mobile Navigation Drawer">
+            <div className="mnav-header">
+              <span className="mono" style={{ color: "var(--mute-2)", fontSize: "11px" }}>
+                MENU & ECOSYSTEM
+              </span>
+              <button
+                type="button"
+                className="mnav-close-btn"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Close menu"
+              >
+                ✕
+              </button>
+            </div>
+            <ul className="mnav-list">
+              <li>
+                <Link
+                  href="/vault"
+                  aria-current={isActive("/vault") ? "page" : undefined}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>Vault</span>
+                  <small className="mono">01</small>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/swap"
+                  aria-current={isActive("/swap") ? "page" : undefined}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>Swap</span>
+                  <small className="mono">02</small>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/pad"
+                  aria-current={isActive("/pad") ? "page" : undefined}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>OrvenPad</span>
+                  <small className="mono">03</small>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/tide"
+                  aria-current={isActive("/tide") ? "page" : undefined}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>Tide Rewards</span>
+                  <small className="mono">04</small>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/lock"
+                  aria-current={isActive("/lock") ? "page" : undefined}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>Lock ORVEN</span>
+                  <small className="mono">05</small>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/agents"
+                  aria-current={isActive("/agents") ? "page" : undefined}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>AI Agents & MCP</span>
+                  <small className="mono">06</small>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/docs"
+                  aria-current={isActive("/docs") ? "page" : undefined}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>Documentation</span>
+                  <small className="mono">07</small>
+                </Link>
+              </li>
+            </ul>
+
+            <div className="mnav-footer">
+              <div className="mnav-wallet-status">
+                <span className="mono">Current Network</span>
+                <b>Robinhood Testnet (Chain 46630)</b>
+              </div>
+              <div className="mnav-links">
+                <a href="https://github.com/orven-protocol" target="_blank" rel="noreferrer">
+                  GitHub
+                </a>
+                <span>·</span>
+                <a href="https://x.com/orvenprotocol" target="_blank" rel="noreferrer">
+                  Twitter/X
+                </a>
+                <span>·</span>
+                <Link href="/docs" onClick={() => setMobileMenuOpen(false)}>
+                  API & Specs
+                </Link>
+              </div>
+            </div>
+          </nav>
+        </>
+      )}
+    </>
   );
 }

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import Link from "next/link";
 import { Layout } from "@/components/Layout";
 import { executeAITask } from "@/lib/api";
 
@@ -51,11 +50,13 @@ export default function AgentsPage() {
         </div>
 
         <div className="layout">
-          <div className="stack">
+          <div className="stack" style={{ minWidth: 0 }}>
             <section className="panel">
               <div className="panel-head">
                 <h2>Quick Installation (stdio)</h2>
-                <span className="mono" style={{ color: "#16a34a" }}>Testnet Ready</span>
+                <span className="mono" style={{ color: "#16a34a" }}>
+                  Testnet Ready
+                </span>
               </div>
               <div className="panel-body stack">
                 <p className="note">
@@ -73,16 +74,20 @@ export default function AgentsPage() {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: "10px",
                   }}
                 >
-                  <code>npx @orven/mcp@testnet</code>
+                  <code style={{ wordBreak: "break-all" }}>npx @orven/mcp@testnet</code>
                   <span className="mono" style={{ color: "var(--faint)", fontSize: "11px" }}>
                     Chain ID 46630
                   </span>
                 </div>
 
                 <div style={{ marginTop: "16px" }}>
-                  <h3 style={{ fontSize: "15px", marginBottom: "8px" }}>Claude Desktop & Cursor Configuration</h3>
+                  <h3 style={{ fontSize: "15px", marginBottom: "8px" }}>
+                    Claude Desktop & Cursor Configuration
+                  </h3>
                   <div
                     style={{
                       background: "var(--soft)",
@@ -94,7 +99,7 @@ export default function AgentsPage() {
                       border: "1px solid var(--line)",
                     }}
                   >
-                    <pre>{`{
+                    <pre style={{ margin: 0, overflowX: "auto" }}>{`{
   "mcpServers": {
     "orven": {
       "command": "npx",
@@ -111,52 +116,96 @@ export default function AgentsPage() {
               <div className="panel-head">
                 <h2>Available Agent Tools (`@orven/mcp`)</h2>
               </div>
-              <table className="trades">
-                <thead>
-                  <tr>
-                    <th>Tool Name</th>
-                    <th>Category</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><code>open_vault</code></td>
-                    <td><span className="mono">Vault</span></td>
-                    <td>Initialize post-quantum token vault on Robinhood Chain.</td>
-                  </tr>
-                  <tr>
-                    <td><code>balance</code></td>
-                    <td><span className="mono">Vault</span></td>
-                    <td>Read spendable and private shielded USDG balance.</td>
-                  </tr>
-                  <tr>
-                    <td><code>orven_swap_quote</code></td>
-                    <td><span className="mono">Trading</span></td>
-                    <td>Calculate optimal route, min-out, and slippage on Uniswap v3/v4.</td>
-                  </tr>
-                  <tr>
-                    <td><code>private_shield</code></td>
-                    <td><span className="mono">Privacy</span></td>
-                    <td>Deposit USDG into STARK shielded note pool with local commitment.</td>
-                  </tr>
-                  <tr>
-                    <td><code>pad_search</code></td>
-                    <td><span className="mono">Work</span></td>
-                    <td>Search active decentralized service offers on OrvenPad.</td>
-                  </tr>
-                  <tr>
-                    <td><code>pad_order</code></td>
-                    <td><span className="mono">Work</span></td>
-                    <td>Fund on-chain escrow for autonomous work contracts.</td>
-                  </tr>
-                  <tr>
-                    <td><code>orven_ai</code></td>
-                    <td><span className="mono">AI Gateway</span></td>
-                    <td>Execute metered inference tasks with atomic USDG payment.</td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className="table-container">
+                <table className="trades">
+                  <thead>
+                    <tr>
+                      <th>Tool Name</th>
+                      <th>Category</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <code>open_vault</code>
+                      </td>
+                      <td>
+                        <span className="mono">Vault</span>
+                      </td>
+                      <td style={{ whiteSpace: "normal" }}>
+                        Initialize post-quantum token vault on Robinhood Chain.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <code>balance</code>
+                      </td>
+                      <td>
+                        <span className="mono">Vault</span>
+                      </td>
+                      <td style={{ whiteSpace: "normal" }}>
+                        Read spendable and private shielded USDG balance.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <code>orven_swap_quote</code>
+                      </td>
+                      <td>
+                        <span className="mono">Trading</span>
+                      </td>
+                      <td style={{ whiteSpace: "normal" }}>
+                        Calculate optimal route, min-out, and slippage on Uniswap v3/v4.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <code>private_shield</code>
+                      </td>
+                      <td>
+                        <span className="mono">Privacy</span>
+                      </td>
+                      <td style={{ whiteSpace: "normal" }}>
+                        Deposit USDG into STARK shielded note pool with local commitment.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <code>pad_search</code>
+                      </td>
+                      <td>
+                        <span className="mono">Work</span>
+                      </td>
+                      <td style={{ whiteSpace: "normal" }}>
+                        Search active decentralized service offers on OrvenPad.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <code>pad_order</code>
+                      </td>
+                      <td>
+                        <span className="mono">Work</span>
+                      </td>
+                      <td style={{ whiteSpace: "normal" }}>
+                        Fund on-chain escrow for autonomous work contracts.
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <code>orven_ai</code>
+                      </td>
+                      <td>
+                        <span className="mono">AI Gateway</span>
+                      </td>
+                      <td style={{ whiteSpace: "normal" }}>
+                        Execute metered inference tasks with atomic USDG payment.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </section>
           </div>
 
@@ -179,11 +228,13 @@ export default function AgentsPage() {
                       onChange={(e) => setSelectedModel(e.target.value)}
                       style={{
                         width: "100%",
-                        padding: "10px",
-                        border: "1px solid var(--line)",
+                        minHeight: "44px",
+                        padding: "0 12px",
+                        border: "1px solid var(--line-2)",
                         borderRadius: "6px",
                         fontFamily: "var(--sans)",
                         background: "#fff",
+                        fontSize: "14px",
                       }}
                     >
                       <option value="orven-gpt-4o">GPT-4o Omnimodel (0.005 USDG / 1k)</option>
@@ -200,7 +251,7 @@ export default function AgentsPage() {
                   </span>
                   <span className="field-row">
                     <input
-                      placeholder="e.g. Analyze Robinhood Chain liquidity depth..."
+                      placeholder="e.g. Analyze Robinhood Chain liquidity..."
                       value={testPrompt}
                       onChange={(e) => setTestPrompt(e.target.value)}
                     />
@@ -220,19 +271,21 @@ export default function AgentsPage() {
                   <div
                     style={{
                       background: "var(--soft)",
-                      padding: "12px",
+                      padding: "14px",
                       borderRadius: "6px",
                       border: "1px solid var(--line)",
                       fontSize: "12px",
                       fontFamily: "var(--mono)",
                       wordBreak: "break-all",
+                      maxHeight: "220px",
+                      overflowY: "auto",
                     }}
                   >
                     {agentOutput}
                   </div>
                 )}
 
-                <p className="note">
+                <p className="note" style={{ fontSize: "12px", marginTop: "8px" }}>
                   Tasks are metered in micro-USDG and gas-sponsored by the Orven Relayer.
                 </p>
               </div>
