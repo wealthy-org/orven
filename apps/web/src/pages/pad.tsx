@@ -6,7 +6,7 @@ import { useToast } from "@/lib/toast";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
 import { Badge } from "@/components/ui/Badge";
-import { Briefcase, Rocket, Search, PlusCircle, ArrowRight } from "lucide-react";
+import { Briefcase, Rocket, Search, PlusCircle, ArrowRight, Layers, FileText, DollarSign, FileEdit } from "lucide-react";
 
 export default function PadPage() {
   const { toast } = useToast();
@@ -371,16 +371,20 @@ export default function PadPage() {
                     {padView === "marketplace" ? "Publish Service Offer" : "Launch Token"}
                   </div>
                 </div>
-                <div className="stack">
+                <div className="form-stack">
                   <p className="note" style={{ fontSize: "12.5px" }}>
                     {padView === "marketplace"
                       ? "Publish a verifiable work offer on OrvenPad. Terms are hashed on-chain and settled upon evaluator verification."
                       : "Create a new token with fair launch mechanics, locked initial liquidity, and anti-sniping protection."}
                   </p>
 
-                  <div className="input-field">
-                    <span className="mono">Category</span>
+                  <div className="form-group">
+                    <label className="form-label">
+                      <Layers size={12} color="#D9381E" />
+                      <span>Category</span>
+                    </label>
                     <select
+                      className="form-control"
                       value={newCategory}
                       onChange={(e) => setNewCategory(e.target.value)}
                     >
@@ -391,11 +395,13 @@ export default function PadPage() {
                     </select>
                   </div>
 
-                  <div className="input-field">
-                    <span className="mono">
-                      {padView === "marketplace" ? "Offer Title" : "Token Name & Symbol"}
-                    </span>
+                  <div className="form-group">
+                    <label className="form-label">
+                      <FileText size={12} color="#D9381E" />
+                      <span>{padView === "marketplace" ? "Offer Title" : "Token Name & Symbol"}</span>
+                    </label>
                     <input
+                      className="form-control"
                       placeholder={
                         padView === "marketplace"
                           ? "e.g. Automated Smart Contract Audit"
@@ -406,9 +412,13 @@ export default function PadPage() {
                     />
                   </div>
 
-                  <div className="input-field">
-                    <span className="mono">Price (USDG)</span>
+                  <div className="form-group">
+                    <label className="form-label">
+                      <DollarSign size={12} color="#D9381E" />
+                      <span>Price (USDG)</span>
+                    </label>
                     <input
+                      className="form-control"
                       placeholder="0.00"
                       inputMode="decimal"
                       value={newPrice}
@@ -416,9 +426,13 @@ export default function PadPage() {
                     />
                   </div>
 
-                  <div className="input-field">
-                    <span className="mono">Description</span>
+                  <div className="form-group">
+                    <label className="form-label">
+                      <FileEdit size={12} color="#D9381E" />
+                      <span>Description</span>
+                    </label>
                     <textarea
+                      className="form-control form-textarea"
                       placeholder="Describe the deliverables, timeline, and requirements..."
                       value={newDesc}
                       onChange={(e) => setNewDesc(e.target.value)}
@@ -426,7 +440,7 @@ export default function PadPage() {
                   </div>
 
                   <ShimmerButton
-                    style={{ minHeight: "48px", borderRadius: "12px", width: "100%", marginTop: "4px" }}
+                    style={{ minHeight: "44px", borderRadius: "10px", width: "100%", marginTop: "2px" }}
                     onClick={padView === "marketplace" ? handlePublishOffer : undefined}
                   >
                     {padView === "marketplace" ? "Create Listing on Chain" : "Deploy Token & Pool"}

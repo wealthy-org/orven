@@ -7,7 +7,7 @@ import { PageTransition } from "@/components/ui/PageTransition";
 import { NumberTicker } from "@/components/ui/NumberTicker";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
 import { Badge } from "@/components/ui/Badge";
-import { Award, Zap, Calendar, Flame, Bot } from "lucide-react";
+import { Award, Zap, Calendar, Flame, Bot, KeyRound } from "lucide-react";
 
 export default function TidePage() {
   const { toast } = useToast();
@@ -270,7 +270,7 @@ export default function TidePage() {
                   <Bot size={18} color="#D9381E" />
                   <div style={{ fontWeight: "700", fontSize: "16px" }}>Link Autonomous Agent</div>
                 </div>
-                <div className="stack">
+                <div className="form-stack">
                   <p className="note" style={{ fontSize: "12.5px" }}>
                     Link your local agent's MCP identity to your Orven Vault to attribute automated
                     trading and task points to your personal account.
@@ -300,21 +300,21 @@ export default function TidePage() {
                     </div>
                   ) : (
                     <>
-                      <label className="field">
-                        <span className="field-top">
-                          <span className="mono">Agent Public Key / Digest</span>
-                        </span>
-                        <span className="field-row">
-                          <input
-                            placeholder="e.g. 0x89ab...c102"
-                            value={agentKeyInput}
-                            onChange={(e) => setAgentKeyInput(e.target.value)}
-                          />
-                        </span>
-                      </label>
+                      <div className="form-group">
+                        <label className="form-label">
+                          <KeyRound size={12} color="#D9381E" />
+                          <span>Agent Public Key / Digest</span>
+                        </label>
+                        <input
+                          className="form-control mono-input"
+                          placeholder="0x89ab...c102 (minimum 8 characters)"
+                          value={agentKeyInput}
+                          onChange={(e) => setAgentKeyInput(e.target.value)}
+                        />
+                      </div>
 
                       <ShimmerButton
-                        style={{ minHeight: "48px", borderRadius: "12px", width: "100%", marginTop: "4px" }}
+                        style={{ minHeight: "44px", borderRadius: "10px", width: "100%", marginTop: "2px" }}
                         disabled={isLinking}
                         onClick={handleLinkAgent}
                       >

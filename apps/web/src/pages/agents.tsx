@@ -5,13 +5,20 @@ import { executeAITask } from "@/lib/api";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
 import { Badge } from "@/components/ui/Badge";
-import { Bot, Terminal, Cpu, Sparkles, Play, Code2 } from "lucide-react";
+import { Bot, Terminal, Cpu, Sparkles, Play, Code2, Copy, Check, Zap } from "lucide-react";
 
 export default function AgentsPage() {
+  const [copiedCmd, setCopiedCmd] = useState(false);
   const [testPrompt, setTestPrompt] = useState("");
   const [selectedModel, setSelectedModel] = useState("orven-gpt-4o");
   const [isExecuting, setIsExecuting] = useState(false);
   const [agentOutput, setAgentOutput] = useState<string | null>(null);
+
+  const handleCopyCmd = () => {
+    navigator.clipboard.writeText("npx @orven/mcp@testnet");
+    setCopiedCmd(true);
+    setTimeout(() => setCopiedCmd(false), 2000);
+  };
 
   const handleRunTask = async () => {
     if (!testPrompt.trim()) return;
@@ -68,27 +75,23 @@ export default function AgentsPage() {
                   Run Orven's MCP server locally on your machine. Keys and seeds remain stored locally
                   in your private environment:
                 </p>
-                <div
-                  style={{
-                    background: "var(--ink)",
-                    color: "#fff",
-                    padding: "14px 18px",
-                    borderRadius: "8px",
-                    fontFamily: "var(--mono)",
-                    fontSize: "13px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    flexWrap: "wrap",
-                    gap: "10px",
-                  }}
-                >
-                  <code style={{ wordBreak: "break-all", color: "#FFA07A" }}>
-                    npx @orven/mcp@testnet
-                  </code>
-                  <Badge variant="secondary" size="sm">
-                    Chain ID 46630
-                  </Badge>
+                <div className="code-snippet-bar">
+                  <div className="code-snippet-cmd">
+                    <span className="code-snippet-prompt">$</span>
+                    <code style={{ color: "#F8FAFC" }}>npx @orven/mcp@testnet</code>
+                    <Badge variant="secondary" size="sm" style={{ background: "rgba(255,255,255,0.08)", color: "#CBD5E1", border: "0" }}>
+                      Chain 46630
+                    </Badge>
+                  </div>
+                  <button
+                    type="button"
+                    className="code-snippet-copy"
+                    onClick={handleCopyCmd}
+                    aria-label="Copy Command"
+                  >
+                    {copiedCmd ? <Check size={12} color="#16a34a" /> : <Copy size={12} />}
+                    <span>{copiedCmd ? "Copied" : "Copy"}</span>
+                  </button>
                 </div>
 
                 <div style={{ marginTop: "16px" }}>
@@ -230,50 +233,45 @@ export default function AgentsPage() {
                   <Sparkles size={18} color="#D9381E" />
                   <div style={{ fontWeight: "700", fontSize: "16px" }}>Agent AI Playground</div>
                 </div>
-                <div className="stack">
+                <div className="form-stack">
                   <p className="note" style={{ fontSize: "12.5px" }}>
                     Simulate an autonomous agent invoking the <code>orven_ai</code> tool through the Orven
                     AI Gateway.
                   </p>
 
-                  <div className="stack">
-                    <div className="tp">
-                      <span className="mono" style={{ fontSize: "11px" }}>Select Model</span>
-                      <select
-                        value={selectedModel}
-                        onChange={(e) => setSelectedModel(e.target.value)}
-                        style={{
-                          width: "100%",
-                          minHeight: "44px",
-                          padding: "0 12px",
-                          border: "1px solid var(--line-2)",
-                          borderRadius: "8px",
-                          fontFamily: "var(--sans)",
-                          background: "#fff",
-                          fontSize: "14px",
-                        }}
-                      >
-                        <option value="orven-gpt-4o">GPT-4o Omnimodel (0.005 USDG / 1k)</option>
-                        <option value="orven-claude-3-5-sonnet">Claude 3.5 Sonnet (0.006 USDG / 1k)</option>
-                        <option value="orven-flux-pro">Flux Pro Studio (0.04 USDG / img)</option>
-                        <option value="orven-runway-gen3">Runway Gen-3 Video (0.25 USDG / 5s)</option>
-                      </select>
-                    </div>
+                  <div className="form-group">
+                    <label className="form-label">
+                      <Cpu size={12} color="#D9381E" />
+                      <span>Select Model</span>
+                    </label>
+                    <select
+                      className="form-control"
+                      value={selectedModel}
+                      onChange={(e) => setSelectedModel(e.target.value)}
+                    >
+                      <option value="orven-gpt-4o">GPT-4o Omnimodel (0.005 USDG / 1k)</option>
+                      <option value="orven-claude-3-5-sonnet">Claude 3.5 Sonnet (0.006 USDG / 1k)</option>
+                      <option value="orven-flux-pro">Flux Pro Studio (0.04 USDG / img)</option>
+                      <option value="orven-runway-gen3">Runway Gen-3 Video (0.25 USDG / 5s)</option>
+                    </select>
                   </div>
 
-                  <div className="ai-prompt-container">
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                      <span className="mono" style={{ fontSize: "11px", fontWeight: "600" }}>Task / Prompt</span>
-                      <span className="mono" style={{ fontSize: "10.5px", color: "var(--mute-2)" }}>orven_ai stdio</span>
+                  <div className="form-group">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <label className="form-label">
+                        <Terminal size={12} color="#D9381E" />
+                        <span>Prompt / Task</span>
+                      </label>
+                      <span className="mono" style={{ fontSize: "10.5px", color: "var(--mute-2)" }}>stdio</span>
                     </div>
                     <textarea
-                      className="ai-prompt-textarea"
+                      className="form-control form-textarea"
                       rows={3}
                       placeholder="Ask orven_ai to audit smart contracts, analyze liquidity pools, or execute tasks..."
                       value={testPrompt}
                       onChange={(e) => setTestPrompt(e.target.value)}
                     />
-                    <div className="ai-prompt-chips">
+                    <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "2px" }}>
                       <button
                         type="button"
                         className="ai-chip-btn"
@@ -292,7 +290,7 @@ export default function AgentsPage() {
                   </div>
 
                   <ShimmerButton
-                    style={{ minHeight: "48px", borderRadius: "12px", width: "100%", marginTop: "4px" }}
+                    style={{ minHeight: "44px", borderRadius: "10px", width: "100%", marginTop: "2px" }}
                     disabled={isExecuting}
                     onClick={handleRunTask}
                   >
@@ -303,7 +301,7 @@ export default function AgentsPage() {
                     <div
                       style={{
                         background: "var(--soft)",
-                        padding: "14px",
+                        padding: "12px 14px",
                         borderRadius: "8px",
                         border: "1px solid var(--line)",
                         fontSize: "12px",
@@ -311,15 +309,27 @@ export default function AgentsPage() {
                         wordBreak: "break-all",
                         maxHeight: "220px",
                         overflowY: "auto",
+                        lineHeight: 1.45,
                       }}
                     >
                       {agentOutput}
                     </div>
                   )}
 
-                  <p className="note" style={{ fontSize: "12px", marginTop: "8px" }}>
-                    Tasks are metered in micro-USDG and gas-sponsored by the Orven Relayer.
-                  </p>
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontSize: "11px",
+                      color: "var(--mute-2)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <Zap size={12} color="#16a34a" />
+                    <span>0.005 USDG / task · Sponsored gas via Relayer</span>
+                  </div>
                 </div>
               </div>
             </section>
