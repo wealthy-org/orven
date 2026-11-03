@@ -1856,6 +1856,187 @@ img {
   color: var(--ink);
 }
 
+/* ========================================================
+   21ST.DEV, KOKONUT UI, SHADCN/UI & ANIME.JS PRIMITIVES
+   ======================================================== */
+/* Border Beam (21st.dev Magic UI) */
+.border-beam-wrap {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: var(--border-width, 1.5px) solid transparent;
+  mask: linear-gradient(transparent, transparent), linear-gradient(#000, #000);
+  mask-clip: padding-box, border-box;
+  mask-composite: intersect;
+  -webkit-mask: linear-gradient(transparent, transparent), linear-gradient(#000, #000);
+  -webkit-mask-clip: padding-box, border-box;
+  -webkit-mask-composite: destination-out;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.border-beam-wrap::after {
+  content: "";
+  position: absolute;
+  aspect-ratio: 1;
+  width: var(--size, 200px);
+  background: linear-gradient(to left, var(--color-from, #D9381E), var(--color-to, #FFA07A), transparent);
+  offset-path: rect(0 auto auto 0 round var(--size, 200px));
+  animation: border-beam-anim var(--duration, 12s) infinite linear;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes border-beam-anim {
+  to {
+    offset-distance: 100%;
+  }
+}
+
+/* Shimmer Button (21st.dev & Kokonut UI) */
+.shimmer-button {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 24px;
+  background: var(--ink);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  border: 1px solid var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.shimmer-button.disabled {
+  cursor: not-allowed;
+  background: #eeeff1;
+  border-color: #eeeff1;
+  color: var(--mute-2);
+}
+
+.shimmer-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.22) 50%, transparent 100%);
+  transform: translateX(-100%);
+  animation: shimmer-sweep-anim 3.2s infinite;
+}
+
+.shimmer-button.disabled .shimmer-sweep {
+  display: none;
+}
+
+@keyframes shimmer-sweep-anim {
+  0% { transform: translateX(-100%); }
+  35%, 100% { transform: translateX(100%); }
+}
+
+.shimmer-content {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Motion Card & Spotlight (Kokonut UI) */
+.motion-card {
+  position: relative;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.motion-card:hover {
+  border-color: var(--line-2);
+  box-shadow: 0 10px 30px rgba(21, 23, 26, 0.06);
+}
+
+.motion-card-spotlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.motion-card-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* shadcn/ui Badges */
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 3px 10px;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.ui-badge-sm {
+  padding: 2px 7px;
+  font-size: 10px;
+}
+
+.ui-badge-default {
+  background: var(--ink);
+  color: #fff;
+}
+
+.ui-badge-secondary {
+  background: var(--soft);
+  color: var(--ink-2);
+  border-color: var(--line);
+}
+
+.ui-badge-outline {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line-2);
+}
+
+.ui-badge-success {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.ui-badge-destructive {
+  background: var(--red-soft);
+  color: var(--red-ink);
+  border-color: #fecaca;
+}
+
+/* Number Ticker (Anime.js) */
+.number-ticker {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+}
+
+/* Bento Grid System */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *,

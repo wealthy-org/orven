@@ -5,6 +5,23 @@ import { Layout } from "@/components/Layout";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { requestRelayerQuote, submitRelayTransaction } from "@/lib/api";
 import { useToast } from "@/lib/toast";
+import { PageTransition } from "@/components/ui/PageTransition";
+import { NumberTicker } from "@/components/ui/NumberTicker";
+import { BorderBeam } from "@/components/ui/BorderBeam";
+import { ShimmerButton } from "@/components/ui/ShimmerButton";
+import { Badge } from "@/components/ui/Badge";
+import {
+  ShieldCheck,
+  Send,
+  Lock,
+  KeyRound,
+  Copy,
+  Check,
+  Download,
+  Upload,
+  Zap,
+  ArrowRight,
+} from "lucide-react";
 
 export default function VaultPage() {
   const { toast, showToast, updateToast } = useToast();
@@ -47,10 +64,11 @@ export default function VaultPage() {
   const handleExportBackup = () => {
     try {
       BrowserVaultManager.exportBackup();
+      toast.success("Backup Downloaded", "Encrypted .json seed backup saved safely.");
       setMessage("Encrypted backup downloaded: Keep your .json file secure!");
       setTimeout(() => setMessage(null), 5000);
     } catch (err: any) {
-      alert(err.message || "Failed to export backup");
+      toast.error("Export Failed", err.message || "Failed to export backup");
     }
   };
 
@@ -63,10 +81,11 @@ export default function VaultPage() {
         const text = event.target?.result as string;
         const restored = BrowserVaultManager.restoreBackup(text);
         setVault({ ...restored });
+        toast.success("Vault Restored!", "Balances and WOTS key indices successfully loaded.");
         setMessage("Vault successfully restored from encrypted backup!");
         setTimeout(() => setMessage(null), 5000);
       } catch (err: any) {
-        alert(err.message || "Invalid backup file");
+        toast.error("Restore Failed", err.message || "Invalid backup file");
       }
     };
     reader.readAsText(file);
@@ -149,7 +168,7 @@ export default function VaultPage() {
         />
       </Head>
 
-      <div className="wrap page">
+      <PageTransition className="wrap page">
         <div className="page-head hide-sm">
           <div>
             <div className="label">
@@ -183,9 +202,14 @@ export default function VaultPage() {
 
         <div className="layout">
           <div className="stack" style={{ minWidth: 0 }}>
-            <section className="panel">
+            {/* Bento Overview Panel with 21st.dev BorderBeam */}
+            <section className="panel" style={{ position: "relative" }}>
+              <BorderBeam size={280} duration={14} colorFrom="#D9381E" colorTo="#FFA07A" />
               <div className="panel-head">
-                <h2>Vault Overview</h2>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <ShieldCheck size={18} color="#D9381E" />
+                  <h2>Vault Overview</h2>
+                </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   <span className="addr mono" title={displayAddr}>
                     {shortAddr}
@@ -195,10 +219,11 @@ export default function VaultPage() {
                       type="button"
                       onClick={handleCopyAddress}
                       className="pill small ghost"
-                      style={{ minHeight: "28px", padding: "0 8px", fontSize: "11px" }}
+                      style={{ minHeight: "28px", padding: "0 8px", fontSize: "11px", gap: "4px" }}
                       aria-label="Copy Address"
                     >
-                      {copied ? "Copied" : "Copy"}
+                      {copied ? <Check size={12} color="#16a34a" /> : <Copy size={12} />}
+                      <span>{copied ? "Copied" : "Copy"}</span>
                     </button>
                   )}
                 </div>
@@ -211,7 +236,14 @@ export default function VaultPage() {
                     gap: "16px",
                   }}
                 >
-                  <div style={{ padding: "16px", background: "var(--soft)", borderRadius: "8px" }}>
+                  <div
+                    style={{
+                      padding: "16px",
+                      background: "var(--soft)",
+                      borderRadius: "8px",
+                      border: "1px solid var(--line)",
+                    }}
+                  >
                     <span className="mono" style={{ display: "block", marginBottom: "8px" }}>
                       Available Balance
                     </span>
@@ -219,11 +251,21 @@ export default function VaultPage() {
                       style={{ fontSize: "clamp(22px, 3vw, 28px)", fontWeight: "700" }}
                       className="num"
                     >
-                      {mounted && vault ? vault.balanceUSDG.toFixed(2) : "0.00"}{" "}
+                      <NumberTicker
+                        value={mounted && vault ? vault.balanceUSDG : 0}
+                        decimalPlaces={2}
+                      />{" "}
                       <span style={{ fontSize: "15px", color: "var(--mute)" }}>USDG</span>
                     </div>
                   </div>
-                  <div style={{ padding: "16px", background: "var(--soft)", borderRadius: "8px" }}>
+                  <div
+                    style={{
+                      padding: "16px",
+                      background: "var(--soft)",
+                      borderRadius: "8px",
+                      border: "1px solid var(--line)",
+                    }}
+                  >
                     <span className="mono" style={{ display: "block", marginBottom: "8px" }}>
                       Shielded (Private)
                     </span>
@@ -231,24 +273,31 @@ export default function VaultPage() {
                       style={{ fontSize: "clamp(22px, 3vw, 28px)", fontWeight: "700" }}
                       className="num"
                     >
-                      {mounted && vault ? vault.shieldedUSDG.toFixed(2) : "0.00"}{" "}
+                      <NumberTicker
+                        value={mounted && vault ? vault.shieldedUSDG : 0}
+                        decimalPlaces={2}
+                      />{" "}
                       <span style={{ fontSize: "15px", color: "var(--mute)" }}>USDG</span>
                     </div>
                   </div>
-                  <div style={{ padding: "16px", background: "var(--soft)", borderRadius: "8px" }}>
+                  <div
+                    style={{
+                      padding: "16px",
+                      background: "var(--soft)",
+                      borderRadius: "8px",
+                      border: "1px solid var(--line)",
+                    }}
+                  >
                     <span className="mono" style={{ display: "block", marginBottom: "8px" }}>
-                      WOTS Key Index
+                      WOTS Key Status
                     </span>
-                    <div
-                      style={{
-                        fontSize: "clamp(18px, 2.4vw, 20px)",
-                        fontWeight: "700",
-                        color: "#16a34a",
-                      }}
-                      className="num"
-                    >
-                      Active: #{mounted && vault ? vault.currentKeyIndex : 0} /{" "}
-                      {vault?.maxKeys ?? 1024}
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "6px" }}>
+                      <Badge variant="success">
+                        Key #{mounted && vault ? vault.currentKeyIndex : 1}
+                      </Badge>
+                      <span className="mono" style={{ fontSize: "11px", color: "var(--mute)" }}>
+                        / {vault?.maxKeys ?? 1024}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -262,18 +311,29 @@ export default function VaultPage() {
                     alignItems: "center",
                   }}
                 >
-                  <button className="pill small" type="button" onClick={handleClaimFaucet}>
+                  <ShimmerButton
+                    onClick={handleClaimFaucet}
+                    style={{ minHeight: "38px", padding: "0 16px", fontSize: "13px", borderRadius: "999px" }}
+                  >
                     + Claim 250 USDG Faucet
-                  </button>
-                  <button className="pill small ghost" type="button" onClick={handleExportBackup}>
-                    Export Backup (.json)
+                  </ShimmerButton>
+                  <button
+                    className="pill small ghost"
+                    type="button"
+                    onClick={handleExportBackup}
+                    style={{ gap: "6px" }}
+                  >
+                    <Download size={13} />
+                    <span>Export Backup (.json)</span>
                   </button>
                   <button
                     className="pill small ghost"
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
+                    style={{ gap: "6px" }}
                   >
-                    Restore Backup
+                    <Upload size={13} />
+                    <span>Restore Backup</span>
                   </button>
                   <input
                     type="file"
@@ -282,9 +342,9 @@ export default function VaultPage() {
                     accept=".json"
                     onChange={handleFileChange}
                   />
-                  <span className="mono" style={{ fontSize: "11px", color: "var(--mute)" }}>
+                  <Badge variant="secondary" className="hide-sm">
                     Robinhood Testnet (Chain ID 46630)
-                  </span>
+                  </Badge>
                 </div>
               </div>
             </section>
@@ -336,12 +396,11 @@ export default function VaultPage() {
               </div>
             </div>
 
+            {/* Transaction Journal */}
             <section className="panel">
               <div className="panel-head">
                 <h2>Transaction Journal (Local WOTS Ledger)</h2>
-                <span className="mono" style={{ fontSize: "11px" }}>
-                  {vault?.transactions.length || 0} Records
-                </span>
+                <Badge variant="outline">{vault?.transactions.length || 0} Records</Badge>
               </div>
               <div className="table-container">
                 <table className="trades">
@@ -369,7 +428,7 @@ export default function VaultPage() {
                             <span className="mono">Key #{tx.wotsIndexUsed}</span>
                           </td>
                           <td>
-                            <span style={{ color: "#16a34a", fontWeight: "600" }}>{tx.status}</span>
+                            <Badge variant="success">{tx.status}</Badge>
                           </td>
                         </tr>
                       ))}
@@ -387,7 +446,8 @@ export default function VaultPage() {
           </div>
 
           <aside className="side">
-            <section className="swap-panel" aria-label="Vault Actions">
+            <section className="swap-panel" aria-label="Vault Actions" style={{ position: "relative" }}>
+              <BorderBeam size={220} duration={12} colorFrom="#D9381E" colorTo="#F97316" />
               <div className="swap-panel-inner">
                 <div className="swap-nav-pills" role="tablist">
                   <button
@@ -423,7 +483,7 @@ export default function VaultPage() {
                   <div className="tp">
                     <span className="mono" style={{ fontSize: "11px" }}>Asset</span>
                     <div className="tp-btn" style={{ cursor: "default" }}>
-                      <span className="tb tb-coin tb-sm" data-len="4">
+                      <span className="tb tb-coin tb-sm" data-len={4}>
                         <img src="/logos/usdg.png" alt="USDG" />
                       </span>
                       <span className="tp-val">
@@ -454,9 +514,12 @@ export default function VaultPage() {
                           {mounted && vault ? vault.address : "Loading address..."}
                         </span>
                       </div>
-                      <button className="pill block" type="button" onClick={handleClaimFaucet}>
+                      <ShimmerButton
+                        onClick={handleClaimFaucet}
+                        style={{ minHeight: "44px", borderRadius: "10px", width: "100%" }}
+                      >
                         Use Testnet Faucet (+250 USDG)
-                      </button>
+                      </ShimmerButton>
                     </div>
                   ) : (
                     <>
@@ -507,10 +570,8 @@ export default function VaultPage() {
                         </div>
                       </div>
 
-                      <button
-                        className="pill block"
-                        style={{ minHeight: "48px", borderRadius: "12px" }}
-                        type="button"
+                      <ShimmerButton
+                        style={{ minHeight: "48px", borderRadius: "12px", width: "100%" }}
                         disabled={isProcessing}
                         onClick={handleAction}
                       >
@@ -519,7 +580,7 @@ export default function VaultPage() {
                           : activeTab === "send"
                           ? "Sign with WOTS Key & Transfer"
                           : "Deposit to Private STARK Pool"}
-                      </button>
+                      </ShimmerButton>
                     </>
                   )}
 
@@ -543,7 +604,7 @@ export default function VaultPage() {
             </section>
           </aside>
         </div>
-      </div>
+      </PageTransition>
     </Layout>
   );
 }

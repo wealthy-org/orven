@@ -3,6 +3,9 @@ import Head from "next/head";
 import Link from "next/link";
 import { Layout } from "@/components/Layout";
 import { ROBINHOOD_TESTNET, TOKENS } from "@orven/product-config";
+import { PageTransition } from "@/components/ui/PageTransition";
+import { Badge } from "@/components/ui/Badge";
+import { BookOpen, Network, Layers, ExternalLink, ShieldCheck, Terminal } from "lucide-react";
 
 export default function DocsPage() {
   return (
@@ -15,8 +18,8 @@ export default function DocsPage() {
         />
       </Head>
 
-      <div className="wrap page">
-        <div className="page-head">
+      <PageTransition className="wrap page">
+        <div className="page-head hide-sm">
           <div>
             <div className="label">
               <span className="sq"></span>
@@ -34,7 +37,11 @@ export default function DocsPage() {
           <div className="stack" style={{ minWidth: 0 }}>
             <section className="panel" id="section-1">
               <div className="panel-head">
-                <h2>1. Post-Quantum WOTS Vaults</h2>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <ShieldCheck size={18} color="#D9381E" />
+                  <h2>1. Post-Quantum WOTS Vaults</h2>
+                </div>
+                <Badge variant="outline">WOTS-256</Badge>
               </div>
               <div className="panel-body stack">
                 <p className="note">
@@ -51,7 +58,11 @@ export default function DocsPage() {
 
             <section className="panel" id="section-2">
               <div className="panel-head">
-                <h2>2. Network & Asset Specifications</h2>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Network size={18} color="#D9381E" />
+                  <h2>2. Network & Asset Specifications</h2>
+                </div>
+                <Badge variant="secondary">Robinhood Testnet 46630</Badge>
               </div>
               <div className="table-container">
                 <table className="trades">
@@ -102,7 +113,11 @@ export default function DocsPage() {
 
             <section className="panel" id="section-3">
               <div className="panel-head">
-                <h2>3. Local Service Endpoints</h2>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Layers size={18} color="#D9381E" />
+                  <h2>3. Local Service Endpoints</h2>
+                </div>
+                <Badge variant="success">All Services Online</Badge>
               </div>
               <div className="table-container">
                 <table className="trades">
@@ -156,7 +171,10 @@ export default function DocsPage() {
           <aside className="side">
             <section className="panel">
               <div className="panel-head">
-                <h2>Navigation</h2>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <BookOpen size={18} color="#D9381E" />
+                  <h2>Navigation</h2>
+                </div>
               </div>
               <div className="panel-body stack">
                 <a href="#section-1" className="link mono" style={{ display: "block" }}>
@@ -171,15 +189,16 @@ export default function DocsPage() {
                 <Link
                   href="/agents"
                   className="link mono"
-                  style={{ display: "block", marginTop: "12px", color: "var(--red)" }}
+                  style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "12px", color: "var(--red)" }}
                 >
-                  → Agent MCP Guide
+                  <span>→ Agent MCP Guide</span>
+                  <ExternalLink size={12} />
                 </Link>
               </div>
             </section>
           </aside>
         </div>
-      </div>
+      </PageTransition>
     </Layout>
   );
 }

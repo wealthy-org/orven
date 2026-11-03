@@ -12,12 +12,16 @@
   },
   "dependencies": {
     "@orven/product-config": "file:../../packages/product-config",
+    "animejs": "^4.5.0",
+    "framer-motion": "^14.9.0",
+    "lucide-react": "^1.67.0",
     "next": "^14.2.24",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "viem": "^2.21.55"
   },
   "devDependencies": {
+    "@types/animejs": "^3.1.13",
     "@types/node": "^22.0.0",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",

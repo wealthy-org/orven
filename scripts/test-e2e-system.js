@@ -6,6 +6,7 @@
  */
 
 import { spawn } from "node:child_process";
+import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -17,7 +18,7 @@ const spawnedProcesses = [];
 async function isPortOpen(url) {
   try {
     const res = await fetch(url);
-    return res.status === 200 || res.status === 304;
+    return res.status < 500;
   } catch {
     return false;
   }
@@ -26,7 +27,7 @@ async function isPortOpen(url) {
 async function ensureServices() {
   const needsApi = !(await isPortOpen("http://localhost:4010/health"));
   const needsAi = !(await isPortOpen("http://localhost:4020/health"));
-  const needsWeb = !(await isPortOpen(`http://localhost:${WEB_PORT}/`));
+  const needsWeb = !(await isPortOpen(`http://localhost:${WEB_PORT}/vault`));
 
   if (needsApi) {
     const apiProc = spawn("node", ["services/application-api/dist/index.js"], { cwd: root, stdio: "ignore" });
@@ -37,8 +38,10 @@ async function ensureServices() {
     spawnedProcesses.push(aiProc);
   }
   if (needsWeb) {
-    const nextBin = join(root, "apps", "web", "node_modules", "next", "dist", "bin", "next");
-    const webProc = spawn("node", [nextBin, "start", "-p", String(WEB_PORT)], { cwd: join(root, "apps", "web"), stdio: "ignore" });
+    const nextBin = existsSync(join(root, "apps", "web", "node_modules", "next", "dist", "bin", "next"))
+      ? join(root, "apps", "web", "node_modules", "next", "dist", "bin", "next")
+      : join(root, "node_modules", "next", "dist", "bin", "next");
+    const webProc = spawn("node", [nextBin, "start", "apps/web", "-p", String(WEB_PORT)], { cwd: root, stdio: "ignore" });
     spawnedProcesses.push(webProc);
   }
 
@@ -48,7 +51,7 @@ async function ensureServices() {
     while (Date.now() - start < 15000) {
       const apiReady = !needsApi || (await isPortOpen("http://localhost:4010/health"));
       const aiReady = !needsAi || (await isPortOpen("http://localhost:4020/health"));
-      const webReady = !needsWeb || (await isPortOpen(`http://localhost:${WEB_PORT}/`));
+      const webReady = !needsWeb || (await isPortOpen(`http://localhost:${WEB_PORT}/vault`));
       if (apiReady && aiReady && webReady) break;
       await new Promise((r) => setTimeout(r, 400));
     }

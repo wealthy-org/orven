@@ -4,6 +4,12 @@ import { Layout } from "@/components/Layout";
 import { FEE_TIERS } from "@orven/product-config";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { useToast } from "@/lib/toast";
+import { PageTransition } from "@/components/ui/PageTransition";
+import { NumberTicker } from "@/components/ui/NumberTicker";
+import { BorderBeam } from "@/components/ui/BorderBeam";
+import { ShimmerButton } from "@/components/ui/ShimmerButton";
+import { Badge } from "@/components/ui/Badge";
+import { Lock, Coins, Shield, Zap } from "lucide-react";
 
 export default function LockPage() {
   const { toast } = useToast();
@@ -72,8 +78,8 @@ export default function LockPage() {
         />
       </Head>
 
-      <div className="wrap page">
-        <div className="page-head">
+      <PageTransition className="wrap page">
+        <div className="page-head hide-sm">
           <div>
             <div className="label">
               <span className="sq"></span>
@@ -107,10 +113,13 @@ export default function LockPage() {
           <div className="stack" style={{ minWidth: 0 }}>
             <section className="panel">
               <div className="panel-head">
-                <h2>Fee Discount Schedule</h2>
-                <span className="mono" style={{ color: "#16a34a" }}>
-                  Active: {currentTier.tier} ({currentTier.fee} Fee)
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Shield size={18} color="#16a34a" />
+                  <h2>Fee Discount Schedule</h2>
+                </div>
+                <Badge variant="success">
+                  {currentTier.tier} ({currentTier.fee} Fee)
+                </Badge>
               </div>
               <div className="table-container">
                 <table className="trades">
@@ -135,12 +144,9 @@ export default function LockPage() {
                         <td>
                           <b>{tier.label}</b>{" "}
                           {currentTier.fee === tier.feePercent && (
-                            <span
-                              className="mono"
-                              style={{ color: "var(--red)", fontSize: "11px", marginLeft: "6px" }}
-                            >
-                              (Current Tier)
-                            </span>
+                            <Badge variant="destructive" size="sm" style={{ marginLeft: "6px" }}>
+                              Current Tier
+                            </Badge>
                           )}
                         </td>
                         <td className="num">{tier.feePercent}</td>
@@ -166,13 +172,15 @@ export default function LockPage() {
           </div>
 
           <aside className="side">
-            <section className="swap-panel" aria-label="Lock Action">
+            <section className="swap-panel" aria-label="Lock Action" style={{ position: "relative" }}>
+              <BorderBeam size={220} duration={12} colorFrom="#D9381E" colorTo="#E11D48" />
               <div className="swap-panel-inner">
-                <div style={{ fontWeight: "700", fontSize: "16px", marginBottom: "14px" }}>
-                  Lock Tokens
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                  <Lock size={18} color="#D9381E" />
+                  <div style={{ fontWeight: "700", fontSize: "16px" }}>Lock Tokens</div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  <div style={{ padding: "14px", background: "var(--soft)", borderRadius: "8px" }}>
+                  <div style={{ padding: "14px", background: "var(--soft)", borderRadius: "8px", border: "1px solid var(--line)" }}>
                     <span className="mono" style={{ fontSize: "11px" }}>Currently Locked</span>
                     <div
                       className="num"
@@ -182,7 +190,11 @@ export default function LockPage() {
                         marginTop: "4px",
                       }}
                     >
-                      {mounted && vault ? vault.lockedORVEN.toLocaleString() : "0"} ORVEN{" "}
+                      <NumberTicker
+                        value={mounted && vault ? vault.lockedORVEN : 0}
+                        decimalPlaces={0}
+                        suffix=" ORVEN"
+                      />{" "}
                       <span style={{ fontSize: "13px", color: "var(--mute)" }}>
                         ({currentTier.tier}: {currentTier.fee})
                       </span>
@@ -241,15 +253,13 @@ export default function LockPage() {
                     ))}
                   </div>
 
-                  <button
-                    className="pill block"
-                    style={{ minHeight: "48px", borderRadius: "12px", marginTop: "4px" }}
-                    type="button"
+                  <ShimmerButton
+                    style={{ minHeight: "48px", borderRadius: "12px", width: "100%", marginTop: "4px" }}
                     disabled={isProcessing}
                     onClick={handleLock}
                   >
                     {isProcessing ? "Broadcasting Lock Order..." : "Lock ORVEN (7 Days)"}
-                  </button>
+                  </ShimmerButton>
 
                   <div
                     style={{
@@ -262,7 +272,7 @@ export default function LockPage() {
                       gap: "6px",
                     }}
                   >
-                    <span style={{ color: "#16a34a" }}>⚡</span>
+                    <Zap size={12} color="#16a34a" />
                     <span>Locking is on-chain · Gas sponsored by Vault</span>
                   </div>
                 </div>
@@ -270,7 +280,7 @@ export default function LockPage() {
             </section>
           </aside>
         </div>
-      </div>
+      </PageTransition>
     </Layout>
   );
 }

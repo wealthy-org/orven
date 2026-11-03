@@ -3,6 +3,12 @@ import Head from "next/head";
 import { Layout } from "@/components/Layout";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { useToast } from "@/lib/toast";
+import { PageTransition } from "@/components/ui/PageTransition";
+import { NumberTicker } from "@/components/ui/NumberTicker";
+import { BorderBeam } from "@/components/ui/BorderBeam";
+import { ShimmerButton } from "@/components/ui/ShimmerButton";
+import { Badge } from "@/components/ui/Badge";
+import { Award, Zap, Calendar, Flame, Bot } from "lucide-react";
 
 export default function TidePage() {
   const { toast } = useToast();
@@ -62,8 +68,8 @@ export default function TidePage() {
         />
       </Head>
 
-      <div className="wrap page">
-        <div className="page-head">
+      <PageTransition className="wrap page">
+        <div className="page-head hide-sm">
           <div>
             <div className="label">
               <span className="sq"></span>
@@ -98,10 +104,11 @@ export default function TidePage() {
             {/* Epoch Overview Widget */}
             <section className="panel">
               <div className="panel-head">
-                <h2>Epoch 1 Overview</h2>
-                <span className="mono" style={{ color: "#16a34a" }}>
-                  Active Epoch
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Award size={18} color="#D9381E" />
+                  <h2>Epoch 1 Overview</h2>
+                </div>
+                <Badge variant="success">Active Epoch</Badge>
               </div>
               <div className="panel-body stack">
                 <div
@@ -111,7 +118,7 @@ export default function TidePage() {
                     gap: "16px",
                   }}
                 >
-                  <div style={{ padding: "16px", background: "var(--soft)", borderRadius: "6px" }}>
+                  <div style={{ padding: "16px", background: "var(--soft)", borderRadius: "8px", border: "1px solid var(--line)" }}>
                     <span className="mono">Your Points</span>
                     <div
                       className="num"
@@ -121,10 +128,13 @@ export default function TidePage() {
                         marginTop: "4px",
                       }}
                     >
-                      {isAgentLinked ? "2,130" : "1,420"}
+                      <NumberTicker
+                        value={isAgentLinked ? 2130 : 1420}
+                        decimalPlaces={0}
+                      />
                     </div>
                   </div>
-                  <div style={{ padding: "16px", background: "var(--soft)", borderRadius: "6px" }}>
+                  <div style={{ padding: "16px", background: "var(--soft)", borderRadius: "8px", border: "1px solid var(--line)" }}>
                     <span className="mono">Multiplier</span>
                     <div
                       className="num"
@@ -135,15 +145,19 @@ export default function TidePage() {
                         color: isAgentLinked ? "#16a34a" : undefined,
                       }}
                     >
-                      {isAgentLinked ? "1.5x (Agent)" : "1.0x (Standard)"}
+                      {isAgentLinked ? (
+                        <Badge variant="success" size="md">1.5x Boost Active</Badge>
+                      ) : (
+                        "1.0x Standard"
+                      )}
                     </div>
                   </div>
-                  <div style={{ padding: "16px", background: "var(--soft)", borderRadius: "6px" }}>
+                  <div style={{ padding: "16px", background: "var(--soft)", borderRadius: "8px", border: "1px solid var(--line)" }}>
                     <span className="mono">Epoch Ends In</span>
                     <div
                       className="num"
                       style={{
-                        fontSize: "clamp(22px, 3vw, 26px)",
+                        fontSize: "clamp(20px, 2.6vw, 24px)",
                         fontWeight: "700",
                         marginTop: "4px",
                       }}
@@ -164,10 +178,14 @@ export default function TidePage() {
             {/* 7-Day Activity Streak Widget */}
             <section className="panel">
               <div className="panel-head">
-                <h2>Weekly Activity Streak</h2>
-                <span className="mono" style={{ color: "var(--red)" }}>
-                  Streak Bonus: +20%
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Calendar size={18} color="#D9381E" />
+                  <h2>Weekly Activity Streak</h2>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <Flame size={14} color="#D9381E" />
+                  <Badge variant="destructive">Streak Bonus: +20%</Badge>
+                </div>
               </div>
               <div className="panel-body stack" style={{ padding: "0 0 16px" }}>
                 <ul className="tide-days">
@@ -247,73 +265,87 @@ export default function TidePage() {
           </div>
 
           <aside className="side">
-            <section className="panel" aria-label="Agent Linking">
-              <div className="panel-head">
-                <h2>Link Autonomous Agent</h2>
-              </div>
-              <div className="panel-body stack">
-                <p className="note">
-                  Link your local agent's MCP identity to your Orven Vault to attribute automated
-                  trading and task points to your personal account.
-                </p>
+            <section className="swap-panel" aria-label="Agent Linking" style={{ position: "relative" }}>
+              <BorderBeam size={220} duration={12} colorFrom="#D9381E" colorTo="#E11D48" />
+              <div className="swap-panel-inner">
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                  <Bot size={18} color="#D9381E" />
+                  <div style={{ fontWeight: "700", fontSize: "16px" }}>Link Autonomous Agent</div>
+                </div>
+                <div className="stack">
+                  <p className="note" style={{ fontSize: "12.5px" }}>
+                    Link your local agent's MCP identity to your Orven Vault to attribute automated
+                    trading and task points to your personal account.
+                  </p>
 
-                {isAgentLinked ? (
+                  {isAgentLinked ? (
+                    <div
+                      style={{
+                        padding: "14px",
+                        background: "var(--soft)",
+                        borderRadius: "8px",
+                        border: "1px solid var(--line)",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#16a34a" }} />
+                        <span className="mono" style={{ color: "#16a34a", fontSize: "12px", fontWeight: "600" }}>
+                          Agent Verified & Linked
+                        </span>
+                      </div>
+                      <div
+                        className="mono"
+                        style={{ fontSize: "11px", wordBreak: "break-all", marginTop: "8px" }}
+                      >
+                        {vault?.linkedAgent}
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <label className="field">
+                        <span className="field-top">
+                          <span className="mono">Agent Public Key / Digest</span>
+                        </span>
+                        <span className="field-row">
+                          <input
+                            placeholder="e.g. 0x89ab...c102"
+                            value={agentKeyInput}
+                            onChange={(e) => setAgentKeyInput(e.target.value)}
+                          />
+                        </span>
+                      </label>
+
+                      <ShimmerButton
+                        style={{ minHeight: "48px", borderRadius: "12px", width: "100%", marginTop: "4px" }}
+                        disabled={isLinking}
+                        onClick={handleLinkAgent}
+                      >
+                        {isLinking ? "Verifying Agent Key..." : "Link Agent (1.5x Boost)"}
+                      </ShimmerButton>
+                    </>
+                  )}
+
                   <div
                     style={{
-                      padding: "14px",
-                      background: "var(--soft)",
-                      borderRadius: "6px",
-                      border: "1px solid var(--line)",
+                      textAlign: "center",
+                      fontSize: "11.5px",
+                      color: "var(--mute-2)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "6px",
+                      marginTop: "2px",
                     }}
                   >
-                    <span
-                      className="mono"
-                      style={{ color: "#16a34a", fontSize: "12px", display: "block" }}
-                    >
-                      ● Agent Verified & Linked
-                    </span>
-                    <div
-                      className="mono"
-                      style={{ fontSize: "11px", wordBreak: "break-all", marginTop: "6px" }}
-                    >
-                      {vault?.linkedAgent}
-                    </div>
+                    <Zap size={12} color="#16a34a" />
+                    <span>Autonomous agents query local MCP via stdio</span>
                   </div>
-                ) : (
-                  <>
-                    <label className="field">
-                      <span className="field-top">
-                        <span className="mono">Agent Public Key / Digest</span>
-                      </span>
-                      <span className="field-row">
-                        <input
-                          placeholder="e.g. 0x89ab...c102"
-                          value={agentKeyInput}
-                          onChange={(e) => setAgentKeyInput(e.target.value)}
-                        />
-                      </span>
-                    </label>
-
-                    <button
-                      className="pill block"
-                      type="button"
-                      disabled={isLinking}
-                      onClick={handleLinkAgent}
-                    >
-                      {isLinking ? "Verifying Agent Key..." : "Link Agent (1.5x Boost)"}
-                    </button>
-                  </>
-                )}
-
-                <p className="note" style={{ fontSize: "12px", marginTop: "8px" }}>
-                  Autonomous agents query the local MCP server over stdio to settle trades and escrow
-                  without user intervention.
-                </p>
+                </div>
               </div>
             </section>
           </aside>
         </div>
-      </div>
+      </PageTransition>
     </Layout>
   );
 }

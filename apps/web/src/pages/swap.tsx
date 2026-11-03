@@ -7,6 +7,12 @@ import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { requestRelayerQuote, submitRelayTransaction } from "@/lib/api";
 import { useWallet } from "@/lib/wallet";
 import { useToast } from "@/lib/toast";
+import { PageTransition } from "@/components/ui/PageTransition";
+import { NumberTicker } from "@/components/ui/NumberTicker";
+import { BorderBeam } from "@/components/ui/BorderBeam";
+import { ShimmerButton } from "@/components/ui/ShimmerButton";
+import { Badge } from "@/components/ui/Badge";
+import { ArrowDownUp, Flame, Zap, ChevronDown, Check, Coins } from "lucide-react";
 
 interface TokenItem {
   symbol: string;
@@ -177,9 +183,8 @@ export default function SwapPage() {
     setSearchFilter("");
   };
 
-  // Button Label Helper
   const getButtonLabel = () => {
-    if (isProcessing) return "Submitting Order...";
+    if (isProcessing) return "Submitting Order via Relayer...";
     if (sourceMode === "wallet" && !isExternalConnected) return "Connect a wallet";
     if (!payAmount || !isValidAmount) return "Enter an amount";
     if (isInsufficientBalance) return `Insufficient ${tokenIn.symbol} balance`;
@@ -202,7 +207,7 @@ export default function SwapPage() {
         />
       </Head>
 
-      <div className="wrap page">
+      <PageTransition className="wrap page">
         <div className="page-head hide-sm">
           <div>
             <div className="label">
@@ -253,14 +258,17 @@ export default function SwapPage() {
               }}
             >
               <div>
-                <span className="mono" style={{ color: "var(--red)", fontSize: "11px" }}>
-                  🔥 Deflationary Buyback Engine
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <Flame size={14} color="#D9381E" />
+                  <span className="mono" style={{ color: "var(--red)", fontSize: "11px" }}>
+                    Deflationary Buyback Engine
+                  </span>
+                </div>
                 <div
                   style={{ fontSize: "clamp(18px, 2.4vw, 22px)", fontWeight: "700", marginTop: "2px" }}
                   className="num"
                 >
-                  124,500 ORVEN Burned{" "}
+                  <NumberTicker value={124500} decimalPlaces={0} suffix=" ORVEN Burned" />{" "}
                   <span style={{ fontSize: "13px", color: "var(--faint)" }}>(~$31,125 USDG)</span>
                 </div>
               </div>
@@ -276,9 +284,9 @@ export default function SwapPage() {
             <section className="panel">
               <div className="panel-head">
                 <h2>How a swap goes</h2>
-                <span className="mono">
+                <Badge variant="outline">
                   Vault: {mounted && vault ? vault.balanceUSDG.toFixed(2) : "0.00"} USDG
-                </span>
+                </Badge>
               </div>
               <div className="panel-body stack">
                 <p className="note">
@@ -319,9 +327,14 @@ export default function SwapPage() {
             </section>
           </div>
 
-          {/* Primary Swap Terminal Widget */}
+          {/* Primary Swap Terminal Widget with 21st.dev BorderBeam */}
           <aside className="side">
-            <section className="swap-panel" aria-label="Orven Swap Terminal">
+            <section
+              className="swap-panel"
+              aria-label="Orven Swap Terminal"
+              style={{ position: "relative" }}
+            >
+              <BorderBeam size={260} duration={12} colorFrom="#D9381E" colorTo="#FFA07A" />
               <div className="swap-panel-inner">
                 {/* Segmented Mode Switcher */}
                 <div className="swap-nav-pills" role="tablist">
@@ -400,15 +413,7 @@ export default function SwapPage() {
                           style={{ width: "22px", height: "22px", borderRadius: "50%" }}
                         />
                         <span>{tokenIn.symbol}</span>
-                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                          <path
-                            d="M2.5 3.5L5 6L7.5 3.5"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
+                        <ChevronDown size={14} />
                       </button>
                     </div>
 
@@ -428,10 +433,7 @@ export default function SwapPage() {
                       aria-label="Invert Swap Tokens"
                       title="Switch swap pair"
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                        <path d="M7 10h14l-4-4" />
-                        <path d="M17 14H3l4 4" />
-                      </svg>
+                      <ArrowDownUp size={15} />
                     </button>
                   </div>
 
@@ -462,15 +464,7 @@ export default function SwapPage() {
                           style={{ width: "22px", height: "22px", borderRadius: "50%" }}
                         />
                         <span>{tokenOut.symbol}</span>
-                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                          <path
-                            d="M2.5 3.5L5 6L7.5 3.5"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
+                        <ChevronDown size={14} />
                       </button>
                     </div>
 
@@ -518,16 +512,14 @@ export default function SwapPage() {
                     </div>
                   </div>
 
-                  {/* ACTION BUTTON */}
-                  <button
-                    className="pill block"
-                    style={{ minHeight: "48px", borderRadius: "12px", marginTop: "4px" }}
-                    type="button"
+                  {/* 21ST.DEV SHIMMER ACTION BUTTON */}
+                  <ShimmerButton
+                    style={{ minHeight: "48px", borderRadius: "12px", width: "100%" }}
                     disabled={isButtonDisabled}
                     onClick={handleExecuteSwap}
                   >
                     {getButtonLabel()}
-                  </button>
+                  </ShimmerButton>
 
                   <div
                     style={{
@@ -541,7 +533,7 @@ export default function SwapPage() {
                       marginTop: "2px",
                     }}
                   >
-                    <span style={{ color: "#16a34a" }}>⚡</span>
+                    <Zap size={12} color="#16a34a" />
                     <span>Zero ETH Gas Required · One-Time WOTS Key Protected</span>
                   </div>
                 </div>
@@ -549,7 +541,7 @@ export default function SwapPage() {
             </section>
           </aside>
         </div>
-      </div>
+      </PageTransition>
 
       {/* Interactive Token Selector (Bottom Sheet on Mobile, Centered Modal on Desktop) */}
       {tokenModalTarget && (

@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import Head from "next/head";
 import { Layout } from "@/components/Layout";
 import { executeAITask } from "@/lib/api";
+import { PageTransition } from "@/components/ui/PageTransition";
+import { BorderBeam } from "@/components/ui/BorderBeam";
+import { ShimmerButton } from "@/components/ui/ShimmerButton";
+import { Badge } from "@/components/ui/Badge";
+import { Bot, Terminal, Cpu, Sparkles, Play, Code2 } from "lucide-react";
 
 export default function AgentsPage() {
   const [testPrompt, setTestPrompt] = useState("");
@@ -13,7 +18,7 @@ export default function AgentsPage() {
     if (!testPrompt.trim()) return;
     try {
       setIsExecuting(true);
-      setAgentOutput("Connecting to Orven AI Gateway (Port 4020) & reserving credit...");
+      setAgentOutput("Connecting to Orven AI Gateway & reserving credit...");
       const res = await executeAITask(testPrompt, selectedModel);
       setAgentOutput(res.output || JSON.stringify(res, null, 2));
     } catch (err: any) {
@@ -33,8 +38,8 @@ export default function AgentsPage() {
         />
       </Head>
 
-      <div className="wrap page">
-        <div className="page-head">
+      <PageTransition className="wrap page">
+        <div className="page-head hide-sm">
           <div>
             <div className="label">
               <span className="sq"></span>
@@ -53,10 +58,11 @@ export default function AgentsPage() {
           <div className="stack" style={{ minWidth: 0 }}>
             <section className="panel">
               <div className="panel-head">
-                <h2>Quick Installation (stdio)</h2>
-                <span className="mono" style={{ color: "#16a34a" }}>
-                  Testnet Ready
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Terminal size={18} color="#D9381E" />
+                  <h2>Quick Installation (stdio)</h2>
+                </div>
+                <Badge variant="success">Testnet Ready</Badge>
               </div>
               <div className="panel-body stack">
                 <p className="note">
@@ -68,7 +74,7 @@ export default function AgentsPage() {
                     background: "var(--ink)",
                     color: "#fff",
                     padding: "14px 18px",
-                    borderRadius: "6px",
+                    borderRadius: "8px",
                     fontFamily: "var(--mono)",
                     fontSize: "13px",
                     display: "flex",
@@ -78,21 +84,26 @@ export default function AgentsPage() {
                     gap: "10px",
                   }}
                 >
-                  <code style={{ wordBreak: "break-all" }}>npx @orven/mcp@testnet</code>
-                  <span className="mono" style={{ color: "var(--faint)", fontSize: "11px" }}>
+                  <code style={{ wordBreak: "break-all", color: "#FFA07A" }}>
+                    npx @orven/mcp@testnet
+                  </code>
+                  <Badge variant="secondary" size="sm">
                     Chain ID 46630
-                  </span>
+                  </Badge>
                 </div>
 
                 <div style={{ marginTop: "16px" }}>
-                  <h3 style={{ fontSize: "15px", marginBottom: "8px" }}>
-                    Claude Desktop & Cursor Configuration
-                  </h3>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                    <Code2 size={16} color="var(--mute-2)" />
+                    <h3 style={{ fontSize: "14.5px" }}>
+                      Claude Desktop & Cursor Configuration
+                    </h3>
+                  </div>
                   <div
                     style={{
                       background: "var(--soft)",
                       padding: "14px 18px",
-                      borderRadius: "6px",
+                      borderRadius: "8px",
                       fontFamily: "var(--mono)",
                       fontSize: "12px",
                       overflowX: "auto",
@@ -114,7 +125,11 @@ export default function AgentsPage() {
 
             <section className="panel">
               <div className="panel-head">
-                <h2>Available Agent Tools (`@orven/mcp`)</h2>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Cpu size={18} color="#D9381E" />
+                  <h2>Available Agent Tools (`@orven/mcp`)</h2>
+                </div>
+                <Badge variant="outline">7 Tools Registered</Badge>
               </div>
               <div className="table-container">
                 <table className="trades">
@@ -128,10 +143,10 @@ export default function AgentsPage() {
                   <tbody>
                     <tr>
                       <td>
-                        <code>open_vault</code>
+                        <code style={{ color: "var(--red-ink)", fontWeight: "600" }}>open_vault</code>
                       </td>
                       <td>
-                        <span className="mono">Vault</span>
+                        <Badge variant="secondary">Vault</Badge>
                       </td>
                       <td style={{ whiteSpace: "normal" }}>
                         Initialize post-quantum token vault on Robinhood Chain.
@@ -139,10 +154,10 @@ export default function AgentsPage() {
                     </tr>
                     <tr>
                       <td>
-                        <code>balance</code>
+                        <code style={{ color: "var(--red-ink)", fontWeight: "600" }}>balance</code>
                       </td>
                       <td>
-                        <span className="mono">Vault</span>
+                        <Badge variant="secondary">Vault</Badge>
                       </td>
                       <td style={{ whiteSpace: "normal" }}>
                         Read spendable and private shielded USDG balance.
@@ -150,10 +165,10 @@ export default function AgentsPage() {
                     </tr>
                     <tr>
                       <td>
-                        <code>orven_swap_quote</code>
+                        <code style={{ color: "var(--red-ink)", fontWeight: "600" }}>orven_swap_quote</code>
                       </td>
                       <td>
-                        <span className="mono">Trading</span>
+                        <Badge variant="secondary">Trading</Badge>
                       </td>
                       <td style={{ whiteSpace: "normal" }}>
                         Calculate optimal route, min-out, and slippage on Uniswap v3/v4.
@@ -161,10 +176,10 @@ export default function AgentsPage() {
                     </tr>
                     <tr>
                       <td>
-                        <code>private_shield</code>
+                        <code style={{ color: "var(--red-ink)", fontWeight: "600" }}>private_shield</code>
                       </td>
                       <td>
-                        <span className="mono">Privacy</span>
+                        <Badge variant="secondary">Privacy</Badge>
                       </td>
                       <td style={{ whiteSpace: "normal" }}>
                         Deposit USDG into STARK shielded note pool with local commitment.
@@ -172,10 +187,10 @@ export default function AgentsPage() {
                     </tr>
                     <tr>
                       <td>
-                        <code>pad_search</code>
+                        <code style={{ color: "var(--red-ink)", fontWeight: "600" }}>pad_search</code>
                       </td>
                       <td>
-                        <span className="mono">Work</span>
+                        <Badge variant="secondary">Work</Badge>
                       </td>
                       <td style={{ whiteSpace: "normal" }}>
                         Search active decentralized service offers on OrvenPad.
@@ -183,10 +198,10 @@ export default function AgentsPage() {
                     </tr>
                     <tr>
                       <td>
-                        <code>pad_order</code>
+                        <code style={{ color: "var(--red-ink)", fontWeight: "600" }}>pad_order</code>
                       </td>
                       <td>
-                        <span className="mono">Work</span>
+                        <Badge variant="secondary">Work</Badge>
                       </td>
                       <td style={{ whiteSpace: "normal" }}>
                         Fund on-chain escrow for autonomous work contracts.
@@ -194,10 +209,10 @@ export default function AgentsPage() {
                     </tr>
                     <tr>
                       <td>
-                        <code>orven_ai</code>
+                        <code style={{ color: "var(--red-ink)", fontWeight: "600" }}>orven_ai</code>
                       </td>
                       <td>
-                        <span className="mono">AI Gateway</span>
+                        <Badge variant="secondary">AI Gateway</Badge>
                       </td>
                       <td style={{ whiteSpace: "normal" }}>
                         Execute metered inference tasks with atomic USDG payment.
@@ -210,89 +225,92 @@ export default function AgentsPage() {
           </div>
 
           <aside className="side">
-            <section className="panel" aria-label="Agent Playground">
-              <div className="panel-head">
-                <h2>Agent AI Playground</h2>
-              </div>
-              <div className="panel-body stack">
-                <p className="note">
-                  Simulate an autonomous agent invoking the <code>orven_ai</code> tool through the Orven
-                  AI Gateway.
-                </p>
-
+            <section className="swap-panel" aria-label="Agent Playground" style={{ position: "relative" }}>
+              <BorderBeam size={220} duration={12} colorFrom="#D9381E" colorTo="#E11D48" />
+              <div className="swap-panel-inner">
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                  <Sparkles size={18} color="#D9381E" />
+                  <div style={{ fontWeight: "700", fontSize: "16px" }}>Agent AI Playground</div>
+                </div>
                 <div className="stack">
-                  <div className="tp">
-                    <span className="mono">Select Model</span>
-                    <select
-                      value={selectedModel}
-                      onChange={(e) => setSelectedModel(e.target.value)}
+                  <p className="note" style={{ fontSize: "12.5px" }}>
+                    Simulate an autonomous agent invoking the <code>orven_ai</code> tool through the Orven
+                    AI Gateway.
+                  </p>
+
+                  <div className="stack">
+                    <div className="tp">
+                      <span className="mono" style={{ fontSize: "11px" }}>Select Model</span>
+                      <select
+                        value={selectedModel}
+                        onChange={(e) => setSelectedModel(e.target.value)}
+                        style={{
+                          width: "100%",
+                          minHeight: "44px",
+                          padding: "0 12px",
+                          border: "1px solid var(--line-2)",
+                          borderRadius: "8px",
+                          fontFamily: "var(--sans)",
+                          background: "#fff",
+                          fontSize: "14px",
+                        }}
+                      >
+                        <option value="orven-gpt-4o">GPT-4o Omnimodel (0.005 USDG / 1k)</option>
+                        <option value="orven-claude-3-5-sonnet">Claude 3.5 Sonnet (0.006 USDG / 1k)</option>
+                        <option value="orven-flux-pro">Flux Pro Studio (0.04 USDG / img)</option>
+                        <option value="orven-runway-gen3">Runway Gen-3 Video (0.25 USDG / 5s)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <label className="field">
+                    <span className="field-top">
+                      <span className="mono">Task / Prompt</span>
+                    </span>
+                    <span className="field-row">
+                      <input
+                        placeholder="e.g. Analyze Robinhood Chain liquidity..."
+                        value={testPrompt}
+                        onChange={(e) => setTestPrompt(e.target.value)}
+                      />
+                    </span>
+                  </label>
+
+                  <ShimmerButton
+                    style={{ minHeight: "48px", borderRadius: "12px", width: "100%", marginTop: "4px" }}
+                    disabled={isExecuting}
+                    onClick={handleRunTask}
+                  >
+                    {isExecuting ? "Executing AI Task..." : "Run Task via orven_ai"}
+                  </ShimmerButton>
+
+                  {agentOutput && (
+                    <div
                       style={{
-                        width: "100%",
-                        minHeight: "44px",
-                        padding: "0 12px",
-                        border: "1px solid var(--line-2)",
-                        borderRadius: "6px",
-                        fontFamily: "var(--sans)",
-                        background: "#fff",
-                        fontSize: "14px",
+                        background: "var(--soft)",
+                        padding: "14px",
+                        borderRadius: "8px",
+                        border: "1px solid var(--line)",
+                        fontSize: "12px",
+                        fontFamily: "var(--mono)",
+                        wordBreak: "break-all",
+                        maxHeight: "220px",
+                        overflowY: "auto",
                       }}
                     >
-                      <option value="orven-gpt-4o">GPT-4o Omnimodel (0.005 USDG / 1k)</option>
-                      <option value="orven-claude-3-5-sonnet">Claude 3.5 Sonnet (0.006 USDG / 1k)</option>
-                      <option value="orven-flux-pro">Flux Pro Studio (0.04 USDG / img)</option>
-                      <option value="orven-runway-gen3">Runway Gen-3 Video (0.25 USDG / 5s)</option>
-                    </select>
-                  </div>
+                      {agentOutput}
+                    </div>
+                  )}
+
+                  <p className="note" style={{ fontSize: "12px", marginTop: "8px" }}>
+                    Tasks are metered in micro-USDG and gas-sponsored by the Orven Relayer.
+                  </p>
                 </div>
-
-                <label className="field">
-                  <span className="field-top">
-                    <span className="mono">Task / Prompt</span>
-                  </span>
-                  <span className="field-row">
-                    <input
-                      placeholder="e.g. Analyze Robinhood Chain liquidity..."
-                      value={testPrompt}
-                      onChange={(e) => setTestPrompt(e.target.value)}
-                    />
-                  </span>
-                </label>
-
-                <button
-                  className="pill block"
-                  type="button"
-                  disabled={isExecuting}
-                  onClick={handleRunTask}
-                >
-                  {isExecuting ? "Executing AI Task..." : "Run Task via orven_ai"}
-                </button>
-
-                {agentOutput && (
-                  <div
-                    style={{
-                      background: "var(--soft)",
-                      padding: "14px",
-                      borderRadius: "6px",
-                      border: "1px solid var(--line)",
-                      fontSize: "12px",
-                      fontFamily: "var(--mono)",
-                      wordBreak: "break-all",
-                      maxHeight: "220px",
-                      overflowY: "auto",
-                    }}
-                  >
-                    {agentOutput}
-                  </div>
-                )}
-
-                <p className="note" style={{ fontSize: "12px", marginTop: "8px" }}>
-                  Tasks are metered in micro-USDG and gas-sponsored by the Orven Relayer.
-                </p>
               </div>
             </section>
           </aside>
         </div>
-      </div>
+      </PageTransition>
     </Layout>
   );
 }

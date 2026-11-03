@@ -37,9 +37,11 @@ async function ensureLocalServer() {
     if (!isOpen) {
       console.log(`   [Auto-Spawner] Spawning local Next.js server for QA on ${baseUrl}...`);
       const port = new URL(baseUrl).port || "3005";
-      const nextBin = path.join(root, "apps", "web", "node_modules", "next", "dist", "bin", "next");
-      spawnedServer = spawn("node", [nextBin, "start", "-p", port], {
-        cwd: path.join(root, "apps", "web"),
+      const nextBin = fs.existsSync(path.join(root, "apps", "web", "node_modules", "next", "dist", "bin", "next"))
+        ? path.join(root, "apps", "web", "node_modules", "next", "dist", "bin", "next")
+        : path.join(root, "node_modules", "next", "dist", "bin", "next");
+      spawnedServer = spawn("node", [nextBin, "start", "apps/web", "-p", port], {
+        cwd: root,
         stdio: "ignore",
       });
 

@@ -3,6 +3,12 @@ import Head from "next/head";
 import { Layout } from "@/components/Layout";
 import { BrowserVaultManager, VaultState } from "@/lib/keystore";
 import { useToast } from "@/lib/toast";
+import { PageTransition } from "@/components/ui/PageTransition";
+import { BorderBeam } from "@/components/ui/BorderBeam";
+import { ShimmerButton } from "@/components/ui/ShimmerButton";
+import { MotionCard } from "@/components/ui/MotionCard";
+import { Badge } from "@/components/ui/Badge";
+import { Briefcase, Rocket, Search, ShieldCheck, PlusCircle } from "lucide-react";
 
 export default function PadPage() {
   const { toast } = useToast();
@@ -99,8 +105,8 @@ export default function PadPage() {
         />
       </Head>
 
-      <div className="wrap page">
-        <div className="page-head">
+      <PageTransition className="wrap page">
+        <div className="page-head hide-sm">
           <div>
             <div className="label">
               <span className="sq"></span>
@@ -148,42 +154,53 @@ export default function PadPage() {
                   type="button"
                   className={`pill small ${padView === "marketplace" ? "" : "ghost"}`}
                   onClick={() => setPadView("marketplace")}
+                  style={{ gap: "6px" }}
                 >
-                  Work Marketplace
+                  <Briefcase size={14} />
+                  <span>Work Marketplace</span>
                 </button>
                 <button
                   type="button"
                   className={`pill small ${padView === "launchpad" ? "" : "ghost"}`}
                   onClick={() => setPadView("launchpad")}
+                  style={{ gap: "6px" }}
                 >
-                  Token Launchpad
+                  <Rocket size={14} />
+                  <span>Token Launchpad</span>
                 </button>
               </div>
 
-              <span className="mono" style={{ fontSize: "11.5px" }}>
+              <Badge variant="outline">
                 Vault: {mounted && vault ? vault.balanceUSDG.toFixed(2) : "0.00"} USDG
-              </span>
+              </Badge>
             </div>
 
             {padView === "marketplace" ? (
               <>
                 <section className="panel">
                   <div className="panel-head">
-                    <h2>Active Work Offers</h2>
-                    <span className="mono" style={{ fontSize: "11px" }}>
-                      Escrow Protected
-                    </span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Briefcase size={18} color="#D9381E" />
+                      <h2>Active Work Offers</h2>
+                    </div>
+                    <Badge variant="success">Escrow Protected</Badge>
                   </div>
                   <div className="panel-body stack">
-                    <div>
+                    <div style={{ position: "relative" }}>
+                      <Search
+                        size={16}
+                        style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "var(--mute-2)" }}
+                      />
                       <input
                         style={{
                           width: "100%",
                           minHeight: "44px",
-                          padding: "0 14px",
+                          padding: "0 14px 0 40px",
                           border: "1px solid var(--line-2)",
-                          borderRadius: "6px",
+                          borderRadius: "8px",
                           fontSize: "14.5px",
+                          background: "#fff",
+                          outline: "none",
                         }}
                         placeholder="Search services, skills, or agent providers..."
                         value={searchQuery}
@@ -195,12 +212,12 @@ export default function PadPage() {
                       {offers
                         .filter((o) => o.title.toLowerCase().includes(searchQuery.toLowerCase()))
                         .map((offer) => (
-                          <div
+                          <MotionCard
                             key={offer.id}
                             style={{
                               padding: "16px",
                               border: "1px solid var(--line)",
-                              borderRadius: "8px",
+                              borderRadius: "10px",
                               display: "flex",
                               justifyContent: "space-between",
                               alignItems: "center",
@@ -246,15 +263,14 @@ export default function PadPage() {
                                 {offer.price.toFixed(2)}{" "}
                                 <span style={{ fontSize: "13px", color: "var(--mute)" }}>USDG</span>
                               </div>
-                              <button
-                                type="button"
-                                className="pill small ghost"
+                              <ShimmerButton
+                                style={{ minHeight: "34px", padding: "0 14px", fontSize: "12px", borderRadius: "999px" }}
                                 onClick={() => handleOrderEscrow(offer)}
                               >
                                 Order Escrow
-                              </button>
+                              </ShimmerButton>
                             </div>
-                          </div>
+                          </MotionCard>
                         ))}
                     </div>
                   </div>
@@ -264,8 +280,11 @@ export default function PadPage() {
               <>
                 <section className="panel">
                   <div className="panel-head">
-                    <h2>Recent Token Launches</h2>
-                    <span className="mono">Uniswap v4 Pools</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Rocket size={18} color="#D9381E" />
+                      <h2>Recent Token Launches</h2>
+                    </div>
+                    <Badge variant="outline">Uniswap v4 Pools</Badge>
                   </div>
                   <div className="table-container">
                     <table className="trades">
@@ -287,7 +306,7 @@ export default function PadPage() {
                           <td className="num">$480,000 USDG</td>
                           <td className="mono">70% / 30%</td>
                           <td>
-                            <span style={{ color: "#16a34a", fontWeight: "600" }}>Graduated</span>
+                            <Badge variant="success">Graduated</Badge>
                           </td>
                         </tr>
                         <tr>
@@ -298,7 +317,7 @@ export default function PadPage() {
                           <td className="num">$12,000 USDG</td>
                           <td className="mono">70% / 30%</td>
                           <td>
-                            <span style={{ color: "#d97706", fontWeight: "600" }}>Bonding</span>
+                            <Badge variant="secondary">Bonding</Badge>
                           </td>
                         </tr>
                       </tbody>
@@ -310,63 +329,68 @@ export default function PadPage() {
           </div>
 
           <aside className="side">
-            <section className="panel" aria-label="Pad Action">
-              <div className="panel-head">
-                <h2>{padView === "marketplace" ? "Publish Service Offer" : "Launch Token"}</h2>
-              </div>
-              <div className="panel-body stack">
-                <p className="note">
-                  {padView === "marketplace"
-                    ? "Publish a verifiable work offer on OrvenPad. Terms are hashed on-chain and settled upon evaluator verification."
-                    : "Create a new token with fair launch mechanics, locked initial liquidity, and anti-sniping protection."}
-                </p>
+            <section className="swap-panel" aria-label="Pad Action" style={{ position: "relative" }}>
+              <BorderBeam size={220} duration={12} colorFrom="#D9381E" colorTo="#E11D48" />
+              <div className="swap-panel-inner">
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                  <PlusCircle size={18} color="#D9381E" />
+                  <div style={{ fontWeight: "700", fontSize: "16px" }}>
+                    {padView === "marketplace" ? "Publish Service Offer" : "Launch Token"}
+                  </div>
+                </div>
+                <div className="stack">
+                  <p className="note" style={{ fontSize: "12.5px" }}>
+                    {padView === "marketplace"
+                      ? "Publish a verifiable work offer on OrvenPad. Terms are hashed on-chain and settled upon evaluator verification."
+                      : "Create a new token with fair launch mechanics, locked initial liquidity, and anti-sniping protection."}
+                  </p>
 
-                <label className="field">
-                  <span className="field-top">
-                    <span className="mono">
-                      {padView === "marketplace" ? "Offer Title" : "Token Name & Symbol"}
+                  <label className="field">
+                    <span className="field-top">
+                      <span className="mono">
+                        {padView === "marketplace" ? "Offer Title" : "Token Name & Symbol"}
+                      </span>
                     </span>
-                  </span>
-                  <span className="field-row">
-                    <input
-                      placeholder={
-                        padView === "marketplace"
-                          ? "e.g. Automated Code Review"
-                          : "e.g. Orven / ORV"
-                      }
-                      value={newTitle}
-                      onChange={(e) => setNewTitle(e.target.value)}
-                    />
-                  </span>
-                </label>
+                    <span className="field-row">
+                      <input
+                        placeholder={
+                          padView === "marketplace"
+                            ? "e.g. Automated Code Review"
+                            : "e.g. Orven / ORV"
+                        }
+                        value={newTitle}
+                        onChange={(e) => setNewTitle(e.target.value)}
+                      />
+                    </span>
+                  </label>
 
-                <label className="field">
-                  <span className="field-top">
-                    <span className="mono">Price (USDG)</span>
-                  </span>
-                  <span className="field-row">
-                    <input
-                      placeholder="0.00"
-                      inputMode="decimal"
-                      value={newPrice}
-                      onChange={(e) => setNewPrice(e.target.value)}
-                    />
-                    <span className="unit">USDG</span>
-                  </span>
-                </label>
+                  <label className="field">
+                    <span className="field-top">
+                      <span className="mono">Price (USDG)</span>
+                    </span>
+                    <span className="field-row">
+                      <input
+                        placeholder="0.00"
+                        inputMode="decimal"
+                        value={newPrice}
+                        onChange={(e) => setNewPrice(e.target.value)}
+                      />
+                      <span className="unit">USDG</span>
+                    </span>
+                  </label>
 
-                <button
-                  className="pill block"
-                  type="button"
-                  onClick={padView === "marketplace" ? handlePublishOffer : undefined}
-                >
-                  {padView === "marketplace" ? "Create Listing on Chain" : "Deploy Token & Pool"}
-                </button>
+                  <ShimmerButton
+                    style={{ minHeight: "48px", borderRadius: "12px", width: "100%", marginTop: "4px" }}
+                    onClick={padView === "marketplace" ? handlePublishOffer : undefined}
+                  >
+                    {padView === "marketplace" ? "Create Listing on Chain" : "Deploy Token & Pool"}
+                  </ShimmerButton>
+                </div>
               </div>
             </section>
           </aside>
         </div>
-      </div>
+      </PageTransition>
     </Layout>
   );
 }
