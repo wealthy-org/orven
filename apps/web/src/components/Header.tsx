@@ -362,8 +362,8 @@ export function Header() {
                   GitHub
                 </a>
                 <span>·</span>
-                <a href="https://x.com/orvenprotocol" target="_blank" rel="noreferrer">
-                  Twitter/X
+                <a href="https://x.com/orven_14" target="_blank" rel="noreferrer">
+                  Twitter/X (@orven_14)
                 </a>
                 <span>·</span>
                 <Link href="/docs" onClick={() => setMobileMenuOpen(false)}>
