@@ -171,7 +171,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(200).json({
               jobId: `job_${Date.now()}`,
               status: "succeeded",
-              output: `[Live OpenRouter · ${orModel}]\n\n${orText}`,
+              output: orText.trim(),
               costUSDG: "0.000 (Free Tier)",
               provider: `openrouter (${orModel})`,
               txHash: `0x${Array.from({ length: 64 }, () =>
