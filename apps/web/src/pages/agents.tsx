@@ -10,7 +10,7 @@ import { Bot, Terminal, Cpu, Sparkles, Play, Code2, Copy, Check, Zap, KeyRound }
 export default function AgentsPage() {
   const [copiedCmd, setCopiedCmd] = useState(false);
   const [testPrompt, setTestPrompt] = useState("");
-  const [selectedModel, setSelectedModel] = useState("meta-llama/llama-3.3-70b-instruct:free");
+  const [selectedModel, setSelectedModel] = useState("cohere/north-mini-code:free");
   const [isExecuting, setIsExecuting] = useState(false);
   const [agentOutput, setAgentOutput] = useState<string | null>(null);
   const [openRouterKey, setOpenRouterKey] = useState("");
@@ -267,11 +267,12 @@ export default function AgentsPage() {
                       value={selectedModel}
                       onChange={(e) => setSelectedModel(e.target.value)}
                     >
-                      <optgroup label="OpenRouter Free Tier (No Token Cost)">
-                        <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B (OpenRouter Free)</option>
-                        <option value="google/gemini-2.0-flash-exp:free">Gemini 2.0 Flash (OpenRouter Free)</option>
-                        <option value="qwen/qwen-2.5-72b-instruct:free">Qwen 2.5 72B (OpenRouter Free)</option>
-                        <option value="deepseek/deepseek-r1:free">DeepSeek R1 (OpenRouter Free)</option>
+                      <optgroup label="OpenRouter Free Tier (Live Models)">
+                        <option value="cohere/north-mini-code:free">Cohere Command Code (OpenRouter Free)</option>
+                        <option value="liquid/lfm-2.5-2.6b:free">Liquid LFM 2.5 (OpenRouter Free)</option>
+                        <option value="nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free">Nvidia Nemotron Nano (OpenRouter Free)</option>
+                        <option value="nvidia/nemotron-3.5-lightning:free">Nvidia Nemotron 3.5 (OpenRouter Free)</option>
+                        <option value="google/gemma-4-26b-a4b-it:free">Google Gemma 4 (OpenRouter Free)</option>
                       </optgroup>
                       <optgroup label="Sovereign Metered Tier (USDG Settlement)">
                         <option value="orven-gpt-4o">GPT-4o Omnimodel (0.005 USDG / 1k)</option>

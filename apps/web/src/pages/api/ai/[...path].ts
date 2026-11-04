@@ -134,12 +134,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             : modelId?.includes("claude")
             ? "anthropic/claude-3.5-sonnet"
             : modelId?.includes("gemini")
-            ? "google/gemini-2.0-flash-exp:free"
+            ? "google/gemma-4-26b-a4b-it:free"
             : modelId?.includes("qwen")
-            ? "qwen/qwen-2.5-72b-instruct:free"
-            : modelId?.includes("deepseek")
-            ? "deepseek/deepseek-r1:free"
-            : "meta-llama/llama-3.3-70b-instruct:free";
+            ? "cohere/north-mini-code:free"
+            : modelId?.includes("liquid")
+            ? "liquid/lfm-2.5-2.6b:free"
+            : "cohere/north-mini-code:free";
 
         const orRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
@@ -165,7 +165,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (orRes.ok) {
           const orData = (await orRes.json()) as any;
-          const orText = orData.choices?.[0]?.message?.content;
+          const msg = orData.choices?.[0]?.message;
+          const orText = msg?.content || msg?.reasoning || msg?.reasoning_details?.[0]?.text;
           if (orText) {
             return res.status(200).json({
               jobId: `job_${Date.now()}`,
@@ -188,7 +189,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           return res.status(200).json({
             jobId: `job_${Date.now()}`,
             status: "error",
-            output: `[OpenRouter Error (HTTP ${orRes.status})]\n${parsedMsg}\n\nTips: Pastikan OpenRouter API Key Anda valid di https://openrouter.ai/keys (Free Tier, saldo $0 tetap bisa panggil model :free).`,
+            output: `[OpenRouter Error (HTTP ${orRes.status})]\n${parsedMsg}\n\nTips: Model ini sedang sibuk di pool upstream OpenRouter. Coba ganti ke model free lain di dropdown (misal Cohere North Mini Code atau Liquid LFM).`,
             costUSDG: "0.000",
             provider: "openrouter_error",
           });
