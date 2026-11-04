@@ -52,7 +52,9 @@ check(MARKETPLACE_FEE_BPS === 50, "Marketplace protocol fee is 50 bps (0.50%)");
 
 // 3. Smart Contract Bytecode Artifacts
 console.log("\n\x1b[1m[3/6] Verifying Compiled Foundry Solc 0.8.30 Artifacts...\x1b[0m");
-const outDir = join(root, "upstream", "ostra-robinhood", "out");
+const outDir = existsSync(join(root, "packages", "contracts", "out", "OstraVault.sol", "OstraVault.json"))
+  ? join(root, "packages", "contracts", "out")
+  : join(root, "upstream", "ostra-robinhood", "out");
 const coreContracts = [
   "OstraVault.sol/OstraVault.json",
   "OstraVaultFactory.sol/OstraVaultFactory.json",

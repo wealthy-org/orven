@@ -43,7 +43,9 @@ async function main() {
   console.log(`   Mode: ${isSimulation ? "SIMULATION / VERIFIED DRY-RUN (Using ephemeral testnet key)" : `LIVE BROADCAST TO ${isMainnet ? "MAINNET" : "TESTNET"}`}\n`);
 
   // Verify compiled contract artifacts exist
-  const coreOutDir = join(root, "upstream", "ostra-robinhood", "out");
+  const coreOutDir = existsSync(join(root, "packages", "contracts", "out", "OstraVault.sol", "OstraVault.json"))
+    ? join(root, "packages", "contracts", "out")
+    : join(root, "upstream", "ostra-robinhood", "out");
   const requiredArtifacts = [
     "OstraVault.sol/OstraVault.json",
     "OstraVaultFactory.sol/OstraVaultFactory.json",

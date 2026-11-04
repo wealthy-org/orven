@@ -1,0 +1,23 @@
+{
+  "name": "@orven/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Orven Protocol Core Smart Contracts for Robinhood Chain (Solidity 0.8.30 & Foundry)",
+  "type": "module",
+  "scripts": {
+    "build": "forge build",
+    "test": "forge test",
+    "deploy:testnet": "node ../../scripts/deploy-network.js testnet",
+    "deploy:mainnet": "node ../../scripts/deploy-network.js mainnet"
+  },
+  "keywords": [
+    "solidity",
+    "foundry",
+    "orven",
+    "post-quantum",
+    "wots",
+    "stark",
+    "robinhood-chain",
+    "arbitrum-orbit"
+  ]
+}
