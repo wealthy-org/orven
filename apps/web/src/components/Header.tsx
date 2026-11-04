@@ -134,13 +134,6 @@ export function Header() {
             </Link>
           </nav>
 
-          <Link
-            className={`pill small ghost vault-pill ${isActive("/vault") ? "on" : ""}`}
-            href="/vault"
-          >
-            Vault
-          </Link>
-
           <div className="wallet">
             {!isConnected ? (
               <button
