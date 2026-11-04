@@ -69,7 +69,7 @@ export default function SwapPage() {
   const rateDisplay =
     exchangeRate >= 0.01
       ? `1 ${tokenIn.symbol} ≈ ${exchangeRate.toFixed(4)} ${tokenOut.symbol}`
-      : `1 ${tokenOut.symbol} ≈ ${(1 / exchangeRate).toLocaleString(undefined, {
+      : `1 ${tokenOut.symbol} ≈ ${(1 / exchangeRate).toLocaleString("en-US", {
           maximumFractionDigits: 2,
         })} ${tokenIn.symbol}`;
 
@@ -627,7 +627,7 @@ export default function SwapPage() {
                       </div>
                     </div>
                     <div className="num mono" style={{ fontSize: "12px", color: "var(--mute-2)" }}>
-                      ${token.rateVsUSDG.toLocaleString()} USDG
+                      ${token.rateVsUSDG.toLocaleString("en-US")} USDG
                     </div>
                   </div>
                 ))}

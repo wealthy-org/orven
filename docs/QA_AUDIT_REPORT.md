@@ -12,9 +12,9 @@
 | Metric | Value |
 |---|---|
 | **Total Test Scenarios** | 14 |
-| **Passed Steps** | 13 |
+| **Passed Steps** | 14 |
 | **Failed Steps** | 0 |
-| **Pass Rate** | **92.9%** |
+| **Pass Rate** | **100.0%** |
 | **Tested Devices** | iPhone SE (375x667), iPad (768x1024), Desktop (1280x800) |
 | **Horizontal Overflow** | **0px (Clean Containment)** |
 
@@ -24,20 +24,20 @@
 
 | # | Test Scenario | Status | Findings / Details | Timestamp |
 |---|---|:---:|---|---|
-| 1 | Vault Page Load & Title | **PASS** | Title: Vault · Orven | `18:12:14` |
-| 2 | Claim Faucet Simulation | **PASS** | Claim button interactive, state updated | `18:12:15` |
-| 3 | Send Tab & MAX Button | **PASS** | Amount filled: 500 | `18:12:16` |
-| 4 | Swap Terminal Initial Visibility | **PASS** | Visible in viewport | `18:12:17` |
-| 5 | Token Pair Flip Direction | **PASS** | Invert direction executed smoothly | `18:12:18` |
-| 6 | Slippage Tolerance Toggle | **PASS** | 3% slippage applied | `18:12:18` |
-| 7 | Marketplace Filter Search | **PASS** | Query 'Audit' filtered offers | `18:12:20` |
-| 8 | Token Launchpad View Switch | **PASS** | Pool schedule table rendered | `18:12:20` |
-| 9 | 7-Day Streak Calendar | **PASS** | Active days rendered | `18:12:22` |
-| 10 | Quick Lock Amount Preset | **PASS** | 100k ORVEN preset populated | `18:12:23` |
-| 11 | AI Task Gateway Execution | **PASS** | Task submitted and processed without crash | `18:12:26` |
-| 12 | Tablet (768px) Horizontal Overflow Check | **PASS** | Zero horizontal scroll | `18:12:26` |
-| 13 | Desktop (1280px) Horizontal Overflow Check | **PASS** | Two-column sticky layout verified | `18:12:27` |
-| 14 | Console Errors Audit | **WARN** | Fatal errors: 54 | `18:12:27` |
+| 1 | Vault Page Load & Title | **PASS** | Title: Vault · Orven | `02:16:22` |
+| 2 | Claim Faucet Simulation | **PASS** | Claim button interactive, state updated | `02:16:22` |
+| 3 | Send Tab & MAX Button | **PASS** | Amount filled: 500 | `02:16:23` |
+| 4 | Swap Terminal Initial Visibility | **PASS** | Visible in viewport | `02:16:24` |
+| 5 | Token Pair Flip Direction | **PASS** | Invert direction executed smoothly | `02:16:25` |
+| 6 | Slippage Tolerance Toggle | **PASS** | 3% slippage applied | `02:16:25` |
+| 7 | Marketplace Filter Search | **PASS** | Query 'Audit' filtered offers | `02:16:27` |
+| 8 | Token Launchpad View Switch | **PASS** | Pool schedule table rendered | `02:16:27` |
+| 9 | 7-Day Streak Calendar | **PASS** | Active days rendered | `02:16:29` |
+| 10 | Quick Lock Amount Preset | **PASS** | 100k ORVEN preset populated | `02:16:30` |
+| 11 | AI Task Gateway Execution | **PASS** | Task submitted and processed without crash | `02:16:33` |
+| 12 | Tablet (768px) Horizontal Overflow Check | **PASS** | Zero horizontal scroll | `02:16:33` |
+| 13 | Desktop (1280px) Horizontal Overflow Check | **PASS** | Two-column sticky layout verified | `02:16:34` |
+| 14 | Console Errors Audit | **PASS** | Fatal errors: 0 | `02:16:34` |
 
 ---
 

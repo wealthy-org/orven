@@ -41,11 +41,11 @@ export default function LockPage() {
       setLockAmount("");
       toast.success(
         "Tokens Locked Successfully!",
-        `Locked ${amount.toLocaleString()} ORVEN for 7 days. Discount updated!`,
+        `Locked ${amount.toLocaleString("en-US")} ORVEN for 7 days. Discount updated!`,
         txHash
       );
       setMessage(
-        `Successfully locked ${amount.toLocaleString()} ORVEN for 7 days! Tx: ${txHash.slice(
+        `Successfully locked ${amount.toLocaleString("en-US")} ORVEN for 7 days! Tx: ${txHash.slice(
           0,
           10
         )}... (WOTS Key #${updated.currentKeyIndex - 1} retired)`
@@ -203,7 +203,7 @@ export default function LockPage() {
                       className="mono"
                       style={{ fontSize: "11px", color: "var(--mute)", marginTop: "4px" }}
                     >
-                      Available: {mounted && vault ? vault.balanceORVEN.toLocaleString() : "0"} ORVEN
+                      Available: {mounted && vault ? vault.balanceORVEN.toLocaleString("en-US") : "0"} ORVEN
                     </div>
                   </div>
 

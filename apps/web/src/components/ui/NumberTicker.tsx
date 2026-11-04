@@ -47,7 +47,7 @@ export function NumberTicker({
     };
   }, [value, delay]);
 
-  const formatted = displayValue.toLocaleString(undefined, {
+  const formatted = displayValue.toLocaleString("en-US", {
     minimumFractionDigits: decimalPlaces,
     maximumFractionDigits: decimalPlaces,
   });
