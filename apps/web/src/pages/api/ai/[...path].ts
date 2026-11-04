@@ -170,17 +170,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(200).json({
               jobId: `job_${Date.now()}`,
               status: "succeeded",
-              output: orText,
-              costUSDG: "0.000",
+              output: `[Live OpenRouter · ${orModel}]\n\n${orText}`,
+              costUSDG: "0.000 (Free Tier)",
               provider: `openrouter (${orModel})`,
               txHash: `0x${Array.from({ length: 64 }, () =>
                 Math.floor(Math.random() * 16).toString(16)
               ).join("")}`,
             });
           }
+        } else {
+          const errData = await orRes.text();
+          let parsedMsg = errData;
+          try {
+            const j = JSON.parse(errData);
+            parsedMsg = j.error?.message || errData;
+          } catch {}
+          return res.status(200).json({
+            jobId: `job_${Date.now()}`,
+            status: "error",
+            output: `[OpenRouter Error (HTTP ${orRes.status})]\n${parsedMsg}\n\nTips: Pastikan OpenRouter API Key Anda valid di https://openrouter.ai/keys (Free Tier, saldo $0 tetap bisa panggil model :free).`,
+            costUSDG: "0.000",
+            provider: "openrouter_error",
+          });
         }
-      } catch (err) {
-        console.warn("OpenRouter invocation failed, falling back:", err);
+      } catch (err: any) {
+        return res.status(200).json({
+          jobId: `job_${Date.now()}`,
+          status: "error",
+          output: `[OpenRouter Network Error]\n${err.message}`,
+          costUSDG: "0.000",
+          provider: "openrouter_network_error",
+        });
       }
     }
 
@@ -243,7 +263,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({
       jobId: `job_${Date.now()}`,
       status: "succeeded",
-      output,
+      output: `[Orven AI Simulation Mode (No OpenRouter Key Connected)]\n\n${output}\n\n💡 Untuk memanggil model OpenRouter live: Klik '+ Connect OpenRouter Key' di atas dan masukkan key gratis Anda dari https://openrouter.ai/keys (100% Free Tier, saldo $0 tetap bisa memanggil model :free).`,
       costUSDG: "0.005",
       txHash: `0x${Array.from({ length: 64 }, () =>
         Math.floor(Math.random() * 16).toString(16)

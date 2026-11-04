@@ -107,7 +107,7 @@ export async function executeAITask(prompt: string, modelId: string = "orven-gpt
 
   return {
     status: "succeeded",
-    output: smartText,
+    output: `[Orven AI Simulation Mode (No OpenRouter Key Connected)]\n\n${smartText}\n\n💡 Untuk memanggil model OpenRouter live: Klik '+ Connect OpenRouter Key' di atas dan masukkan key gratis Anda dari https://openrouter.ai/keys (100% Free Tier, saldo $0 tetap bisa memanggil model :free).`,
     costUSDG: "0.005",
   };
 }
