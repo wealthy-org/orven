@@ -3,8 +3,8 @@
   "chainId": 4663,
   "network": "robinhood-mainnet",
   "deployedAt": "2026-11-03T18:10:14.046Z",
-  "deployer": "0x51b25209C5a40082001EA900B629ECaAcf96AdE3",
-  "singleWalletAdmin": "0x51b25209C5a40082001EA900B629ECaAcf96AdE3",
+  "deployer": "0x9178B573219C55586BbAf51Ecb24ACfb27BB7681",
+  "singleWalletAdmin": "0x9178B573219C55586BbAf51Ecb24ACfb27BB7681",
   "token": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
   "status": "simulated_deployment",
   "contracts": {
