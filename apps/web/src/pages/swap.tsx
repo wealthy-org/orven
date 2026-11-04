@@ -491,7 +491,7 @@ export default function SwapPage() {
                     <div className="swap-info-row">
                       <span className="swap-info-label">Swap Fee (0.20%)</span>
                       <span className="swap-info-val">
-                        0.20% <span style={{ color: "var(--red)", fontSize: "10.5px" }}>🔥 50% Burn · Free Gas</span>
+                        0.20% <span style={{ color: "var(--red)", fontSize: "10.5px", display: "inline-flex", alignItems: "center", gap: "2px" }}><Flame size={11} color="var(--red)" aria-hidden="true" /> 50% Burn · Free Gas</span>
                       </span>
                     </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Zap } from "lucide-react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -99,7 +100,7 @@ export function PWAInstallPrompt() {
             gap: "8px",
           }}
         >
-          <span style={{ fontSize: "14px" }}>⚡</span>
+          <Zap size={14} color="#fff" aria-hidden="true" />
           <span>OFFLINE MODE · Serving cached state from local post-quantum keystore</span>
         </div>
       )}

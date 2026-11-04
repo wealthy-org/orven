@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useWallet } from "@/lib/wallet";
 import { useNetwork } from "@/lib/network";
 import { ROBINHOOD_TESTNET, ROBINHOOD_MAINNET } from "@orven/product-config";
+import { Check, Copy } from "lucide-react";
 
 export function Header() {
   const router = useRouter();
@@ -202,8 +203,9 @@ export function Header() {
                 )}
 
                 <div className="wallet-dropdown-actions">
-                  <button type="button" onClick={handleCopy} className="wallet-dropdown-item">
-                    <span>{copied ? "✔ Copied" : "Copy Address"}</span>
+                  <button type="button" onClick={handleCopy} className="wallet-dropdown-item" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    {copied ? <Check size={13} color="#16a34a" /> : <Copy size={13} />}
+                    <span>{copied ? "Copied" : "Copy Address"}</span>
                   </button>
                   <a
                     href={`${explorerUrl}/address/${address}`}

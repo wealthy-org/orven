@@ -612,7 +612,7 @@ export default function VaultPage() {
                       marginTop: "2px",
                     }}
                   >
-                    <span style={{ color: "#16a34a" }}>⚡</span>
+                    <Zap size={13} color="#16a34a" aria-hidden="true" />
                     <span>One-time post-quantum key · Never reused</span>
                   </div>
                 </div>
