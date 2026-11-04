@@ -56,7 +56,7 @@ export async function submitRelayTransaction(quoteId: string, signedPayload: str
   };
 }
 
-export async function executeAITask(prompt: string, modelId: string = "orven-gpt-4o") {
+export async function executeAITask(prompt: string, modelId: string = "orven-gpt-4o", openRouterKey?: string) {
   try {
     // 1. Get quote
     const quoteRes = await fetch(`${AI_GATEWAY_BASE}/v1/quote`, {
@@ -83,6 +83,7 @@ export async function executeAITask(prompt: string, modelId: string = "orven-gpt
         modelId,
         maxPriceMinor,
         prompt,
+        openRouterKey,
       }),
     });
 

@@ -1,18 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Layout } from "@/components/Layout";
 import { executeAITask } from "@/lib/api";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
 import { Badge } from "@/components/ui/Badge";
-import { Bot, Terminal, Cpu, Sparkles, Play, Code2, Copy, Check, Zap } from "lucide-react";
+import { Bot, Terminal, Cpu, Sparkles, Play, Code2, Copy, Check, Zap, KeyRound } from "lucide-react";
 
 export default function AgentsPage() {
   const [copiedCmd, setCopiedCmd] = useState(false);
   const [testPrompt, setTestPrompt] = useState("");
-  const [selectedModel, setSelectedModel] = useState("orven-gpt-4o");
+  const [selectedModel, setSelectedModel] = useState("meta-llama/llama-3.3-70b-instruct:free");
   const [isExecuting, setIsExecuting] = useState(false);
   const [agentOutput, setAgentOutput] = useState<string | null>(null);
+  const [openRouterKey, setOpenRouterKey] = useState("");
+  const [showKeyInput, setShowKeyInput] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("orven_openrouter_api_key");
+    if (saved) setOpenRouterKey(saved);
+  }, []);
+
+  const handleKeyChange = (val: string) => {
+    setOpenRouterKey(val);
+    if (typeof window !== "undefined") {
+      if (val.trim()) {
+        localStorage.setItem("orven_openrouter_api_key", val.trim());
+      } else {
+        localStorage.removeItem("orven_openrouter_api_key");
+      }
+    }
+  };
 
   const handleCopyCmd = () => {
     navigator.clipboard.writeText("npx @orven/mcp@testnet");
@@ -25,7 +43,7 @@ export default function AgentsPage() {
     try {
       setIsExecuting(true);
       setAgentOutput("Connecting to Orven AI Gateway & reserving credit...");
-      const res = await executeAITask(testPrompt, selectedModel);
+      const res = await executeAITask(testPrompt, selectedModel, openRouterKey);
       setAgentOutput(res.output || JSON.stringify(res, null, 2));
     } catch (err: any) {
       setAgentOutput(`Error: ${err.message}`);
@@ -249,11 +267,46 @@ export default function AgentsPage() {
                       value={selectedModel}
                       onChange={(e) => setSelectedModel(e.target.value)}
                     >
-                      <option value="orven-gpt-4o">GPT-4o Omnimodel (0.005 USDG / 1k)</option>
-                      <option value="orven-claude-3-5-sonnet">Claude 3.5 Sonnet (0.006 USDG / 1k)</option>
-                      <option value="orven-flux-pro">Flux Pro Studio (0.04 USDG / img)</option>
-                      <option value="orven-runway-gen3">Runway Gen-3 Video (0.25 USDG / 5s)</option>
+                      <optgroup label="OpenRouter Free Tier (No Token Cost)">
+                        <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B (OpenRouter Free)</option>
+                        <option value="google/gemini-2.0-flash-exp:free">Gemini 2.0 Flash (OpenRouter Free)</option>
+                        <option value="qwen/qwen-2.5-72b-instruct:free">Qwen 2.5 72B (OpenRouter Free)</option>
+                        <option value="deepseek/deepseek-r1:free">DeepSeek R1 (OpenRouter Free)</option>
+                      </optgroup>
+                      <optgroup label="Sovereign Metered Tier (USDG Settlement)">
+                        <option value="orven-gpt-4o">GPT-4o Omnimodel (0.005 USDG / 1k)</option>
+                        <option value="orven-claude-3-5-sonnet">Claude 3.5 Sonnet (0.006 USDG / 1k)</option>
+                        <option value="orven-flux-pro">Flux Pro Studio (0.04 USDG / img)</option>
+                        <option value="orven-runway-gen3">Runway Gen-3 Video (0.25 USDG / 5s)</option>
+                      </optgroup>
                     </select>
+
+                    <div style={{ marginTop: "6px" }}>
+                      <button
+                        type="button"
+                        onClick={() => setShowKeyInput(!showKeyInput)}
+                        className="pill small ghost"
+                        style={{ fontSize: "11px", padding: "3px 8px", minHeight: "24px", gap: "5px" }}
+                      >
+                        <KeyRound size={11} color="var(--red)" />
+                        <span>{openRouterKey ? "OpenRouter Key Connected ●" : "+ Connect OpenRouter Key (Optional)"}</span>
+                      </button>
+                      {showKeyInput && (
+                        <div style={{ marginTop: "6px" }}>
+                          <input
+                            type="password"
+                            className="form-control"
+                            style={{ fontSize: "11px", padding: "6px 8px", fontFamily: "var(--mono)" }}
+                            placeholder="sk-or-v1-... (Saved in your browser)"
+                            value={openRouterKey}
+                            onChange={(e) => handleKeyChange(e.target.value)}
+                          />
+                          <div style={{ fontSize: "10px", color: "var(--mute-2)", marginTop: "4px" }}>
+                            Paste your free OpenRouter key from openrouter.ai/keys to call models live!
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="form-group">

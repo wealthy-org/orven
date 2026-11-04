@@ -122,9 +122,69 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (subpath === "v1/jobs" && req.method === "POST") {
-    const { prompt, modelId } = req.body || {};
+    const { prompt, modelId, openRouterKey: clientKey } = req.body || {};
 
-    // 1. Try real LLM provider if API keys are configured (OpenAI, Groq, Anthropic)
+    // 1. Try OpenRouter API first (per Manager's instruction for testing free models)
+    const openrouterKey = clientKey || process.env.OPENROUTER_API_KEY;
+    if (openrouterKey) {
+      try {
+        const orModel =
+          modelId?.includes("/")
+            ? modelId
+            : modelId?.includes("claude")
+            ? "anthropic/claude-3.5-sonnet"
+            : modelId?.includes("gemini")
+            ? "google/gemini-2.0-flash-exp:free"
+            : modelId?.includes("qwen")
+            ? "qwen/qwen-2.5-72b-instruct:free"
+            : modelId?.includes("deepseek")
+            ? "deepseek/deepseek-r1:free"
+            : "meta-llama/llama-3.3-70b-instruct:free";
+
+        const orRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${openrouterKey}`,
+            "HTTP-Referer": "https://useorvent.xyz",
+            "X-Title": "Orven Protocol",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: orModel,
+            messages: [
+              {
+                role: "system",
+                content:
+                  "You are the Orven Protocol Autonomous AI Agent on Robinhood Chain. You assist users with post-quantum vaults, zero-gas swaps, and on-chain agent operations.",
+              },
+              { role: "user", content: prompt },
+            ],
+            max_tokens: 600,
+          }),
+        });
+
+        if (orRes.ok) {
+          const orData = (await orRes.json()) as any;
+          const orText = orData.choices?.[0]?.message?.content;
+          if (orText) {
+            return res.status(200).json({
+              jobId: `job_${Date.now()}`,
+              status: "succeeded",
+              output: orText,
+              costUSDG: "0.000",
+              provider: `openrouter (${orModel})`,
+              txHash: `0x${Array.from({ length: 64 }, () =>
+                Math.floor(Math.random() * 16).toString(16)
+              ).join("")}`,
+            });
+          }
+        }
+      } catch (err) {
+        console.warn("OpenRouter invocation failed, falling back:", err);
+      }
+    }
+
+    // 2. Try OpenAI / Groq fallback if configured
     const apiKey = process.env.OPENAI_API_KEY || process.env.GROQ_API_KEY;
     const apiUrl = process.env.GROQ_API_KEY
       ? "https://api.groq.com/openai/v1/chat/completions"
@@ -177,7 +237,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
-    // 2. Intelligent contextual response engine
+    // 3. Intelligent contextual response engine
     const output = generateSmartAIResponse(prompt, modelId);
 
     return res.status(200).json({
