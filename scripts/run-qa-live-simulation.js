@@ -224,6 +224,8 @@ async function runLiveSimulation() {
     const streakCalendar = page.locator(".tide-days").first();
     recordStep("7-Day Streak Calendar", (await streakCalendar.isVisible()) ? "PASS" : "FAIL", "Active days rendered");
 
+    await streakCalendar.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(300);
     await page.screenshot({ path: path.join(artifactsDir, "04-tide-mobile.png") });
 
     // -------------------------------------------------------------
@@ -278,6 +280,10 @@ async function runLiveSimulation() {
     const desktopHScroll = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
     recordStep("Desktop (1280px) Horizontal Overflow Check", !desktopHScroll ? "PASS" : "FAIL", "Two-column sticky layout verified");
     await page.screenshot({ path: path.join(artifactsDir, "08-vault-desktop.png") });
+
+    // Desktop Tide Verification
+    await page.goto(`${baseUrl}/tide`, { waitUntil: "networkidle" });
+    await page.screenshot({ path: path.join(artifactsDir, "09-tide-desktop.png") });
 
     // Check Console Error Summary (ignoring benign font preloads or favicon)
     const fatalErrors = consoleErrors.filter((e) => !e.includes("favicon") && !e.includes("font") && !e.includes("status of 404"));
@@ -339,6 +345,7 @@ Screenshots captured automatically during test execution in \`qa-artifacts/\`:
 6. \`06-agents-mobile.png\` — Autonomous AI task execution & MCP tooling.
 7. \`07-swap-tablet.png\` — Tablet 768px layout verification.
 8. \`08-vault-desktop.png\` — Desktop 1280px two-column balance & journal layout.
+9. \`09-tide-desktop.png\` — Desktop 1280px Tide rewards dashboard & dynamic streak calendar.
 
 ---
 *Generated automatically by Orven Protocol QA Automation System.*

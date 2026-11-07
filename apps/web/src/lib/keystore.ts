@@ -380,6 +380,46 @@ export class BrowserVaultManager {
     }
   }
 
+  static recordDailyCheckin(isMainnet?: boolean): { vault: VaultState; txHash: string; alreadyClaimed: boolean } {
+    this.acquireLock();
+    try {
+      const vault = this.loadVault(isMainnet) || this.createVault(isMainnet);
+      const todayDateStr = new Date().toDateString();
+      const alreadyClaimed = (vault.transactions || []).some(
+        (tx) => tx.type === "Tide Daily Check-in" && new Date(tx.timestamp).toDateString() === todayDateStr
+      );
+
+      if (alreadyClaimed) {
+        return { vault, txHash: "", alreadyClaimed: true };
+      }
+
+      if (vault.currentKeyIndex >= vault.maxKeys) {
+        throw new Error("WOTS keys exhausted. Rekeying required.");
+      }
+
+      const usedIndex = vault.currentKeyIndex;
+      vault.currentKeyIndex += 1;
+
+      const txHash = `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}`;
+
+      vault.transactions.unshift({
+        id: `tide_checkin_${Date.now()}`,
+        type: "Tide Daily Check-in",
+        asset: "TIDE",
+        amount: 100,
+        timestamp: Date.now(),
+        status: "confirmed",
+        txHash,
+        wotsIndexUsed: usedIndex,
+      });
+
+      localStorage.setItem(this.getStorageKey(isMainnet), JSON.stringify(vault));
+      return { vault, txHash, alreadyClaimed: false };
+    } finally {
+      this.releaseLock();
+    }
+  }
+
   /**
    * Export encrypted vault backup file.
    */
